@@ -1,0 +1,193 @@
+﻿@page "/ar/dailycontract"
+@using ChainConnext.Shared.BD
+
+@inject ContextMenuService ContextMenuService
+@inject ILogger<ARDailyContract> Logger
+@inject DialogService dialogService
+@inject IJSRuntime jsRuntime
+@inject NavigationManager Navigation
+@inject IAccountService _accountService
+@inject NotificationService NotificationService
+@inject HttpClient Http
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+<PageTitle>ChainConnext > บัญชีลูกหนี้ > ติดตั้งประจำวัน</PageTitle>
+
+@if (!IsAccess)
+{
+    <RadzenText TextStyle="TextStyle.H1">ไม่มีสิทธิในส่วนนี้</RadzenText>
+}
+else
+{
+    <RadzenStack>
+        <RadzenRow AlignItems="AlignItems.Center">
+            @* <RadzenColumn Size="1">
+                <RadzenLabel Text="เดือน/ปี" />
+            </RadzenColumn>
+            <RadzenColumn Size="2">
+                <RadzenDatePicker TValue="DateTime?" Value=@FindMonth Change="@(args => OnDateChange(args))" DateFormat="MM/yyyy" />
+            </RadzenColumn> *@
+            <RadzenColumn Size="3">
+                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Wrap="FlexWrap.NoWrap" Gap="0.1rem">
+                    <RadzenButton Icon="chevron_left" Variant="Variant.Outlined" ButtonStyle="ButtonStyle.Info" Click=@(()=>OnButtonDateChange(-1)) IsBusy=@IsLoad />
+                    <RadzenDatePicker TValue="DateTime?" Value=@FindMonth Change="@(args => OnDateChange(args))" DateFormat="MM/yyyy" />
+                    <RadzenButton Icon="chevron_right" Variant="Variant.Outlined" ButtonStyle="ButtonStyle.Info" Click=@(()=>OnButtonDateChange(1)) IsBusy=@IsLoad />
+                </RadzenStack>
+            </RadzenColumn>
+            <RadzenColumn Size="1">
+                <RadzenButton Icon="search" ButtonStyle="ButtonStyle.Success" Class="w-100" IsBusy=@IsLoad Click=@GetMainData />
+            </RadzenColumn>
+            <RadzenColumn Size="1">
+                <RadzenButton Icon="download" ButtonStyle="ButtonStyle.Info" Class="w-100" IsBusy=@IsLoad />
+            </RadzenColumn>
+            <RadzenColumn Size="1">
+                <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Class="w-100" IsBusy=@IsLoad />
+            </RadzenColumn>
+            <RadzenColumn Size="2">
+                <RadzenCheckBox @bind-Value=@IsTodebtor Name="IsTodebtor" />
+                <RadzenLabel Text="แสดงเฉพาะไม่ติ๊ก" Component="IsTodebtor" Style="margin-left: 8px; vertical-align: middle;" />
+            </RadzenColumn>
+        </RadzenRow>
+        <RadzenRow>
+            <RadzenColumn Size="2">
+                <RadzenTabs @bind-SelectedIndex=@selectedIndexDate>
+                    <Tabs>
+                        <RadzenTabsItem Text="วันที่">
+                            <RadzenDataGrid IsLoading="@IsLoad" Data="@ListDate" TItem="BD_accstatus" AllowColumnResize="true"
+                                            AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" LogicalFilterOperator="LogicalFilterOperator.Or"
+                                            AllowSorting="true" SelectionMode="DataGridSelectionMode.Single" @bind-Value=@selectedMain CellClick="@OnCellClick"
+                                            PagerPosition="PagerPosition.Bottom" Style=@($"height:{(Height - 150)}px")>
+                                <Columns>
+                                    <RadzenDataGridColumn TItem="BD_accstatus" Property="effdate" Title="วันที่ติดตั้ง" FormatString="{0:dd/MM/yyyy}" />
+                                </Columns>
+                            </RadzenDataGrid>
+                        </RadzenTabsItem>
+                    </Tabs>
+                </RadzenTabs>
+            </RadzenColumn>
+            <RadzenColumn Size="10">
+                <RadzenTabs @bind-SelectedIndex=@selectedIndex>
+                    <Tabs>
+                        <RadzenTabsItem Text="ถังส้ม">
+                            @* <RadzenDataGrid IsLoading="@IsLoad" Data="@ListDetail" TItem="BD_accstatus" AllowColumnResize="true"
+                                            AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" LogicalFilterOperator="LogicalFilterOperator.Or"
+                                            AllowSorting="true" SelectionMode="DataGridSelectionMode.Single" @bind-Value=@selectedDetail
+                                            AllowPaging="true" PageSize="10"
+                                            PagerPosition="PagerPosition.Bottom" ColumnWidth="150px" Style=@($"height:{(Height - 150)}px")>
+                                <Columns>
+                                    <RadzenDataGridColumn TItem="BD_accstatus" Property="todebtor" Title="ตั้งหนี้" Frozen="true" Filterable="false" Sortable="false" Width="50px">
+                                        <Template Context="Um">
+                                            <RadzenCheckBox TriState="false" TValue="bool?" Value=@Um.is_todebtor />
+                                        </Template>
+                                    </RadzenDataGridColumn>
+                                    <RadzenDataGridColumn TItem="BD_accstatus" Property="refno" Title="เลขอ้างอิง" Frozen="true">
+                                        <FooterTemplate>
+                                            <b>@ListDetail.Count</b>
+                                        </FooterTemplate>
+                                    </RadzenDataGridColumn>
+                                    <RadzenDataGridColumn TItem="BD_accstatus" Property="torefno" Title="เปลี่ยนไป" />
+                                    <RadzenDataGridColumn TItem="BD_accstatus" Property="tocode" Title="รหัส" Width="50px" />
+                                    <RadzenDataGridColumn TItem="BD_accstatus" Property="fromrefno" Title="ที่มา" />
+                                    <RadzenDataGridColumn TItem="BD_accstatus" Property="contno" Title="เลชสัญญา" />
+                                    <RadzenDataGridColumn TItem="BD_accstatus" Property="name" Title="ชื่อ - สกุล" />
+                                    <RadzenDataGridColumn TItem="BD_accstatus" Property="model" Title="สินค้า" />
+                                    <RadzenDataGridColumn TItem="BD_accstatus" Property="serialno" Title="เลขเครื่อง" />
+                                    <RadzenDataGridColumn TItem="BD_accstatus" Property="mode" Title="งวด" />
+                                    <RadzenDataGridColumn TItem="BD_accstatus" Property="sales" Title="ราคาเงินสด" />
+                                    <RadzenDataGridColumn TItem="BD_accstatus" Property="credit" Title="ราคาเช่าซื้อ" />
+                                    <RadzenDataGridColumn TItem="BD_accstatus" Property="premium2" Title="งวดแรก" />
+                                    <RadzenDataGridColumn TItem="BD_accstatus" Property="premium" Title="งวดต่อไป" />
+                                    <RadzenDataGridColumn TItem="BD_accstatus" Property="firstdisc" Title="ส่วนลด" />
+                                    <RadzenDataGridColumn TItem="BD_accstatus" Property="netcredit" Title="หักส่วนลด" />
+                                    <RadzenDataGridColumn TItem="BD_accstatus" Property="nextcredit" Title="ชำระงวดแรก" />
+                                    <RadzenDataGridColumn TItem="BD_accstatus" Property="chanel" Title="ช่องทางขาย" />
+                                    <RadzenDataGridColumn TItem="BD_accstatus" Property="bcode" Title="สาขา" />
+                                </Columns>
+                            </RadzenDataGrid> *@
+                            <ARAccStatusDetailList ListDetail=@ListDetail IsLoad=@IsLoad Height=@Height Width=@Width />
+                        </RadzenTabsItem>
+                        <RadzenTabsItem Text="ปฏิบัตรการ <-> ถังส้ม">
+                            <RadzenRow>
+                                <RadzenColumn Size="6">
+                                    @* <RadzenDataGrid IsLoading="@IsLoadMc" Data="@ListDetailMastCont" TItem="BD_MastCont" AllowColumnResize="true"
+                                                    AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" LogicalFilterOperator="LogicalFilterOperator.Or"
+                                                    AllowSorting="true" SelectionMode="DataGridSelectionMode.Single" @bind-Value=@selectedDetailMastCont
+                                                    AllowPaging="true" PageSize="10"
+                                                    PagerPosition="PagerPosition.Bottom" ColumnWidth="150px" Style=@($"height:{(Height - 150)}px")>
+                                        <Columns>
+                                            <RadzenDataGridColumn TItem="BD_MastCont" Property="toacc" Title="เข้า" Frozen="true" Filterable="false" Sortable="false" Width="50px">
+                                                <Template Context="Um">
+                                                    <RadzenCheckBox TriState="false" TValue="bool?" Value=@Um.is_toacc />
+                                                </Template>
+                                            </RadzenDataGridColumn>
+                                            <RadzenDataGridColumn TItem="BD_MastCont" Property="RefNo" Title="เลขอ้างอิง" Frozen="true">
+                                                <FooterTemplate>
+                                                    <b>@ListDetailMastCont.Count</b>
+                                                </FooterTemplate>
+                                            </RadzenDataGridColumn>
+                                            <RadzenDataGridColumn TItem="BD_MastCont" Property="torefno" Title="เปลี่ยนไป" />
+                                            <RadzenDataGridColumn TItem="BD_MastCont" Property="tocode" Title="รหัส" Width="50px" />
+                                            <RadzenDataGridColumn TItem="BD_MastCont" Property="fromrefno" Title="ที่มา" />
+                                            <RadzenDataGridColumn TItem="BD_MastCont" Property="CONTNO" Title="เลชสัญญา" />
+                                            <RadzenDataGridColumn TItem="BD_MastCont" Property="MODEL" Title="สินค้า" />
+                                            <RadzenDataGridColumn TItem="BD_MastCont" Property="SERIALNO" Title="เลขเครื่อง" />
+                                            <RadzenDataGridColumn TItem="BD_MastCont" Property="MODE" Title="งวด" />
+                                            <RadzenDataGridColumn TItem="BD_MastCont" Property="SALES" Title="ราคาเงินสด" />
+                                            <RadzenDataGridColumn TItem="BD_MastCont" Property="CREDIT" Title="ราคาเช่าซื้อ" />
+                                            <RadzenDataGridColumn TItem="BD_MastCont" Property="premium2" Title="งวดแรก" />
+                                            <RadzenDataGridColumn TItem="BD_MastCont" Property="PREMIUM" Title="งวดต่อไป" />
+                                            <RadzenDataGridColumn TItem="BD_MastCont" Property="discfirst" Title="ส่วนลด" />
+                                            <RadzenDataGridColumn TItem="BD_MastCont" Property="netcredit" Title="หักส่วนลด" />
+                                            <RadzenDataGridColumn TItem="BD_MastCont" Property="nextcredit" Title="ชำระงวดแรก" />
+                                            <RadzenDataGridColumn TItem="BD_MastCont" Property="chanel" Title="ช่องทางขาย" />
+                                            <RadzenDataGridColumn TItem="BD_MastCont" Property="CHECKER" Title="สาขา" />
+                                        </Columns>
+                                    </RadzenDataGrid> *@
+                                    <ARContractDetailList ListDetailMastCont=@ListDetailMastCont IsLoad=@IsLoadMc Height=@Height Width=@Width />
+                                </RadzenColumn>
+                                <RadzenColumn Size="6">
+                                    @* <RadzenDataGrid IsLoading="@IsLoad" Data="@ListDetail" TItem="BD_accstatus" AllowColumnResize="true"
+                                                    AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" LogicalFilterOperator="LogicalFilterOperator.Or"
+                                                    AllowSorting="true" SelectionMode="DataGridSelectionMode.Single" @bind-Value=@selectedDetail
+                                                    AllowPaging="true" PageSize="10"
+                                                    PagerPosition="PagerPosition.Bottom" ColumnWidth="150px" Style=@($"height:{(Height - 150)}px")>
+                                        <Columns>
+                                            <RadzenDataGridColumn TItem="BD_accstatus" Property="todebtor" Title="ตั้งหนี้" Frozen="true" Filterable="false" Sortable="false" Width="50px">
+                                                <Template Context="Um">
+                                                    <RadzenCheckBox TriState="false" TValue="bool?" Value=@Um.is_todebtor />
+                                                </Template>
+                                            </RadzenDataGridColumn>
+                                            <RadzenDataGridColumn TItem="BD_accstatus" Property="refno" Title="เลขอ้างอิง" Frozen="true">
+                                                <FooterTemplate>
+                                                    <b>@ListDetail.Count</b>
+                                                </FooterTemplate>
+                                            </RadzenDataGridColumn>
+                                            <RadzenDataGridColumn TItem="BD_accstatus" Property="torefno" Title="เปลี่ยนไป" />
+                                            <RadzenDataGridColumn TItem="BD_accstatus" Property="tocode" Title="รหัส" Width="50px" />
+                                            <RadzenDataGridColumn TItem="BD_accstatus" Property="fromrefno" Title="ที่มา" />
+                                            <RadzenDataGridColumn TItem="BD_accstatus" Property="contno" Title="เลชสัญญา" />
+                                            <RadzenDataGridColumn TItem="BD_accstatus" Property="name" Title="ชื่อ - สกุล" />
+                                            <RadzenDataGridColumn TItem="BD_accstatus" Property="model" Title="สินค้า" />
+                                            <RadzenDataGridColumn TItem="BD_accstatus" Property="serialno" Title="เลขเครื่อง" />
+                                            <RadzenDataGridColumn TItem="BD_accstatus" Property="mode" Title="งวด" />
+                                            <RadzenDataGridColumn TItem="BD_accstatus" Property="sales" Title="ราคาเงินสด" />
+                                            <RadzenDataGridColumn TItem="BD_accstatus" Property="credit" Title="ราคาเช่าซื้อ" />
+                                            <RadzenDataGridColumn TItem="BD_accstatus" Property="premium2" Title="งวดแรก" />
+                                            <RadzenDataGridColumn TItem="BD_accstatus" Property="premium" Title="งวดต่อไป" />
+                                            <RadzenDataGridColumn TItem="BD_accstatus" Property="firstdisc" Title="ส่วนลด" />
+                                            <RadzenDataGridColumn TItem="BD_accstatus" Property="netcredit" Title="หักส่วนลด" />
+                                            <RadzenDataGridColumn TItem="BD_accstatus" Property="nextcredit" Title="ชำระงวดแรก" />
+                                            <RadzenDataGridColumn TItem="BD_accstatus" Property="chanel" Title="ช่องทางขาย" />
+                                            <RadzenDataGridColumn TItem="BD_accstatus" Property="bcode" Title="สาขา" />
+                                        </Columns>
+                                    </RadzenDataGrid> *@
+                                    <ARAccStatusDetailList ListDetail=@ListDetail IsLoad=@IsLoad Height=@Height Width=@Width />
+                                </RadzenColumn>
+                            </RadzenRow>
+                        </RadzenTabsItem>
+                    </Tabs>
+                </RadzenTabs>
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenStack>
+}

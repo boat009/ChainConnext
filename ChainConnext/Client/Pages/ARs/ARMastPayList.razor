@@ -1,0 +1,33 @@
+﻿@using ChainConnext.Shared.BD
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@inject IAccountService _accountService
+@inject ILogger<ARMastPayList> Logger
+@inject NotificationService NotificationService
+
+<RadzenRow>
+    <RadzenDataGrid IsLoading="@isLoading" Data="@bD_Debtorpaybs" TItem="BD_debtorpayb" AllowVirtualization="false" AllowColumnResize="true"
+                    AllowFiltering="true" PageSize="60"
+                    FilterMode="FilterMode.Advanced"
+                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                    LogicalFilterOperator="LogicalFilterOperator.Or"
+                    FilterPopupRenderMode="PopupRenderMode.OnDemand"
+                    AllowSorting="true" SelectionMode="DataGridSelectionMode.Single"
+                    PagerPosition="PagerPosition.Bottom" AllowPaging="true" ColumnWidth="150px" Style=@($"height:{(pHeight - 200)}px")>
+        <Columns>
+            <RadzenDataGridColumn TItem="BD_debtorpayb" Property="payperiod" Title="งวด" TextAlign="TextAlign.Center" Frozen="true" Width="100px" />
+            <RadzenDataGridColumn TItem="BD_debtorpayb" Property="bookno" Title="เล่มที่/เลขที่" TextAlign="TextAlign.Center" />
+            <RadzenDataGridColumn TItem="BD_debtorpayb" Property="paydate" Title="วันที่ชำระเงิน" FormatString="{0:dd/MM/yyyy}" />
+            <RadzenDataGridColumn TItem="BD_debtorpayb" Property="invno" Title="เลขที่ใบเสร็จ">
+                <FooterTemplate>
+                    รวมชำระ
+                </FooterTemplate>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="BD_debtorpayb" Property="amt" Title="จำนวนชำระเงิน" FormatString="{0:N2}" TextAlign="TextAlign.Right">
+                <FooterTemplate>
+                    <b>@bD_Debtorpaybs.Sum(x=>x.amt).ToString("N2")</b>
+                </FooterTemplate>
+            </RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid>
+</RadzenRow>

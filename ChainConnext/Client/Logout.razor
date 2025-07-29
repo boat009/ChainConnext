@@ -1,0 +1,43 @@
+﻿@page "/logout"
+
+@inject IAccountService _accountService
+@inject NavigationManager Navigation
+@inject HttpClient Http
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+@using ChainConnext.Client.Services;
+@using ChainConnext.Shared;
+@using ChainConnext.Shared.Authen;
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationState { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await xLogout();
+    }
+
+    public async Task xLogout()
+    {
+        string UserID = "";
+        var authState = await authenticationState;
+        var user = authState.User;
+        if (user.Identity.IsAuthenticated)
+        {
+            var UserData = Newtonsoft.Json.JsonConvert.DeserializeObject<Authens>(user.Identity.GetData());
+            if (UserData != null)
+            {
+                UserID = UserData.UserID;
+            }
+        }
+
+        var postBody = new LogoutRequest { UserID = UserID };
+
+        //var response = await Http.PostAsJsonAsync("Logout/CheckLogout", postBody);
+        //var UserMainData = await response.Content.ReadFromJsonAsync<Authens>();
+
+        //sidebar1Expanded = false;
+        await _accountService.LogoutAsync(postBody);
+        Navigation.NavigateTo("Login");
+    }
+}

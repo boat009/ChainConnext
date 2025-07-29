@@ -1,0 +1,112 @@
+﻿@page "/contractlist"
+@using ChainConnext.Shared.BD;
+@using ChainConnext.Shared.Contracts
+
+@inject ILogger<ContractList> Logger
+@inject DialogService dialogService
+@inject IJSRuntime jsRuntime
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@inject IAccountService _accountService
+@inject NotificationService NotificationService
+@inject ContextMenuService ContextMenuService
+
+<RadzenStack>
+    <RadzenRow AlignItems="AlignItems.Center">
+        <RadzenColumn Size="2" SizeMD="2">
+            <RadzenFormField Text="เลขอ้างอิง" Style="width: 100%;">
+                <RadzenTextBox class="w-100" @bind-Value=@Cont.RefNo Name="RefNo" />
+            </RadzenFormField>
+        </RadzenColumn>
+        <RadzenColumn Size="2" SizeMD="2">
+            <RadzenFormField Text="เลขสัญญา" Style="width: 100%;">
+                <RadzenTextBox class="w-100" @bind-Value=@Cont.ContractNo Name="ContractNo" />
+            </RadzenFormField>
+        </RadzenColumn>
+        <RadzenColumn Size="2" SizeMD="3">
+            <RadzenFormField Text="ชื่อ - สกุล" Style="width: 100%;">
+                <RadzenTextBox class="w-100" @bind-Value=@Cont.CustomerName Name="CustomerName" />
+            </RadzenFormField>
+        </RadzenColumn>
+        <RadzenColumn Size="2" SizeMD="2">
+            <RadzenFormField Text="เลขบัตร" Style="width: 100%;">
+                <RadzenTextBox class="w-100" @bind-Value=@Cont.CitizenId Name="CitizenId" Placeholder="เลขบัตร" />
+            </RadzenFormField>
+        </RadzenColumn>
+        <RadzenColumn Size="2" SizeMD="2">
+            <RadzenFormField Text="สาขา" Style="width: 100%;">
+                <RadzenTextBox class="w-100" @bind-Value=@Cont.BranchCode Name="BranchCode" Placeholder="สาขา" />
+            </RadzenFormField>
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenRow AlignItems="AlignItems.Center">
+        <RadzenColumn Size="2" SizeMD="3">
+            <RadzenFormField Text="เลขเครื่อง" Style="width: 100%;">
+                <RadzenTextBox class="w-100" @bind-Value=@Cont.SerialNo Name="SerialNo" Placeholder="เลขเครื่อง" />
+            </RadzenFormField>
+        </RadzenColumn>
+        <RadzenColumn Size="2" SizeMD="2">
+            <RadzenFormField Text="วันที่ติดตั้ง จาก" Style="width: 100%;">
+                <RadzenDatePicker TValue="DateTime?" @bind-Value=@Cont.EffDate Change="@(args => @Cont.EffDate = args)" DateFormat="dd/MM/yyyy">
+                    <FooterTemplate>
+                        <RadzenButton Click=@(args => @Cont.EffDate = DateTime.Now) Text="Today" class="my-3 w-100" />
+                    </FooterTemplate>
+                </RadzenDatePicker>
+            </RadzenFormField>
+        </RadzenColumn>
+        <RadzenColumn Size="2" SizeMD="2">
+            <RadzenFormField Text="วันที่ติดตั้ง ถึง" Style="width: 100%;">
+                <RadzenDatePicker TValue="DateTime?" @bind-Value=@Cont.EffDateTo Change="@(args => @Cont.EffDateTo = args)" DateFormat="dd/MM/yyyy">
+                    <FooterTemplate>
+                        <RadzenButton Click=@(args => @Cont.EffDateTo = DateTime.Now) Text="Today" class="my-3 w-100" />
+                    </FooterTemplate>
+                </RadzenDatePicker>
+            </RadzenFormField>
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenRow>
+        <RadzenColumn Size="2" SizeMD="2">
+            <RadzenButton ButtonStyle="ButtonStyle.Success" Text="ค้นหา" Class="w-100" Icon="search" Click=@Search IsBusy=@IsLoading />
+        </RadzenColumn>
+        <RadzenColumn Size="3" SizeMD="3">
+            <RadzenButton ButtonStyle="ButtonStyle.Success" Text="ค้นหาแบบละเอียด" Class="w-100" Icon="search" Click=@Search IsBusy=@IsLoading Visible="false" />
+        </RadzenColumn>
+        <RadzenColumn Size="3" SizeMD="3">
+            *คลิกเพื่อดูรายละเอียดข้อมูล หรือ คลิกขวาแล้วเลือก ดูข้อมูล เพื่อดูรายละเอียดข้อมูล
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenRow>
+        <RadzenColumn Size="12">
+            <RadzenDataGrid IsLoading="@IsLoading" Data="@ContData" TItem="Contract_Info_Find" AllowVirtualization="false" AllowColumnResize="true"
+                            AllowFiltering="true" PageSize="20" AllowPaging="true"
+                            FilterMode="FilterMode.Advanced"
+                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                            LogicalFilterOperator="LogicalFilterOperator.Or" @bind-Value=@selectedItems
+                            FilterPopupRenderMode="PopupRenderMode.OnDemand" CellContextMenu="@OnCellContextMenu" RowClick=@OnRowClick
+                            AllowSorting="true" SelectionMode="DataGridSelectionMode.Single" AllowRowSelectOnRowClick="true"
+                            PagerPosition="PagerPosition.Bottom" ColumnWidth="150px" Style=@($"height:{(Height - 160)}px")>
+                <Columns>
+                    <RadzenDataGridColumn TItem="Contract_Info_Find" Property="RefNo" Title="อ้างอิง" Frozen="true" />
+                    <RadzenDataGridColumn TItem="Contract_Info_Find" Property="ContractNo" Title="สัญญา" />
+                    <RadzenDataGridColumn TItem="Contract_Info_Find" Property="CustomerName" Title="ลูกค้า" Width="200px" />
+                    <RadzenDataGridColumn TItem="Contract_Info_Find" Property="Model" Title="Model" />
+                    <RadzenDataGridColumn TItem="Contract_Info_Find" Property="ModelDesc" Title="ModelDesc" />
+                    <RadzenDataGridColumn TItem="Contract_Info_Find" Property="SerialNo" Title="SerialNo" />
+                    <RadzenDataGridColumn TItem="Contract_Info_Find" Property="EffDate" Title="วันที่ติดตั้ง" FormatString="{0:dd/MM/yyyy}" />
+                    <RadzenDataGridColumn TItem="Contract_Info_Find" Property="ContractStatus" Title="สถานะ" />
+                    <RadzenDataGridColumn TItem="Contract_Info_Find" Property="ContractStatusDate" Title="วันที่สถานะ" FormatString="{0:dd/MM/yyyy}" />
+                    <RadzenDataGridColumn TItem="Contract_Info_Find" Property="Credit" Title="ผ่อน" />
+                    <RadzenDataGridColumn TItem="Contract_Info_Find" Property="Sales" Title="สด" />
+                    <RadzenDataGridColumn TItem="Contract_Info_Find" Property="ContractPeriod" Title="จำนวนงวด" />
+                    <RadzenDataGridColumn TItem="Contract_Info_Find" Property="ContractPeriodAmount" Title="งวด 2 ขึ้นไป" />
+                    <RadzenDataGridColumn TItem="Contract_Info_Find" Property="ContractFirstPeriodAmount" Title="งวด 1" />
+                    <RadzenDataGridColumn TItem="Contract_Info_Find" Property="ContractDiscount" Title="ส่วนลด" />
+                    <RadzenDataGridColumn TItem="Contract_Info_Find" Property="AfterDiscount" Title="หลังหักส่วนลด" />
+                    <RadzenDataGridColumn TItem="Contract_Info_Find" Property="ContractFirstPay" Title="ชำระงวดแรก" />
+                    <RadzenDataGridColumn TItem="Contract_Info_Find" Property="BranchName" Title="สาขา" />
+                    <RadzenDataGridColumn TItem="Contract_Info_Find" Property="ChanelName" Title="ช่องทาง" />
+                </Columns>
+            </RadzenDataGrid>
+        </RadzenColumn>
+    </RadzenRow>
+</RadzenStack>

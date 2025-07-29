@@ -1,0 +1,16 @@
+﻿<RadzenTabs @bind-SelectedIndex=@selectedIndex>
+    <Tabs>
+        <RadzenTabsItem Text="ปัญหาฝ่ายปฏิบัติการ">
+            <ProbList4 pConInf=@pConInf pHeight=@pHeight pWidth=@pWidth />
+        </RadzenTabsItem>
+        <RadzenTabsItem Text="ปัญหาฝ่ายเครดิต">
+            <ProbList1 pConInf=@pConInf />
+        </RadzenTabsItem>
+        <RadzenTabsItem Text="ปัญหาฝ่ายเร่งรัด 1">
+            <ProbList2 pConInf=@pConInf />
+        </RadzenTabsItem>
+        <RadzenTabsItem Text="ปัญหาฝ่ายเร่งรัด 2">
+            <ProbList3 pConInf=@pConInf />
+        </RadzenTabsItem>
+    </Tabs>
+</RadzenTabs>

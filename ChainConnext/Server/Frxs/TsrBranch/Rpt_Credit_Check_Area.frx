@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="CSharp" ReportInfo.Created="12/28/2016 10:02:40" ReportInfo.Modified="03/27/2017 13:52:00" ReportInfo.CreatorVersion="2015.1.3.0">
+  <Dictionary>
+    <TableDataSource Name="RptData" ReferenceName="RptData.RptData" DataType="System.Int32" Enabled="true">
+      <Column Name="RowNo" DataType="System.Int64"/>
+      <Column Name="ContractNo" DataType="System.String"/>
+      <Column Name="SaleCode" DataType="System.String"/>
+      <Column Name="FullName" DataType="System.String"/>
+      <Column Name="AreaCode" DataType="System.String"/>
+      <Column Name="AppointDate" DataType="System.DateTime"/>
+      <Column Name="SentDate" DataType="System.DateTime"/>
+      <Column Name="SerialNo" DataType="System.String"/>
+      <Column Name="Remark" DataType="System.String"/>
+      <Column Name="Checker" DataType="System.String"/>
+      <Column Name="BranchName" DataType="System.String"/>
+      <Column Name="BranchCode" DataType="System.String"/>
+      <Column Name="RefNo" DataType="System.String"/>
+      <Column Name="IsPass" DataType="System.Int32"/>
+      <Column Name="TransToBD" DataType="System.DateTime"/>
+      <Column Name="TransToBDBy" DataType="System.String"/>
+    </TableDataSource>
+    <Parameter Name="pSentDateF" DataType="System.String"/>
+    <Parameter Name="pSentDateT" DataType="System.String"/>
+    <Parameter Name="pAppointDateF" DataType="System.String"/>
+    <Parameter Name="pAppointDateT" DataType="System.String"/>
+  </Dictionary>
+  <ReportPage Name="Page1">
+    <ReportTitleBand Name="ReportTitle1" Width="718.2"/>
+    <PageHeaderBand Name="PageHeader1" Top="4" Width="718.2" Height="85.05">
+      <TextObject Name="Text2" Top="66.15" Width="37.8" Height="18.9" Border.Lines="All" Border.Color="DarkGray" Text="No." VertAlign="Center" Font="DilleniaUPC, 14pt, style=Bold"/>
+      <TextObject Name="Text4" Left="37.8" Top="66.15" Width="85.05" Height="18.9" Border.Lines="All" Border.Color="DarkGray" Text="เลขที่สัญญา" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 14pt, style=Bold"/>
+      <TextObject Name="Text6" Left="122.85" Top="66.15" Width="94.5" Height="18.9" Border.Lines="All" Border.Color="DarkGray" Text="SaleCode" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 14pt, style=Bold"/>
+      <TextObject Name="Text8" Left="217.35" Top="66.15" Width="122.85" Height="18.9" Border.Lines="All" Border.Color="DarkGray" Text="ชื่อ - สกุล" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 14pt, style=Bold"/>
+      <TextObject Name="Text10" Left="340.2" Top="66.15" Width="37.8" Height="18.9" Border.Lines="All" Border.Color="DarkGray" Text="เขต" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 14pt, style=Bold"/>
+      <TextObject Name="Text12" Left="378" Top="66.15" Width="85.05" Height="18.9" Border.Lines="All" Border.Color="DarkGray" Text="วันที่นัดเก็บ" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 14pt, style=Bold"/>
+      <TextObject Name="Text14" Left="463.05" Top="66.15" Width="85.05" Height="18.9" Border.Lines="All" Border.Color="DarkGray" Text="วันที่ส่ง" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 14pt, style=Bold"/>
+      <TextObject Name="Text16" Left="548.1" Top="66.15" Width="94.5" Height="18.9" Border.Lines="All" Border.Color="DarkGray" Text="หมายเลขเครื่อง" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 14pt, style=Bold"/>
+      <TextObject Name="Text18" Left="642.6" Top="66.15" Width="94.5" Height="18.9" Border.Lines="All" Border.Color="DarkGray" Text="ตรวจสอบ" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 14pt, style=Bold"/>
+      <TextObject Name="Text33" Width="718.2" Height="37.8" Text="([RptData.RptType])" HorzAlign="Right" Font="DilleniaUPC, 16pt, style=Bold"/>
+      <TextObject Name="Text19" Width="718.2" Height="37.8" Text="รายงานเข้าเขต" Font="DilleniaUPC, 18pt, style=Bold"/>
+      <TextObject Name="Text26" Top="37.8" Width="718.2" Height="28.35" Text="[RptData.BranchName]" Font="DilleniaUPC, 14pt, style=Bold"/>
+      <TextObject Name="Text34" Top="37.8" Width="718.2" Height="28.35" Text="วันที่นัดเก็บ [pSentDateF] - [pSentDateT] // วันที่ส่ง [pAppointDateF] - [pAppointDateT]" HorzAlign="Right" VertAlign="Bottom" Font="DilleniaUPC, 14pt, style=Bold"/>
+    </PageHeaderBand>
+    <DataBand Name="Data1" Top="93.05" Width="718.2" Height="18.9" DataSource="RptData">
+      <TextObject Name="Text1" Width="37.8" Height="18.9" Border.Lines="All" Border.Color="DarkGray" Text="[RptData.RowNo]" VertAlign="Center" Font="DilleniaUPC, 14pt"/>
+      <TextObject Name="Text3" Left="37.8" Width="85.05" Height="18.9" Border.Lines="All" Border.Color="DarkGray" Text="[RptData.ContractNo]" VertAlign="Center" Font="DilleniaUPC, 14pt"/>
+      <TextObject Name="Text5" Left="122.85" Width="94.5" Height="18.9" Border.Lines="All" Border.Color="DarkGray" Text="[RptData.SaleCode]" VertAlign="Center" Font="DilleniaUPC, 14pt"/>
+      <TextObject Name="Text7" Left="217.35" Width="122.85" Height="18.9" Border.Lines="All" Border.Color="DarkGray" Text="[RptData.FullName]" VertAlign="Center" WordWrap="false" Font="DilleniaUPC, 14pt"/>
+      <TextObject Name="Text9" Left="340.2" Width="37.8" Height="18.9" Border.Lines="All" Border.Color="DarkGray" Text="[RptData.AreaCode]" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 14pt"/>
+      <TextObject Name="Text11" Left="378" Width="85.05" Height="18.9" Border.Lines="All" Border.Color="DarkGray" Text="[RptData.AppointDate]" HideZeros="true" Format="Date" Format.Format="dd/MM/yyyy" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 14pt"/>
+      <TextObject Name="Text13" Left="463.05" Width="85.05" Height="18.9" Border.Lines="All" Border.Color="DarkGray" Text="[RptData.SentDate]" HideZeros="true" Format="Date" Format.Format="dd/MM/yyyy" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 14pt"/>
+      <TextObject Name="Text15" Left="548.1" Width="94.5" Height="18.9" Border.Lines="All" Border.Color="DarkGray" Text="[RptData.SerialNo]" VertAlign="Center" Font="DilleniaUPC, 14pt"/>
+      <TextObject Name="Text17" Left="642.6" Width="94.5" Height="18.9" Border.Lines="All" Border.Color="DarkGray" Text="[RptData.Checker]" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 14pt"/>
+    </DataBand>
+    <PageFooterBand Name="PageFooter1" Top="115.95" Width="718.2"/>
+  </ReportPage>
+</Report>

@@ -1,0 +1,40 @@
+﻿@using ChainConnext.Shared.BD;
+@inject HttpClient Http
+@inject Radzen.DialogService dialogService
+@inject ILogger<SetProKindDialog> Logger
+@inject IJSRuntime jsRuntime
+@inject IAccountService _accountService
+@inject NotificationService NotificationService
+@inject NavigationManager Navigation
+
+<RadzenStack>
+    <RadzenRow>
+        <RadzenColumn Size="12">
+            <RadzenTemplateForm TItem="BDProKind" Data=@proKind Submit=@OnSubmit InvalidSubmit=@OnInvalidSubmit>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="2">
+                        <RadzenLabel Text="รหัส" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="4">
+                        <RadzenTextBox Class="w-100" @bind-Value=@proKind.code Name="code" MaxLength="5" />
+                        <RadzenRequiredValidator Component="code" Text="รหัส is required" Style="position: absolute" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="2">
+                        <RadzenLabel Text="ชื่อหมวดสินค้า" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="10">
+                        <RadzenTextBox Class="w-100" @bind-Value=@proKind.name Name="name" MaxLength="150" />
+                        <RadzenRequiredValidator Component="name" Text="ชื่อหมวดสินค้า is required" Style="position: absolute" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center" class="my-2">
+                    <RadzenColumn Size="6" SizeMD="4" Offset="4" OffsetMD="2">
+                        <RadzenButton ButtonType="ButtonType.Submit" Text="Save" Icon="save" ButtonStyle="ButtonStyle.Success" IsBusy=@IsLoading Class="w-100" />
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenTemplateForm>
+        </RadzenColumn>
+    </RadzenRow>
+</RadzenStack>

@@ -1,0 +1,17 @@
+﻿@using ChainConnext.Shared.Toss;
+<RadzenRow>
+    <RadzenDataGrid IsLoading="@isLoading" Data="@problem_Infos" TItem="Problem_Info" AllowVirtualization="false" AllowColumnResize="true"
+                    AllowFiltering="true" PageSize="60"
+                    FilterMode="FilterMode.Advanced"
+                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                    LogicalFilterOperator="LogicalFilterOperator.Or"
+                    FilterPopupRenderMode="PopupRenderMode.OnDemand"
+                    AllowSorting="true" SelectionMode="DataGridSelectionMode.Single"
+                    PagerPosition="PagerPosition.Bottom" AllowPaging="true" ColumnWidth="150px">
+        <Columns>
+            <RadzenDataGridColumn TItem="Problem_Info" Property="ProblemCode" Title="รหัส" Frozen="true" Width="100px" />
+            <RadzenDataGridColumn TItem="Problem_Info" Property="ProblemDate" Title="วันที่" FormatString="{0:dd/MM/yyyy}" Width="100px" />
+            <RadzenDataGridColumn TItem="Problem_Info" Property="ProblemDetail" Title="รายละเอียด" />
+        </Columns>
+    </RadzenDataGrid>
+</RadzenRow>

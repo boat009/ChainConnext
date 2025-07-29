@@ -1,0 +1,17 @@
+﻿@using ChainConnext.Shared.Payments;
+@inject IJSRuntime jsRuntime
+<RadzenTabs @bind-SelectedIndex=@selectedIndex>
+    <Tabs>
+        <RadzenTabsItem Text="ใบเสร็จค่างวด">
+            <RadzenRow>
+                <BillList1 pConInf=@pConInf pHeight=@Height pWidth=@Width />
+            </RadzenRow>
+        </RadzenTabsItem>
+        <RadzenTabsItem Text="ใบเสร็จย่อย">
+            <BillList2 pConInf=@pConInf pHeight=@Height pWidth=@Width />
+        </RadzenTabsItem>
+        @* <RadzenTabsItem Text="ภาษีขาย">
+            <BillList3 pConInf=@pConInf pHeight=@Height pWidth=@Width />
+        </RadzenTabsItem> *@
+    </Tabs>
+</RadzenTabs>

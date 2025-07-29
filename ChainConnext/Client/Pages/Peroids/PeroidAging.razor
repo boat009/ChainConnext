@@ -1,0 +1,90 @@
+﻿@inject HttpClient Http
+@inject ILogger<PeroidAging> Logger
+@inject IAccountService _accountService
+@inject NavigationManager Navigation
+<RadzenStack>
+    <RadzenRow>
+        <RadzenColumn Size="12">
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenColumn Size="4" SizeMD="2">
+                    <RadzenLabel Text="ยอดสุทธิ" />
+                </RadzenColumn>
+                <RadzenColumn Size="2" SizeMD="2">
+                    <RadzenNumeric class="w-100" @bind-Value=@Caging.ContractAmt Format="#,###.00" TextAlign="TextAlign.Right" />
+                </RadzenColumn>
+                <RadzenColumn Size="4" SizeMD="2">
+                    <RadzenLabel Text="ส่วนลด" />
+                </RadzenColumn>
+                <RadzenColumn Size="2" SizeMD="2">
+                    <RadzenNumeric class="w-100" @bind-Value=@Caging.DiscountAmt Format="#,###.00" TextAlign="TextAlign.Right" />
+                </RadzenColumn>
+                <RadzenColumn Size="4" SizeMD="2">
+                    <RadzenLabel Text="ค่างวดต่อเดือน" />
+                </RadzenColumn>
+                <RadzenColumn Size="2" SizeMD="2">
+                    <RadzenNumeric class="w-100" @bind-Value=@Caging.PeroidAmt Format="#,###.00" TextAlign="TextAlign.Right" />
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenColumn Size="4" SizeMD="2">
+                    <RadzenLabel Text="จำนวนงวด" />
+                </RadzenColumn>
+                <RadzenColumn Size="2" SizeMD="2">
+                    <RadzenNumeric TValue="int" @bind-Value=@Caging.Peroid Style="text-align: center;" />
+                </RadzenColumn>
+                <RadzenColumn Size="4" SizeMD="2">
+                    <RadzenLabel Text="VatPeroid" />
+                </RadzenColumn>
+                <RadzenColumn Size="2" SizeMD="2">
+                    <RadzenNumeric class="w-100" @bind-Value=@Caging.VatPeroid Format="#,###.00" TextAlign="TextAlign.Right" />
+                </RadzenColumn>
+                <RadzenColumn Size="4" SizeMD="2">
+                    <RadzenLabel Text="ภาษีค่างวด" />
+                </RadzenColumn>
+                <RadzenColumn Size="2" SizeMD="2">
+                    <RadzenNumeric class="w-100" @bind-Value=@Caging.PeroidVat Format="#,###.00" TextAlign="TextAlign.Right" />
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenColumn Size="4" SizeMD="2">
+                    <RadzenLabel Text="ภาษีค่างวดๆ1" />
+                </RadzenColumn>
+                <RadzenColumn Size="2" SizeMD="2">
+                    <RadzenNumeric class="w-100" @bind-Value=@Caging.PeroidVat1Amt Format="#,###.00" TextAlign="TextAlign.Right" />
+                </RadzenColumn>
+                <RadzenColumn Size="4" SizeMD="2">
+                    <RadzenLabel Text="ภาษีทั้งหมด" />
+                </RadzenColumn>
+                <RadzenColumn Size="2" SizeMD="2">
+                    <RadzenNumeric class="w-100" @bind-Value=@Caging.PeroidVatAllAmt Format="#,###.00" TextAlign="TextAlign.Right" />
+                </RadzenColumn>
+                <RadzenColumn Size="4" SizeMD="2">
+                    <RadzenLabel Text="ต้นทุน" />
+                </RadzenColumn>
+                <RadzenColumn Size="2" SizeMD="2">
+                    <RadzenNumeric class="w-100" @bind-Value=@Caging.SaleAmt Format="#,###.00" TextAlign="TextAlign.Right" />
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenColumn Size="4" SizeMD="2">
+                    <RadzenLabel Text="รายได้" />
+                </RadzenColumn>
+                <RadzenColumn Size="2" SizeMD="2">
+                    <RadzenNumeric class="w-100" @bind-Value=@Caging.InterestAmt Format="#,###.00" TextAlign="TextAlign.Right" />
+                </RadzenColumn>
+                <RadzenColumn Size="4" SizeMD="2">
+                    <RadzenLabel Text="IRR" />
+                </RadzenColumn>
+                <RadzenColumn Size="2" SizeMD="2">
+                    <RadzenNumeric class="w-100" @bind-Value=@Caging.IRR Format="#,###.00" TextAlign="TextAlign.Right" />
+                </RadzenColumn>
+                <RadzenColumn Size="4" SizeMD="2">
+                    <RadzenLabel Text="ค่างวดๆ1" />
+                </RadzenColumn>
+                <RadzenColumn Size="2" SizeMD="2">
+                    <RadzenNumeric class="w-100" @bind-Value=@Caging.FirstPeroidAmt Format="#,###.00" TextAlign="TextAlign.Right" />
+                </RadzenColumn>
+            </RadzenRow>
+        </RadzenColumn>
+    </RadzenRow>
+</RadzenStack>

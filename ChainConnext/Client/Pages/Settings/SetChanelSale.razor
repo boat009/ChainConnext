@@ -1,0 +1,61 @@
+﻿@page "/setting/chanelsale"
+@using ChainConnext.Shared.BD;
+@inject HttpClient Http
+@inject ILogger<SetChanelSale> Logger
+@inject IAccountService _accountService
+@inject NavigationManager Navigation
+@inject NotificationService NotificationService
+@inject DialogService dialogService
+@inject IJSRuntime jsRuntime
+
+@if (!IsAccess)
+{
+    <RadzenText TextStyle="TextStyle.H1">ไม่มีสิทธิในส่วนนี้</RadzenText>
+}
+else
+{
+    <RadzenRow>
+        <RadzenColumn Size="4" SizeMD="2">
+            <RadzenButton ButtonStyle="ButtonStyle.Success" Text="เพิ่ม" Class="w-100 mb-4" Icon="add" Click=@(() => OpenEdit(new Chanel(),"Add")) Visible=@IsSave />
+        </RadzenColumn>
+        <RadzenColumn Size="4" SizeMD="2">
+            <RadzenButton ButtonStyle="ButtonStyle.Success" Text="Export" Class="w-100 mb-4" Icon="get_app" Click=@ExportToExcel Visible=@IsSave />
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenRow>
+        <RadzenDataGrid IsLoading="@isLoading" Data="@chanels" TItem="Chanel" AllowVirtualization="false" AllowColumnResize="true"
+                        AllowFiltering="true" PageSize="20"
+                        FilterMode="FilterMode.Advanced"
+                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                        LogicalFilterOperator="LogicalFilterOperator.Or"
+                        FilterPopupRenderMode="PopupRenderMode.OnDemand"
+                        AllowSorting="true" SelectionMode="DataGridSelectionMode.Single"
+                        PagerPosition="PagerPosition.Bottom" AllowPaging="true" ColumnWidth="150px" Style=@($"height:{(Height - 80)}px")>
+            <Columns>
+                <RadzenDataGridColumn TItem="Chanel" Property="id" Title="แก้ไข" Width="80px" Frozen="true" Filterable="false" Sortable="false" Visible=@IsSave>
+                    <Template Context="data">
+                        <RadzenButton ButtonStyle="ButtonStyle.Warning" Shade="Shade.Lighter" Icon="edit" Click=@(() => OpenEdit(data,"Edit")) />
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="Chanel" Property="code" Title="รหัส" Frozen="true" Width="100px" />
+                <RadzenDataGridColumn TItem="Chanel" Property="name" Title="ชื่อช่องทาง" Frozen="true" Width="200px" />
+                <RadzenDataGridColumn TItem="Chanel" Property="ChanelDepName" Title="ผ่าย" />
+                <RadzenDataGridColumn TItem="Chanel" Property="Used" Title="ใช้งาน" Filterable="false" Sortable="false">
+                    <Template Context="Um">
+                        <RadzenCheckBox TriState="false" TValue="bool" Value="@Um.Used" Disabled="true" />
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="Chanel" Property="aline" Title="สาย" />
+                <RadzenDataGridColumn TItem="Chanel" Property="ateam" Title="ทีม" />
+                <RadzenDataGridColumn TItem="Chanel" Property="teamno" Title="หน่วยที่" />
+                <RadzenDataGridColumn TItem="Chanel" Property="ChanelMap" Title="Map" />
+                <RadzenDataGridColumn TItem="Chanel" Property="ChanelTag" Title="Tag" />
+                <RadzenDataGridColumn TItem="Chanel" Property="ID" Title="ลบ" Width="80px" Filterable="false" Sortable="false" Visible=@IsDelete>
+                    <Template Context="data">
+                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Shade="Shade.Lighter" Icon="delete" Click=@(() => OpenDelete(data,"Delete")) />
+                    </Template>
+                </RadzenDataGridColumn>
+            </Columns>
+        </RadzenDataGrid>
+    </RadzenRow>
+}

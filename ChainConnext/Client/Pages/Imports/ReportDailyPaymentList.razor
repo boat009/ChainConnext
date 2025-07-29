@@ -1,0 +1,36 @@
+﻿@using ChainConnext.Shared.Reports;
+@inject DialogService dialogService
+@inject ContextMenuService ContextMenuService
+@inject IJSRuntime jsRuntime
+@inject NavigationManager Navigation
+
+<RadzenDataGrid IsLoading="@IsLoading" Data="@TmpRpt" TItem="Tmp_ReportDaily_Payment" AllowVirtualization="false" AllowColumnResize="true"
+                AllowFiltering="true" PageSize="20"
+                FilterMode="FilterMode.Advanced"
+                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                LogicalFilterOperator="LogicalFilterOperator.Or"
+                FilterPopupRenderMode="PopupRenderMode.OnDemand" CellContextMenu="@OnCellContextMenu"
+                AllowSorting="true" SelectionMode="DataGridSelectionMode.Single" @bind-Value=@selectedTmpRpt
+                PagerPosition="PagerPosition.Bottom" AllowPaging="true" ColumnWidth="150px" Style=@($"height:{(Height - 80)}px")>
+    <Columns>
+        <RadzenDataGridColumn Width="60px" TItem="Tmp_ReportDaily_Payment" Property="RefNo" Title="View" Frozen="true" Sortable="false" Filterable="false">
+            <Template Context="data">
+                <RadzenButton ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Shade="Shade.Lighter" Icon="search" Click=@(() => ViewData(data,"View")) />
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="Tmp_ReportDaily_Payment" Property="InvNo" Title="เลขที่ใบเสร็จ" Frozen="true" Width="200px" />
+        <RadzenDataGridColumn TItem="Tmp_ReportDaily_Payment" Property="RefNo" Title="เลขอ้างอิง" Frozen="true" Width="150px" />
+        <RadzenDataGridColumn TItem="Tmp_ReportDaily_Payment" Property="ContNo" Title="เลขสัญญา" Frozen="true" Width="150px" />
+        <RadzenDataGridColumn TItem="Tmp_ReportDaily_Payment" Property="CashCode" Title="ออนไลน์" />
+        <RadzenDataGridColumn TItem="Tmp_ReportDaily_Payment" Property="CashName" Title="ชื่อออนไลน์" />
+        <RadzenDataGridColumn TItem="Tmp_ReportDaily_Payment" Property="CashCodeBD" Title="พนักงาน" />
+        <RadzenDataGridColumn TItem="Tmp_ReportDaily_Payment" Property="CashNameBD" Title="ชื่อพนักงาน" />
+        <RadzenDataGridColumn TItem="Tmp_ReportDaily_Payment" Property="CustName" Title="ชื่อลูกค้า" />
+        <RadzenDataGridColumn TItem="Tmp_ReportDaily_Payment" Property="PayPeriod" Title="งวดที่" />
+        <RadzenDataGridColumn TItem="Tmp_ReportDaily_Payment" Property="paydate" Title="วันที่ชำระ" FormatString="{0:dd/MM/yyyy HH:mm}" />
+        <RadzenDataGridColumn TItem="Tmp_ReportDaily_Payment" Property="Amount" Title="จำนวนเงิน" FormatString="{0:N0}" />
+        <RadzenDataGridColumn TItem="Tmp_ReportDaily_Payment" Property="DisAmt" Title="ส่วนลด" FormatString="{0:N0}" />
+        <RadzenDataGridColumn TItem="Tmp_ReportDaily_Payment" Property="DocDate" Title="วันที่ส่งเงิน" FormatString="{0:dd/MM/yyyy}" />
+        <RadzenDataGridColumn TItem="Tmp_ReportDaily_Payment" Property="DueDate" Title="กำหนดชำระ" FormatString="{0:dd/MM/yyyy}" />
+    </Columns>
+</RadzenDataGrid>

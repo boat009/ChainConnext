@@ -1,0 +1,178 @@
+﻿@page "/imp/billbh"
+
+@inject ILogger<ContractDetail> Logger
+@inject DialogService dialogService
+@inject IJSRuntime jsRuntime
+@inject NavigationManager Navigation
+@inject IAccountService _accountService
+@inject NotificationService NotificationService
+@inject HttpClient Http
+@inject IPrintingService PrintingService
+@inject ContextMenuService ContextMenuService
+
+<PageTitle>@TitlePage</PageTitle>
+
+@if (!IsAccess)
+{
+    <RadzenText TextStyle="TextStyle.H1">ไม่มีสิทธิในส่วนนี้</RadzenText>
+}
+else
+{
+    <RadzenStack>
+        <RadzenRow>
+            <RadzenColumn Size="12">
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="12" SizeMD="2">
+                        <RadzenLabel Text="วันที่" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="12" SizeMD="2">
+                        <RadzenDatePicker Name="DateFrom" @bind-Value=@Rpt.DateFrom DateFormat="dd/MM/yyyy">
+                            <FooterTemplate>
+                                <RadzenButton Click=@(args => @Rpt.DateFrom = DateTime.Now) Text="Today" class="my-2 w-100" />
+                            </FooterTemplate>
+                        </RadzenDatePicker>
+                    </RadzenColumn>
+                </RadzenRow>
+                @if(Rpt.ForTest)
+                {
+                    <RadzenRow AlignItems="AlignItems.Center">
+                        <RadzenColumn Size="12" SizeMD="2">
+                            <RadzenLabel Text="For Test : TmpNo" />
+                        </RadzenColumn>
+                        <RadzenColumn Size="12" SizeMD="2">
+                            <RadzenDropDownDataGrid @bind-Value=@Rpt.WhereCond Data=@tmp_Reports_TmpList TextProperty="TmpNo" ValueProperty="TmpNo"
+                                                    AllowColumnResize="true" AllowFilteringByAllStringColumns="true">
+                                <Columns>
+                                    <RadzenDropDownDataGridColumn Property="TmpNo" Title="TmpNo" Width="200px" />
+                                    <RadzenDropDownDataGridColumn Property="paydate" Title="paydate" Width="150px" FormatString="{0:dd/MM/yyyy}" />
+                                </Columns>
+                            </RadzenDropDownDataGrid>
+                        </RadzenColumn>
+                    </RadzenRow>
+                }
+                <RadzenRow AlignItems="AlignItems.Center" class="my-2">
+                    <RadzenColumn Size="12" SizeMD="2" OffsetMD="2">
+                        <RadzenButton Text="Find" Icon="search" Class="w-100" ButtonStyle="ButtonStyle.Info" Click=@(() => ShowBusyDialog()) IsBusy=@IsLoading />
+                    </RadzenColumn>
+                    @* <RadzenColumn Size="12" SizeMD="2">
+                        <RadzenLabel Text=@($"Height : {Height} Width : {Width}") />
+                    </RadzenColumn> *@
+                    @* <RadzenColumn Size="12" SizeMD="2" Offset="2">
+                        <RadzenButton Text="Test" Icon="search" Class="w-100" ButtonStyle="ButtonStyle.Info" Click=@(() => ShowBusyDialogProgress()) IsBusy=@IsLoading />
+                    </RadzenColumn> *@
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="12" SizeMD="2" OffsetMD="2">
+                        <RadzenButton Text="Save" Icon="save" Class="w-100" ButtonStyle="ButtonStyle.Primary" IsBusy=@IsLoading Visible=@IsData Click=@ConfirmSave Disabled=@IsSaveDisable />
+                    </RadzenColumn>
+                    <RadzenColumn Size="12" SizeMD="2">
+                        <RadzenButton Text="Excel" Icon="view_list" Class="w-100" ButtonStyle="ButtonStyle.Success" IsBusy=@IsLoading Visible=@IsExport Click=@ShowBusyDialogExportExcel />
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenColumn>
+        </RadzenRow>
+        <RadzenRow>
+            <RadzenColumn Size="2">
+                <RadzenLabel Text=@StatusRow />
+            </RadzenColumn>
+            <RadzenColumn Size="12">
+                <RadzenProgressBar ProgressBarStyle="ProgressBarStyle.Primary" Max="100" @bind-Value=@currentPregress />
+            </RadzenColumn>
+        </RadzenRow>
+        <RadzenRow>
+            <RadzenColumn Size="12">
+                <RadzenTabs @bind-SelectedIndex=@selectedIndex Change=@OnTabChange>
+                    <Tabs>
+                        <RadzenTabsItem Text=@TabTxt0>
+                            <ReportDailyPaymentList TmpRpt=@tmp_Reports Height=@Height Width=@Width OnDoSave=@ConfirmSave1 OnDoDelete=@ConfirmDelete1 />
+                        </RadzenTabsItem>
+                        <RadzenTabsItem Text=@TabTxt1>
+                            <ReportDailyPaymentList TmpRpt=@(tmp_Reports.FindAll(x=>x.PayPartial==false && x.CanSave==true)) Height=@Height Width=@Width OnDoSave=@ConfirmSave1 OnDoDelete=@ConfirmDelete1 />
+                        </RadzenTabsItem>
+                        <RadzenTabsItem Text=@TabTxt2>
+                            <ReportDailyPaymentList TmpRpt=@(tmp_Reports.FindAll(x=>x.PayPartial==true && x.CanSave==true)) Height=@Height Width=@Width OnDoSave=@ConfirmSave1 OnDoDelete=@ConfirmDelete1 />
+                        </RadzenTabsItem>
+                        <RadzenTabsItem Text=@TabTxt3>
+                            <ReportDailyPaymentList TmpRpt=@(tmp_Reports.FindAll(x=>x.PayVat=="1" && x.CanSave==true)) Height=@Height Width=@Width OnDoSave=@ConfirmSave1 OnDoDelete=@ConfirmDelete1 />
+                        </RadzenTabsItem>
+                        <RadzenTabsItem Text=@TabTxt4>
+                            <ReportDailyPaymentList TmpRpt=@(tmp_Reports.FindAll(x=>x.CheckMastPay==true)) Height=@Height Width=@Width OnDoSave=@ConfirmSave1 OnDoDelete=@ConfirmDelete1 />
+                        </RadzenTabsItem>
+                        <RadzenTabsItem Text=@TabTxt5>
+                            <ReportDailyPaymentList TmpRpt=@(tmp_Reports.FindAll(x=>x.IsError==true)) Height=@Height Width=@Width OnDoSave=@ConfirmSave1 OnDoDelete=@ConfirmDelete1 />
+                        </RadzenTabsItem>
+                        <RadzenTabsItem Text=@TabTxt6>
+                            <ReportDailyPaymentList TmpRpt=@(tmp_Reports.FindAll(x=>x.CanSave==false)) Height=@Height Width=@Width />
+                        </RadzenTabsItem>
+                        <RadzenTabsItem Text=@TabTxt7>
+                            <ReportDailyPaymentList TmpRpt=@(tmp_Reports.FindAll(x=>x.CheckInvoiceABH==false && x.CanSave==true)) Height=@Height Width=@Width OnDoSave=@ConfirmSave1 OnDoDelete=@ConfirmDelete1 />
+                        </RadzenTabsItem>
+                        <RadzenTabsItem Text=@TabTxt8>
+                            <ReportDailyPaymentList TmpRpt=@(tmp_Reports.FindAll(x=>x.CheckInvoiceABH==true && x.CanSave==true)) Height=@Height Width=@Width OnDoSave=@ConfirmSave1 OnDoDelete=@ConfirmDelete1 />
+                        </RadzenTabsItem>
+                    </Tabs>
+                </RadzenTabs>
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenStack>
+}
+
+<div class="modal @modalClass" tabindex="-1" role="dialog" style="display:@modalDisplay;overflow-y: auto;">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <RadzenText TextStyle="TextStyle.H6" Text=@($"{@currentPregress} %")></RadzenText>
+                </h5>
+                @* <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close" @onclick=@CloseModal>
+                </button> *@
+            </div>
+            <div class="modal-body">
+                <RadzenProgressBar ProgressBarStyle="ProgressBarStyle.Primary" Max="100" @bind-Value=@currentPregress />
+            </div>
+        </div>
+    </div>
+</div>
+@if (showBackdrop)
+{
+    <div class="modal-backdrop fade show"></div>
+}
+
+@code {
+
+    private string modalDisplay = "none;";
+    private string modalClass = string.Empty;
+    private bool showBackdrop = false;
+
+    public void OpenModal()
+    {
+        modalDisplay = "block";
+        modalClass = "show";
+        showBackdrop = true;
+    }
+
+    public void CloseModal()
+    {
+        modalDisplay = "none";
+        modalClass = string.Empty;
+        showBackdrop = false;
+    }
+
+    async Task BusyDialog()
+    {
+        await dialogService.OpenAsync("", ds =>
+    @<RadzenStack AlignItems="AlignItems.Center" Gap="2rem" Class="rz-p-12">
+        <RadzenImage Path="images/community.svg" Style="width: 200px;" />
+        <RadzenText TextStyle="TextStyle.H6">Loading, please wait...</RadzenText>
+    </RadzenStack>, new DialogOptions() { ShowTitle = false, Style = "min-height:auto;min-width:auto;width:auto", CloseDialogOnEsc = false });
+    }
+    async Task BusyDialogProgress()
+    {
+        await dialogService.OpenAsync("", ds =>
+    @<RadzenStack AlignItems="AlignItems.Center" Gap="2rem" Class="rz-p-12">
+        <RadzenImage Path="images/community.svg" Style="width: 200px;" />
+        <RadzenText TextStyle="TextStyle.H6">Loading, please wait...</RadzenText>
+        <RadzenProgressBar ProgressBarStyle="ProgressBarStyle.Primary" Max="100" @bind-Value=@currentPregress />
+    </RadzenStack>, new DialogOptions() { ShowTitle = false, Style = "min-height:auto;min-width:auto;width:auto", CloseDialogOnEsc = false });
+    }
+}

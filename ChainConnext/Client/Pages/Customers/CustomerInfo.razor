@@ -1,0 +1,156 @@
+﻿@using ChainConnext.Shared.Contracts;
+@using ChainConnext.Shared.Customers;
+@inject HttpClient Http
+@inject ILogger<CustomerInfo> Logger
+@inject IAccountService _accountService
+@inject NavigationManager Navigation
+@inject DialogService dialogService
+@inject NotificationService NotificationService
+
+<RadzenStack>
+    <RadzenRow>
+        <RadzenColumn Size="12" SizeMD="8">
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenColumn Size="4" SizeMD="2">
+                    <RadzenLabel Text="ชื่อ-สกุล" />
+                </RadzenColumn>
+                <RadzenColumn Size="4" SizeMD="2">
+                    <RadzenDropDown @bind-Value=@CustInf.Title Placeholder="Select something" class="w-100" 
+                                    Data=@customer_Titles TextProperty="TitleName" ValueProperty="TitleID"
+                                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                    AllowFiltering="true">
+                    </RadzenDropDown>
+                </RadzenColumn>
+                <RadzenColumn Size="8" SizeMD="4">
+                    <RadzenTextBox Style="width: 100%;" @bind-Value=@CustInf.FirstName />
+                </RadzenColumn>
+                <RadzenColumn Size="8" SizeMD="4">
+                    <RadzenTextBox Style="width: 100%;" @bind-Value=@CustInf.LastName />
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenColumn Size="4" SizeMD="2">
+                    <RadzenLabel Text="ประเภทบัตร" />
+                </RadzenColumn>
+                <RadzenColumn Size="8" SizeMD="4">
+                    <RadzenDropDown @bind-Value=@CustInf.CardTypeId Placeholder="Select something" class="w-100"
+                                    Data=@customer_CardTypes TextProperty="CardTypeNameTH" ValueProperty="CardTypeId"
+                                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                    AllowFiltering="true">
+                    </RadzenDropDown>
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenColumn Size="4" SizeMD="2">
+                    <RadzenLabel Text="เลขบัตร" />
+                </RadzenColumn>
+                <RadzenColumn Size="8" SizeMD="4">
+                    <RadzenTextBox Style="width: 100%;" @bind-Value=@CustInf.CitizenId />
+                </RadzenColumn>
+                <RadzenColumn Size="4" SizeMD="2">
+                    <RadzenLabel Text="เลขภาษี" />
+                </RadzenColumn>
+                <RadzenColumn Size="8" SizeMD="4">
+                    <RadzenTextBox Style="width: 100%;" @bind-Value=@CustInf.AuthorizeId />
+                </RadzenColumn>
+            </RadzenRow>
+        </RadzenColumn>
+        <RadzenColumn Size="12" SizeMD="4">
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenColumn Size="4" SizeMD="5">
+                    <RadzenLabel Text="วันเกิด" />
+                </RadzenColumn>
+                <RadzenColumn Size="8" SizeMD="7">
+                    <RadzenDatePicker TValue="DateTime?" Value=@CustInf.BirthDate Change="@(args => @CustInf.BirthDate = args)" DateFormat="dd/MM/yyyy" />
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenColumn Size="4" SizeMD="5">
+                    <RadzenLabel Text="วันที่ออกบัตร" />
+                </RadzenColumn>
+                <RadzenColumn Size="8" SizeMD="7">
+                    <RadzenDatePicker TValue="DateTime?" Value=@CustInf.CitizenStartDate Change="@(args => @CustInf.CitizenStartDate = args)" DateFormat="dd/MM/yyyy" />
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenColumn Size="4" SizeMD="5">
+                    <RadzenLabel Text="วันที่หมดอายุ" />
+                </RadzenColumn>
+                <RadzenColumn Size="8" SizeMD="7">
+                    <RadzenDatePicker TValue="DateTime?" Value=@CustInf.CitizenExpireDate Change="@(args => @CustInf.CitizenExpireDate = args)" DateFormat="dd/MM/yyyy" />
+                </RadzenColumn>
+            </RadzenRow>
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenRow>
+        <RadzenColumn Size="12" SizeMD="8">
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenColumn Size="4" SizeMD="2" Offset="4" OffsetMD="2">
+                    <RadzenButton Text="Save" Icon="save" ButtonStyle="ButtonStyle.Info" Class="mb-4" Click=@OnSave Visible=@IsSaveCust Disabled=@DisableSave />
+                </RadzenColumn>
+            </RadzenRow>
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenRow Gap="2rem" Class="rz-p-0 rz-p-lg-4">
+        <RadzenColumn Size="12" SizeMD="8">
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenButton Text="เพิ่มที่อยู่ใหม่" Icon="add" ButtonStyle="ButtonStyle.Success" Class="mb-4" Click=@(() => OpenAddressEdit(@CustInf,"New")) Visible=@IsSaveCust Disabled=@DisableSave />
+            </RadzenRow>
+            <RadzenRow AlignItems="AlignItems.Center">
+            <RadzenDataGrid IsLoading="@isLoading" Data="@customer_Addresses" TItem="Customer_Address" AllowVirtualization="false" AllowColumnResize="true"
+                            AllowFiltering="true" PageSize="5"
+                            FilterMode="FilterMode.Advanced"
+                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                            LogicalFilterOperator="LogicalFilterOperator.Or"
+                            FilterPopupRenderMode="PopupRenderMode.OnDemand"
+                                AllowSorting="true" SelectionMode="DataGridSelectionMode.Single" @bind-Value=@selectedAddr CellClick="@OnAddrCellClick"
+                            PagerPosition="PagerPosition.Bottom" AllowPaging="true">
+                <Columns>
+                    <RadzenDataGridColumn TItem="Customer_Address" Title="ที่อยู่" Property="AddressFull">
+                        <Template Context="data">
+                            <RadzenRow>
+                                <RadzenColumn Size="4" SizeMD="2">
+                                    <RadzenText TextStyle="TextStyle.Caption">@data.AddressTypeName</RadzenText>
+                                </RadzenColumn>
+                                <RadzenColumn Size="8" SizeMD="10">
+                                    <p style="white-space:pre-wrap">@data.AddressFull</p>
+                                </RadzenColumn>
+                            </RadzenRow>
+                        </Template>
+                    </RadzenDataGridColumn>
+                </Columns>
+            </RadzenDataGrid>
+    </RadzenRow>
+        </RadzenColumn>
+        <RadzenColumn Size="12" SizeMD="4">
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenButton Text="เพิ่มเบอร์โทรใหม่" Icon="add" ButtonStyle="ButtonStyle.Success" Class="mb-4" Click=@(() => OpenTelephoneEdit(@CustInf,"New")) Visible=@IsSaveCust Disabled=@DisableSave />
+            </RadzenRow>
+            <RadzenRow AlignItems="AlignItems.Center">
+            <RadzenDataGrid IsLoading="@isLoading" Data="@customer_Telephones" TItem="Customer_Telephone" AllowVirtualization="false" AllowColumnResize="true"
+                            AllowFiltering="true" PageSize="5"
+                            FilterMode="FilterMode.Advanced"
+                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                            LogicalFilterOperator="LogicalFilterOperator.Or"
+                            FilterPopupRenderMode="PopupRenderMode.OnDemand"
+                                AllowSorting="true" SelectionMode="DataGridSelectionMode.Single" @bind-Value=@selectedTel CellClick="@OnTelellClick"
+                            PagerPosition="PagerPosition.Bottom" AllowPaging="true">
+                <Columns>
+                    <RadzenDataGridColumn TItem="Customer_Telephone" Title="เบอร์โทร" Property="TelNumber">
+                        <Template Context="data">
+                            <RadzenRow>
+                                <RadzenColumn Size="4" SizeMD="2">
+                                    <RadzenText TextStyle="TextStyle.Caption">@data.TelTypeName</RadzenText>
+                                </RadzenColumn>
+                                <RadzenColumn Size="8" SizeMD="10">
+                                    <p style="white-space:pre-wrap">@data.TelNumber</p>
+                                </RadzenColumn>
+                            </RadzenRow>
+                        </Template>
+                    </RadzenDataGridColumn>
+                </Columns>
+            </RadzenDataGrid>
+            </RadzenRow>
+        </RadzenColumn>
+    </RadzenRow>
+</RadzenStack>

@@ -1,0 +1,163 @@
+﻿@inherits LayoutComponentBase
+
+@inject IAccountService _accountService
+@inject NavigationManager Navigation
+@inject ILogger<MainLayout> Logger
+@inject IJSRuntime jsRuntime
+@inject HttpClient Http
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+@using BrowserInterop.Extensions
+@using BrowserInterop.Geolocation
+
+@* <RadzenDialog />
+<RadzenNotification />
+<RadzenContextMenu />
+<RadzenTooltip /> *@
+<RadzenComponents />
+
+<CascadingValue Value="this">
+    <AuthorizeView>
+        <Authorized>
+            <NavigationLock ConfirmExternalNavigation="false" OnBeforeInternalNavigation="OnBeforeInternalNavigation" />
+            <RadzenLayout Style="grid-template-areas: 'rz-sidebar rz-header' 'rz-sidebar rz-body'">
+                <RadzenHeader>
+                    <div class="row justify-content-start align-items-center">
+                        <div class="col-5 d-flex align-items-center">
+                            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
+                                <RadzenSidebarToggle Click="@(() => sidebar1Expanded = !sidebar1Expanded)" />
+                                @* <RadzenLabel Text="@Header" /> *@
+                                @* <RadzenLabel Text="XXX" /> *@
+                                @* <a href="https://app.sabuyconnext.com/ccn2024/" target="_blank">@($">>Chain Connext New Version Click hear<<")</a> *@
+                            </RadzenStack>
+                        </div>
+                        <div class="col-7 d-flex align-items-center justify-content-end">
+                            
+                            <RadzenLabel Text="@Header" />
+                            <RadzenProfileMenu Click="OnProfileMenuClicked">
+                                <Template>
+                                    <RadzenLabel Text=@context.User.Identity?.Name />
+                                </Template>
+                                <ChildContent>
+                                    @*<RadzenProfileMenuItem Text="Buttons" Icon="account_circle"></RadzenProfileMenuItem>
+                                    <RadzenProfileMenuItem Text="Menu" Icon="line_weight"></RadzenProfileMenuItem>
+                                    <RadzenProfileMenuItem Text="FileInput" Icon="attach_file"></RadzenProfileMenuItem>
+                                    <RadzenProfileMenuItem Text="Dialog" Icon="perm_media"></RadzenProfileMenuItem>
+                                    <RadzenProfileMenuItem Text="Notification" Icon="announcement"></RadzenProfileMenuItem>*@
+                                    <RadzenProfileMenuItem Text="Update Permission" Icon="sync"></RadzenProfileMenuItem>
+                                    <RadzenProfileMenuItem Text=@($"Server {LblServerName}") Icon="announcement"></RadzenProfileMenuItem>
+                                    <RadzenProfileMenuItem Text=@Lblversion Icon="announcement"></RadzenProfileMenuItem>
+                                    <RadzenProfileMenuItem Text="Logout" Icon="logout"></RadzenProfileMenuItem>
+                                </ChildContent>
+                            </RadzenProfileMenu>
+                        </div>
+                    </div>
+                </RadzenHeader>
+                <RadzenSidebar @bind-Expanded="@sidebar1Expanded">
+                    <RadzenPanelMenu>
+                        <RadzenPanelMenuItem Text="Home" Icon="home" Path="@Navigation.BaseUri" />
+                        <RadzenPanelMenuItem Text="สัญญา" Icon="contact_page" Path="contract" Visible=@(@context.User.Identity?.GetMenus().Exists(x=>x.MenuId == 76 && x.IsAccess==true) ?? false) />
+                        <RadzenPanelMenuItem Text="ค้นหาข้อมูลสัญญา" Icon="person_search" Path="contractlist" Visible=@(@context.User.Identity?.GetMenus().Exists(x=>x.MenuId == 80 && x.IsAccess==true) ?? false) />
+                        <RadzenPanelMenuItem Text="บันทึกสัญญาแบบย่อ" Icon="contact_page" Path="contractnew" Visible=@(@context.User.Identity?.GetMenus().Exists(x=>x.MenuId == 22 && x.IsAccess==true) ?? false) />
+                        <RadzenPanelMenuItem Text="รับชำระเงิน" Icon="receipt_long" Path="payment" Visible=@(@context.User.Identity?.GetMenus().Exists(x=>x.MenuId == 19 && x.IsAccess==true) ?? false) />
+                        <RadzenPanelMenuItem Text="ใบเสร็จรับเงิน" Icon="find_in_page" Path="paymentlist" Visible=@(@context.User.Identity?.GetMenus().Exists(x=>x.MenuId == 23 && x.IsAccess==true) ?? false) />
+                        <RadzenPanelMenuItem Text="Report" Icon="summarize" Visible=@(@context.User.Identity?.GetMenus().Exists(x=>x.MenuGroup == "Report" && x.IsAccess==true) ?? false)>
+                            <div class="rz-pl-2">
+                                @foreach (var item in @context.User.Identity?.GetMenus().FindAll(x => x.MenuGroup == "Report" && x.IsAccess == true))
+                                {
+                                    <RadzenPanelMenuItem Text=@item.MenuDesc Icon=@item.MenuIcon Path=@item.MenuPath />
+                                }
+                            </div>
+                            @* <RadzenPanelMenuItem Text="เปลี่ยนสถานะ N เป็น R" Icon="receipt_long" Path="rpt/billbh" />
+                            <RadzenPanelMenuItem Text="เปลี่ยนสถานะ N เป็น R (สัญญา X)" Icon="receipt_long" Path="rpt/billbh" />
+                            <RadzenPanelMenuItem Text="เปลี่ยนสถานะ R เป็น N" Icon="receipt_long" Path="rpt/billbh" />
+                            <RadzenPanelMenuItem Text="เปลี่ยนสถานะ T" Icon="receipt_long" Path="rpt/billbh" />
+                            <RadzenPanelMenuItem Text="รายงานโคน-สวมสัญญา (เปลี่ยนราคา)" Icon="receipt_long" Path="rpt/billbh" />
+                            <RadzenPanelMenuItem Text="รายงานเก็บเงินงวดที่ 1" Icon="receipt_long" Path="rpt/billbh" />
+                            <RadzenPanelMenuItem Text="รายงานขอใบเสร็จคืน" Icon="receipt_long" Path="rpt/billbh" />
+                            <RadzenPanelMenuItem Text="รายงานการ์ดตรวจสอบ" Icon="receipt_long" Path="rpt/billbh" />
+                            <RadzenPanelMenuItem Text="รายงานข้อมูลติดตั้ง" Icon="receipt_long" Path="rpt/billbh" />
+                            <RadzenPanelMenuItem Text="รายงานถอด" Icon="receipt_long" Path="rpt/billbh" />
+                            <RadzenPanelMenuItem Text="รายงานรับชำระเต็มงวด" Icon="receipt_long" Path="rpt/billbh" />
+                            <RadzenPanelMenuItem Text="รายงานรับชำระบางส่วน" Icon="receipt_long" Path="rpt/billbh" /> *@
+                        </RadzenPanelMenuItem>
+                        <RadzenPanelMenuItem Text="Import" Icon="file_download" Visible=@(@context.User.Identity?.GetPerms().Exists(x=>x.PermsName == "IsImport" && x.IsPerms==true) ?? false)>
+                            <div class="rz-pl-2">
+                                @foreach (var item in @context.User.Identity?.GetMenus().FindAll(x => x.MenuGroup == "Import" && x.IsAccess == true))
+                                {
+                                    <RadzenPanelMenuItem Text=@item.MenuDesc Icon=@item.MenuIcon Path=@item.MenuPath />
+                                }
+                            </div>
+                            @* <RadzenPanelMenuItem Text="ใบเสร็จจาก On Mobile" Icon="receipt_long" Path="imp/billbh" /> *@
+                        </RadzenPanelMenuItem>
+                        <RadzenPanelMenuItem Text="บัญชีลูกหนี้" Icon="payments" Visible=@(@context.User.Identity?.GetMenus().Exists(x=>x.MenuId == 29 && x.IsAccess==true) ?? false)>
+                            <div class="rz-pl-2">
+                                @foreach (var item in @context.User.Identity?.GetMenus().FindAll(x => x.MainMenuId == 29 && x.IsAccess == true))
+                                {
+                                    <RadzenPanelMenuItem Text=@item.MenuDesc Icon=@item.MenuIcon Path=@item.MenuPath>
+                                        <div class="rz-pl-2">
+                                            @foreach (var itemsub in @context.User.Identity?.GetMenus().FindAll(x => x.MainMenuId == item.MenuId && x.IsAccess == true))
+                                            {
+                                                <RadzenPanelMenuItem Text=@itemsub.MenuDesc Icon=@itemsub.MenuIcon Path=@itemsub.MenuPath />
+                                            }
+                                        </div>
+                                    </RadzenPanelMenuItem>
+                                }
+                            </div>
+                        </RadzenPanelMenuItem>
+                        <RadzenPanelMenuItem Text="Package" Icon="auto_awesome_mosaic" Visible=@(@context.User.Identity?.GetMenus().Exists(x=>x.MenuGroup == "Package" && x.IsAccess==true) ?? false)>
+                            <div class="rz-pl-2">
+                                @foreach (var item in @context.User.Identity?.GetMenus().FindAll(x => x.MenuGroup == "Package" && x.IsAccess == true))
+                                {
+                                    <RadzenPanelMenuItem Text=@item.MenuDesc Icon=@item.MenuIcon Path=@item.MenuPath />
+                                }
+                            </div>
+                            @* <RadzenPanelMenuItem Text="ใบเสร็จจาก On Mobile" Icon="receipt_long" Path="imp/billbh" /> *@
+                        </RadzenPanelMenuItem>
+                        <RadzenPanelMenuItem Text="Setup" Icon="settings" Visible=@(@context.User.Identity?.GetPerms().Exists(x=>x.PermsName == "IsSetting" && x.IsPerms==true) ?? false)>
+                            <div class="rz-pl-2">
+                                @foreach (var item in @context.User.Identity?.GetMenus().FindAll(x => x.MenuGroup == "Setting"))
+                                {
+                                    <RadzenPanelMenuItem Text=@item.MenuDesc Icon=@item.MenuIcon Path=@item.MenuPath />
+                                }
+                            </div>
+                            @* <RadzenPanelMenuItem Text="Permission" Icon="checklist" Path="setting/permission" />
+                            <RadzenPanelMenuItem Text="Model" Icon="table_rows" Path="setting/promodel" />
+                            <RadzenPanelMenuItem Text="ช่องทางการขาย" Icon="table_rows" Path="setting/chanelsale" />
+                            <RadzenPanelMenuItem Text="เขตเก็บเงิน" Icon="table_rows" Path="setting/creditarea" /> *@
+                        </RadzenPanelMenuItem>
+                    </RadzenPanelMenu>
+                    <RadzenFooter>
+                        Version @Versoin
+                        <br />
+                        On : @Header
+                    </RadzenFooter>
+                    @* <div class="fixed-bottom">
+                        Version @version
+                    </div> *@
+                </RadzenSidebar>
+                <RadzenBody>
+                    <ChildContent>
+                        @Body
+                    </ChildContent>
+                    @* @Body *@
+                    @* <div class="rz-p-4">
+                        @Body
+                    </div> *@
+                </RadzenBody>
+                @* <RadzenFooter>
+                    Version @version
+                </RadzenFooter> *@
+            </RadzenLayout>
+        </Authorized>
+        <NotAuthorized>
+            @*@{
+            var returnUrl =
+            Navigation.ToBaseRelativePath(Navigation.Uri);
+            <RedirectToLogin ReturnUrl="@returnUrl" />
+
+            }*@
+            <Login />
+        </NotAuthorized>
+    </AuthorizeView>
+</CascadingValue>

@@ -1,0 +1,26 @@
+﻿@using ChainConnext.Shared.BD
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@inject IAccountService _accountService
+@inject ILogger<ARTaxList> Logger
+@inject NotificationService NotificationService
+
+<RadzenRow>
+    <RadzenDataGrid IsLoading="@isLoading" Data="@bD_Mastvats" TItem="BD_mastvat" AllowVirtualization="false" AllowColumnResize="true"
+                    AllowFiltering="true" PageSize="60"
+                    FilterMode="FilterMode.Advanced"
+                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                    LogicalFilterOperator="LogicalFilterOperator.Or"
+                    FilterPopupRenderMode="PopupRenderMode.OnDemand"
+                    AllowSorting="true" SelectionMode="DataGridSelectionMode.Single"
+                    PagerPosition="PagerPosition.Bottom" AllowPaging="true" ColumnWidth="150px" Style=@($"height:{(pHeight - 200)}px")>
+        <Columns>
+            <RadzenDataGridColumn TItem="BD_mastvat" Property="PayPeriod" Title="งวดที่" TextAlign="TextAlign.Center" Frozen="true" Width="100px" />
+            <RadzenDataGridColumn TItem="BD_mastvat" Property="DOCDATE" Title="วันที่นำส่ง" FormatString="{0:dd/MM/yyyy}" />
+            <RadzenDataGridColumn TItem="BD_mastvat" Property="VatNo" Title="เล่มที่ใบกำกับ" TextAlign="TextAlign.Center" />
+            <RadzenDataGridColumn TItem="BD_mastvat" Property="PERIOD" Title="รายละเอียด" TextAlign="TextAlign.Center" />
+            <RadzenDataGridColumn TItem="BD_mastvat" Property="AMOUNT" Title="มูลค่าสินค้า" FormatString="{0:N2}" TextAlign="TextAlign.Right" />
+            <RadzenDataGridColumn TItem="BD_mastvat" Property="VAT" Title="ภาษี" FormatString="{0:N2}" TextAlign="TextAlign.Right" />
+        </Columns>
+    </RadzenDataGrid>
+</RadzenRow>

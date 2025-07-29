@@ -1,0 +1,63 @@
+﻿@page "/ar/dailyimportcheck"
+@using ChainConnext.Shared.BD
+
+@inject ContextMenuService ContextMenuService
+@inject ILogger<ARDailyImportCheck> Logger
+@inject DialogService dialogService
+@inject IJSRuntime jsRuntime
+@inject NavigationManager Navigation
+@inject IAccountService _accountService
+@inject NotificationService NotificationService
+@inject HttpClient Http
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+<PageTitle>ChainConnext > บัญชีลูกหนี้ > ตรวจสอบนำเข้าข้อมูล</PageTitle>
+
+@if (!IsAccess)
+{
+    <RadzenText TextStyle="TextStyle.H1">ไม่มีสิทธิในส่วนนี้</RadzenText>
+}
+else
+{
+    <RadzenStack>
+        <RadzenRow AlignItems="AlignItems.Center">
+            <RadzenColumn Size="3">
+                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Wrap="FlexWrap.NoWrap" Gap="0.1rem">
+                    <RadzenButton Icon="chevron_left" Variant="Variant.Outlined" ButtonStyle="ButtonStyle.Info" Click=@(()=>OnButtonDateChange(-1)) IsBusy=@IsLoad />
+                    <RadzenDatePicker TValue="DateTime?" Value=@FindDate Change="@(args => OnDateChange(args))" DateFormat="MM/yyyy" />
+                    <RadzenButton Icon="chevron_right" Variant="Variant.Outlined" ButtonStyle="ButtonStyle.Info" Click=@(()=>OnButtonDateChange(1)) IsBusy=@IsLoad />
+                </RadzenStack>
+            </RadzenColumn>
+            <RadzenColumn Size="1">
+                <RadzenButton Icon="search" ButtonStyle="ButtonStyle.Success" Class="w-100" IsBusy=@IsLoad Click=@GetData />
+            </RadzenColumn>
+            <RadzenColumn Size="1">
+                <RadzenButton Icon="download" ButtonStyle="ButtonStyle.Info" Class="w-100" IsBusy=@IsLoad Click=@ShowBusyDialogProgress />
+            </RadzenColumn>
+        </RadzenRow>
+        <RadzenRow>
+            <RadzenColumn Size="2">
+                <RadzenLabel Text=@StatusRow />
+            </RadzenColumn>
+            <RadzenColumn Size="12">
+                <RadzenProgressBar ProgressBarStyle="ProgressBarStyle.Primary" Max="100" @bind-Value=@currentPregress />
+            </RadzenColumn>
+        </RadzenRow>
+        <RadzenRow>
+            <RadzenColumn Size="12">
+                <RadzenDataGrid IsLoading="@IsLoad" Data="@ListDetailMastCont" TItem="BD_accstatus" AllowColumnResize="true"
+                                AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" LogicalFilterOperator="LogicalFilterOperator.Or"
+                                AllowSorting="true" SelectionMode="DataGridSelectionMode.Single" @bind-Value=@selectedDetailMastCont
+                                CellContextMenu="@OnCellContextMenu"
+                                PagerPosition="PagerPosition.Bottom" ColumnWidth="150px" Style=@($"height:{(Height - 150)}px")>
+                    <Columns>
+                        <RadzenDataGridColumn TItem="BD_accstatus" Property="effdate" Title="วันที่ติดตั้ง" FormatString="{0:dd/MM/yyyy}" />
+                        <RadzenDataGridColumn TItem="BD_accstatus" Property="c_all" Title="จำนวนทั้งหมด" />
+                        <RadzenDataGridColumn TItem="BD_accstatus" Property="c_todebtor_1" Title="นำเข้าแล้ว" />
+                        <RadzenDataGridColumn TItem="BD_accstatus" Property="c_todebtor_0" Title="เพิ่มใหม่" />
+                    </Columns>
+                </RadzenDataGrid>
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenStack>
+}

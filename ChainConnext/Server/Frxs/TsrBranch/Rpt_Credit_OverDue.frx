@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="CSharp" ReportInfo.Created="12/28/2016 10:02:40" ReportInfo.Modified="12/13/2017 09:44:57" ReportInfo.CreatorVersion="2015.1.3.0">
+  <Dictionary>
+    <TableDataSource Name="RptData" ReferenceName="RptData.RptData" DataType="System.Int32" Enabled="true">
+      <Column Name="ที่" DataType="System.Int64"/>
+      <Column Name="เลขสัญญา" DataType="System.String"/>
+      <Column Name="ชื่อลูกค้า" DataType="System.String"/>
+      <Column Name="AreaCode" DataType="System.String"/>
+      <Column Name="CreditName" DataType="System.String"/>
+      <Column Name="จำนวนวันนัดเกิน" DataType="System.String"/>
+      <Column Name="สาเหตุที่นัดเกิน" DataType="System.String"/>
+      <Column Name="ปรับ" DataType="System.Decimal"/>
+      <Column Name="RptTxt" DataType="System.String"/>
+    </TableDataSource>
+  </Dictionary>
+  <ReportPage Name="Page1">
+    <PageHeaderBand Name="PageHeader1" Width="718.2" Height="94.5">
+      <TextObject Name="Text1" Width="718.2" Height="56.7" Text="รายงานสัญญานัดเกินกำหนด&#13;&#10;[RptData.RptTxt]" HorzAlign="Center" Font="DilleniaUPC, 16pt, style=Bold"/>
+      <TextObject Name="Text3" Top="66.15" Width="37.8" Height="28.35" Border.Lines="All" Border.Color="DarkGray" Text="ที่" HorzAlign="Center" Font="DilleniaUPC, 14pt, style=Bold"/>
+      <TextObject Name="Text4" Left="37.8" Top="66.15" Width="94.5" Height="28.35" Border.Lines="All" Border.Color="DarkGray" Text="เลขสัญญา" HorzAlign="Center" Font="DilleniaUPC, 14pt, style=Bold"/>
+      <TextObject Name="Text6" Left="132.3" Top="66.15" Width="132.3" Height="28.35" Border.Lines="All" Border.Color="DarkGray" Text="ชื่อลูกค้า" HorzAlign="Center" Font="DilleniaUPC, 14pt, style=Bold"/>
+      <TextObject Name="Text8" Left="264.6" Top="66.15" Width="75.6" Height="28.35" Border.Lines="All" Border.Color="DarkGray" Text="เขต(เครดิต)" HorzAlign="Center" Font="DilleniaUPC, 14pt, style=Bold"/>
+      <TextObject Name="Text10" Left="340.2" Top="66.15" Width="122.85" Height="28.35" Border.Lines="All" Border.Color="DarkGray" Text="ชื่อ(พนักงานเครดิต)" HorzAlign="Center" Font="DilleniaUPC, 14pt, style=Bold"/>
+      <TextObject Name="Text12" Left="463.05" Top="66.15" Width="94.5" Height="28.35" Border.Lines="All" Border.Color="DarkGray" Text="จำนวนวันนัดเกิน" HorzAlign="Center" Font="DilleniaUPC, 14pt, style=Bold"/>
+      <TextObject Name="Text14" Left="557.55" Top="66.15" Width="94.5" Height="28.35" Border.Lines="All" Border.Color="DarkGray" Text="สาเหตุที่นัดเกิน" HorzAlign="Center" Font="DilleniaUPC, 14pt, style=Bold"/>
+      <TextObject Name="Text16" Left="652.05" Top="66.15" Width="66.15" Height="28.35" Border.Lines="All" Border.Color="DarkGray" Text="ปรับ" HorzAlign="Center" Font="DilleniaUPC, 14pt, style=Bold"/>
+    </PageHeaderBand>
+    <DataBand Name="Data1" Top="98.5" Width="718.2" Height="28.35" DataSource="RptData">
+      <TextObject Name="Text2" Width="37.8" Height="28.35" Border.Lines="All" Border.Color="DarkGray" Text="[RptData.ที่]" HorzAlign="Center" Font="DilleniaUPC, 14pt"/>
+      <TextObject Name="Text5" Left="37.8" Width="94.5" Height="28.35" Border.Lines="All" Border.Color="DarkGray" Text="[RptData.เลขสัญญา]" HorzAlign="Center" Font="DilleniaUPC, 14pt"/>
+      <TextObject Name="Text7" Left="132.3" Width="132.3" Height="28.35" Border.Lines="All" Border.Color="DarkGray" Text="[RptData.ชื่อลูกค้า]" Font="DilleniaUPC, 14pt"/>
+      <TextObject Name="Text9" Left="264.6" Width="75.6" Height="28.35" Border.Lines="All" Border.Color="DarkGray" Text="[RptData.เขต(เครดิต)]" HorzAlign="Center" Font="DilleniaUPC, 14pt"/>
+      <TextObject Name="Text11" Left="340.2" Width="122.85" Height="28.35" Border.Lines="All" Border.Color="DarkGray" Text="[RptData.ชื่อ(พนักงานเครดิต)]" Font="DilleniaUPC, 14pt"/>
+      <TextObject Name="Text13" Left="463.05" Width="94.5" Height="28.35" Border.Lines="All" Border.Color="DarkGray" Text="[RptData.จำนวนวันนัดเกิน]" Font="DilleniaUPC, 14pt"/>
+      <TextObject Name="Text15" Left="557.55" Width="94.5" Height="28.35" Border.Lines="All" Border.Color="DarkGray" Text="[RptData.สาเหตุที่นัดเกิน]" Font="DilleniaUPC, 14pt"/>
+      <TextObject Name="Text17" Left="652.05" Width="66.15" Height="28.35" Border.Lines="All" Border.Color="DarkGray" Text="[RptData.ปรับ]" HideZeros="true" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" HorzAlign="Right" Font="DilleniaUPC, 14pt"/>
+    </DataBand>
+    <ReportSummaryBand Name="ReportSummary1" Top="130.85" Width="718.2" Height="28.35" PrintOnBottom="true">
+      <TextObject Name="Text22" Top="9.45" Width="255.15" Height="18.9" Text="ผู้จัดทำ................................................................." VertAlign="Center" Font="DilleniaUPC, 14pt"/>
+      <TextObject Name="Text23" Left="463.05" Top="9.45" Width="255.15" Height="18.9" Text="ผู้ตรวจสอบ.........................................................." VertAlign="Center" Font="DilleniaUPC, 14pt"/>
+    </ReportSummaryBand>
+  </ReportPage>
+</Report>

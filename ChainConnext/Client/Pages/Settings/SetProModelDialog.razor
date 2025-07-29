@@ -1,0 +1,206 @@
+﻿@using ChainConnext.Shared.BD;
+@inject HttpClient Http
+@inject Radzen.DialogService dialogService
+@inject ILogger<SetProKindDialog> Logger
+@inject IJSRuntime jsRuntime
+@inject IAccountService _accountService
+@inject NotificationService NotificationService
+@inject NavigationManager Navigation
+@inject ILocalStorageService localStorage
+
+<RadzenStack>
+    <RadzenRow>
+        <RadzenColumn Size="12">
+            <RadzenTemplateForm TItem="BDProModel" Data=@proModel Submit=@OnSubmit InvalidSubmit=@OnInvalidSubmit>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="3">
+                        <RadzenLabel Text=@($"หมวดสินค้า") />
+                    </RadzenColumn>
+                    <RadzenColumn Size="6" SizeMD="9">
+                        <RadzenDropDown @bind-Value=@proModel.cate AllowClear="false" Placeholder="Select something" Class="w-100"
+                                        Data=@proKinds TextProperty="KindCodeName" ValueProperty="code"
+                                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                        AllowFiltering="true">
+                        </RadzenDropDown>
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="3">
+                        <RadzenLabel Text="รหัส" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="6" SizeMD="4">
+                        <RadzenTextBox Class="w-100" @bind-Value=@proModel.MODEL Name="MODEL" MaxLength="15" />
+                        <RadzenRequiredValidator Component="MODEL" Text="รหัส is required" Style="position: absolute" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="3">
+                        <RadzenLabel Text="ชื่อสินค้า" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="9">
+                        <RadzenTextBox Class="w-100" @bind-Value=@proModel.Des Name="Des" MaxLength="100" />
+                        <RadzenRequiredValidator Component="Des" Text="ชื่อสินค้า is required" Style="position: absolute" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="3">
+                        <RadzenLabel Text="สถานะ" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="6" SizeMD="2">
+                        <RadzenTextBox Class="w-100" @bind-Value=@proModel.status Name="status" MaxLength="1" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="4" SizeMD="2">
+                        <RadzenLabel Text="ณ วันที่" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="6" SizeMD="4">
+                        <RadzenDatePicker Name="DateFrom" @bind-Value=@proModel.stdate DateFormat="dd/MM/yyyy">
+                            <FooterTemplate>
+                                <RadzenButton Click=@(args => @proModel.stdate = DateTime.Now) Text="Today" class="my-3 w-100" />
+                            </FooterTemplate>
+                        </RadzenDatePicker>
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="3">
+                        <RadzenLabel Text="ราคาเงินสด" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="6" SizeMD="3">
+                        <RadzenNumeric TValue="decimal" Format="#,###" @bind-Value=@proModel.CASH TextAlign="TextAlign.Right" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="4" SizeMD="2">
+                        <RadzenLabel Text="ราคาเงินผ่อน" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="6" SizeMD="3">
+                        <RadzenNumeric TValue="decimal" Format="#,###" @bind-Value=@proModel.Sales TextAlign="TextAlign.Right" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="3">
+                        <RadzenLabel Text="งวด 2 ขึ้นไป" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="6" SizeMD="3">
+                        <RadzenNumeric TValue="decimal" Format="#,###" @bind-Value=@proModel.CREDIT TextAlign="TextAlign.Right" Change=@(args => OnCalSales(args,"CREDIT")) />
+                    </RadzenColumn>
+                    <RadzenColumn Size="4" SizeMD="2">
+                        <RadzenLabel Text="งวด 1" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="6" SizeMD="3">
+                        <RadzenNumeric TValue="decimal" Format="#,###" @bind-Value=@proModel.credit2 TextAlign="TextAlign.Right" Change=@(args => OnCalSales(args,"credit2")) />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="3">
+                        <RadzenLabel Text="จำนวนงวด" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="6" SizeMD="3">
+                        <RadzenNumeric TValue="int" Format="00" @bind-Value=@proModel.MODE Min="1" TextAlign="TextAlign.Right" Change=@(args => OnCalSales(args,"MODE")) />
+                    </RadzenColumn>
+                    <RadzenColumn Size="4" SizeMD="2">
+                        <RadzenLabel Text="ส่วนลด" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="6" SizeMD="3">
+                        <RadzenNumeric TValue="decimal" Format="#,###" @bind-Value=@proModel.WPrice TextAlign="TextAlign.Right" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="3">
+                        <RadzenLabel Text="ชื่อออกใบเสร็จ" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="9">
+                        <RadzenTextBox Class="w-100" @bind-Value=@proModel.InvDesc Name="Des" MaxLength="150" />
+                        <RadzenRequiredValidator Component="Des" Text="ชื่อออกใบเสร็จ is required" Style="position: absolute" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="3">
+                        <RadzenLabel Text="ชื่อออกใบกำกับภาษี" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="9">
+                        <RadzenTextBox Class="w-100" @bind-Value=@proModel.vatdesc Name="Des" MaxLength="150" />
+                        <RadzenRequiredValidator Component="Des" Text="ชื่อออกใบกำกับภาษี is required" Style="position: absolute" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="3">
+                        <RadzenLabel Text="คะแนน" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="6" SizeMD="3">
+                        <RadzenNumeric TValue="decimal" @bind-Value=@proModel.rate TextAlign="TextAlign.Right" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="4" SizeMD="2">
+                        <RadzenLabel Text="วันที่เริ่มโปร" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="6" SizeMD="3">
+                        <RadzenDatePicker Name="DateFrom" @bind-Value=@proModel.ProStartDate DateFormat="dd/MM/yyyy">
+                            <FooterTemplate>
+                                <RadzenButton Click=@(args => @proModel.ProStartDate = DateTime.Now) Text="Today" class="my-3 w-100" />
+                            </FooterTemplate>
+                        </RadzenDatePicker>
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="3">
+                        <RadzenLabel Text="Rate" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="6" SizeMD="3">
+                        <RadzenNumeric TValue="decimal" Format="#,###" @bind-Value=@proModel.BaseRate TextAlign="TextAlign.Right" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="4" SizeMD="2">
+                        <RadzenLabel Text="วันที่หมดโปร" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="6" SizeMD="3">
+                        <RadzenDatePicker Name="DateFrom" @bind-Value=@proModel.ProEndDate DateFormat="dd/MM/yyyy">
+                            <FooterTemplate>
+                                <RadzenButton Click=@(args => @proModel.ProEndDate = DateTime.Now) Text="Today" class="my-3 w-100" />
+                            </FooterTemplate>
+                        </RadzenDatePicker>
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="3">
+                        <RadzenLabel Text="ItemCode" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="6" SizeMD="3">
+                        <RadzenTextBox Class="w-100" @bind-Value=@proModel.ErpItemCode Name="Des" MaxLength="10" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="3">
+                        <RadzenLabel Text="kindDesc" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="6" SizeMD="3">
+                        <RadzenDropDown @bind-Value=@proModel.KindDesc AllowClear="false" Placeholder="Select something" Class="w-100"
+                                        Data=@KindDescList TextProperty="KindDesc" ValueProperty="KindDesc"
+                                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                        AllowFiltering="true">
+                        </RadzenDropDown>
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="3">
+                        <RadzenLabel Text="เพิ่มเติม" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="6" SizeMD="9">
+                        <RadzenTextArea Class="w-100" @bind-Value=@proModel.Remark Name="Remark" Rows="2" MaxLength="500" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center" Class="rz-mt-2">
+                    <RadzenColumn Size="4" SizeMD="3">
+
+                    </RadzenColumn>
+                    <RadzenColumn Size="6" SizeMD="3">
+                        <RadzenStack Orientation="Orientation.Horizontal">
+                            <RadzenCheckBox TValue="bool" Value=@CheckSave Change=@(args => CheckSave = args) Name="CheckSave" />
+                            <RadzenLabel Text="ยืนยันบันทึก" Component="CheckSave" Style="margin-left: 8px; vertical-align: middle;" />
+                        </RadzenStack>
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center" class="my-2">
+                    <RadzenColumn Size="6" SizeMD="4" Offset="6" OffsetMD="3">
+                        <RadzenButton ButtonType="ButtonType.Submit" Text="Save" Icon="save" ButtonStyle="ButtonStyle.Success" IsBusy=@IsLoading Class="w-100" Disabled=!CheckSave />
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenTemplateForm>
+        </RadzenColumn>
+    </RadzenRow>
+</RadzenStack>

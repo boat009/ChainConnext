@@ -1,0 +1,52 @@
+﻿
+@inject HttpClient Http
+@inject Radzen.DialogService dialogService
+@inject ILogger<SetPackageDialog> Logger
+@inject IJSRuntime jsRuntime
+@inject IAccountService _accountService
+@inject NotificationService NotificationService
+@inject NavigationManager Navigation
+@inject ILocalStorageService localStorage
+
+<RadzenStack>
+    <RadzenRow>
+        <RadzenColumn Size="12">
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenColumn Size="4" SizeMD="3">
+                    <RadzenLabel Text="Item Code" />
+                </RadzenColumn>
+                <RadzenColumn Size="6" SizeMD="4">
+                    <TextBoxEnterComponent @bind-SearchValue=@Pm.ItemCode OnFindEnter=@OnFindEnter IsUpperCase="true" TextPlaceHolder="Test" InputType="search" />
+                    <RadzenRequiredValidator Component="ItemCode" Text="ItemCode is required" Style="position: absolute" />
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenColumn Size="4" SizeMD="3">
+                    <RadzenLabel Text="ชื่อสินค้า" />
+                </RadzenColumn>
+                <RadzenColumn Size="6" SizeMD="9">
+                    <TextBoxEnterComponent @bind-SearchValue=@Pm.PackageDesc VisibleSearchButton="false" ID="PackageDesc" />
+                    <RadzenRequiredValidator Component="PackageDesc" Text="PackageDesc is required" Style="position: absolute" />
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenColumn Size="4" SizeMD="3">
+                    <RadzenLabel Text="รหัส" />
+                </RadzenColumn>
+                <RadzenColumn Size="6" SizeMD="4">
+                    <TextBoxEnterComponent @bind-SearchValue=@Pm.ModelGroup VisibleSearchButton="false" ID="ModelGroup" />
+                    <RadzenRequiredValidator Component="ModelGroup" Text="ModelGroup is required" Style="position: absolute" />
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenColumn Size="4" SizeMD="3">
+                    <RadzenLabel Text="รหัส" />
+                </RadzenColumn>
+                <RadzenColumn Size="6" SizeMD="4">
+                    
+                    <RadzenRequiredValidator Component="ModelGroup" Text="ModelGroup is required" Style="position: absolute" />
+                </RadzenColumn>
+            </RadzenRow>
+        </RadzenColumn>
+    </RadzenRow>
+</RadzenStack>

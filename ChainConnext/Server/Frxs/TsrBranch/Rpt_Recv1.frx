@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="CSharp" ReportInfo.Created="10/19/2016 10:16:02" ReportInfo.Modified="11/15/2017 09:32:57" ReportInfo.CreatorVersion="2015.1.3.0">
+  <Dictionary>
+    <TableDataSource Name="RptData" ReferenceName="RptData.RptData" DataType="System.Int32" Enabled="true">
+      <Column Name="BranchCode" DataType="System.String"/>
+      <Column Name="BranchName" DataType="System.String"/>
+      <Column Name="No." DataType="System.Int64"/>
+      <Column Name="BookPayNo" DataType="System.String"/>
+      <Column Name="RefNo" DataType="System.String"/>
+      <Column Name="ContractNo" DataType="System.String"/>
+      <Column Name="CustName" DataType="System.String"/>
+      <Column Name="SaleName" DataType="System.String"/>
+      <Column Name="ContractDate" DataType="System.DateTime"/>
+      <Column Name="PayPeroid" DataType="System.Int32"/>
+      <Column Name="ProModel" DataType="System.String"/>
+      <Column Name="FirstAmt" DataType="System.Decimal"/>
+      <Column Name="Discount" DataType="System.Decimal"/>
+      <Column Name="PayAmt" DataType="System.Decimal"/>
+      <Column Name="PayFull" DataType="System.String"/>
+      <Column Name="PayMark" DataType="System.String"/>
+    </TableDataSource>
+    <Parameter Name="pEndDate" DataType="System.String"/>
+    <Parameter Name="pStartDate" DataType="System.String"/>
+    <Total Name="Total_PayAmt" Expression="[RptData.PayAmt]" Evaluator="Data1" PrintOn="DataFooter1"/>
+  </Dictionary>
+  <ReportPage Name="Page1" Landscape="true" PaperWidth="300" PaperHeight="210">
+    <PageHeaderBand Name="PageHeader1" Width="1058.4" Height="56.7">
+      <TextObject Name="Text19" Width="1058.4" Height="56.7" Text="รายงานใบรับเงิน&#13;&#10;ประจำววันที่ [RptData.วันที่รายงานจาก] ถึง [RptData.วันที่รายงานถึง]" HorzAlign="Center" Font="DilleniaUPC, 16pt, style=Bold"/>
+    </PageHeaderBand>
+    <DataBand Name="Data1" Top="93.05" Width="1058.4" Height="28.35" DataSource="RptData">
+      <TextObject Name="Text1" Left="-18.9" Width="37.8" Height="28.35" Border.Lines="All" Border.Color="Gray" Text="[RptData.No.]" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 13pt"/>
+      <TextObject Name="Text3" Left="18.9" Width="85.05" Height="28.35" Border.Lines="All" Border.Color="Gray" Text="[RptData.BookPayNo]" VertAlign="Center" Font="DilleniaUPC, 13pt"/>
+      <TextObject Name="Text4" Left="103.95" Width="66.15" Height="28.35" Border.Lines="All" Border.Color="Gray" Text="[RptData.RefNo]" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 13pt"/>
+      <TextObject Name="Text5" Left="170.1" Width="66.15" Height="28.35" Border.Lines="All" Border.Color="Gray" Text="[RptData.ContractNo]" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 13pt"/>
+      <TextObject Name="Text6" Left="236.25" Width="122.85" Height="28.35" Border.Lines="All" Border.Color="Gray" Text="[RptData.CustName]" VertAlign="Center" WordWrap="false" Font="DilleniaUPC, 13pt"/>
+      <TextObject Name="Text7" Left="359.1" Width="151.2" Height="28.35" Border.Lines="All" Border.Color="Gray" Text="[RptData.SaleName]" VertAlign="Center" WordWrap="false" Font="DilleniaUPC, 13pt"/>
+      <TextObject Name="Text8" Left="510.3" Width="56.7" Height="28.35" Border.Lines="All" Border.Color="Gray" Text="[RptData.SetUpDate]" HideZeros="true" Format="Date" Format.Format="dd/MM/yy" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 13pt"/>
+      <TextObject Name="Text9" Left="567" Width="37.8" Height="28.35" Border.Lines="All" Border.Color="Gray" Text="[RptData.PayPeroid]" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 13pt"/>
+      <TextObject Name="Text10" Left="604.8" Width="56.7" Height="28.35" Border.Lines="All" Border.Color="Gray" Text="[RptData.ProModel]" VertAlign="Center" WordWrap="false" Font="DilleniaUPC, 13pt"/>
+      <TextObject Name="Text11" Left="661.5" Width="56.7" Height="28.35" Border.Lines="All" Border.Color="Gray" Text="[RptData.FirstAmt]" HideZeros="true" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" HorzAlign="Right" VertAlign="Center" WordWrap="false" Font="DilleniaUPC, 13pt" Trimming="EllipsisCharacter"/>
+      <TextObject Name="Text12" Left="718.2" Width="37.8" Height="28.35" Border.Lines="All" Border.Color="Gray" Text="[RptData.Discount]" HideZeros="true" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" HorzAlign="Right" VertAlign="Center" WordWrap="false" Font="DilleniaUPC, 13pt" Trimming="EllipsisCharacter"/>
+      <TextObject Name="Text14" Left="756" Width="47.25" Height="28.35" Border.Lines="All" Border.Color="Gray" Text="[RptData.PayAmt]" HideZeros="true" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" HorzAlign="Right" VertAlign="Center" WordWrap="false" Font="DilleniaUPC, 13pt" Trimming="EllipsisCharacter"/>
+      <TextObject Name="Text42" Left="803.25" Width="56.7" Height="28.35" Border.Lines="All" Border.Color="Gray" Text="[RptData.PayDate]" HideZeros="true" Format="Date" Format.Format="dd/MM/yy" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 13pt"/>
+      <TextObject Name="Text43" Left="859.95" Width="56.7" Height="28.35" Border.Lines="All" Border.Color="Gray" Text="[RptData.TransDate]" HideZeros="true" Format="Date" Format.Format="dd/MM/yy" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 13pt"/>
+      <TextObject Name="Text44" Left="973.35" Width="103.95" Height="28.35" Border.Lines="All" Border.Color="Gray" Text="[RptData.PayPlaceName]" VertAlign="Center" Font="DilleniaUPC, 13pt"/>
+      <TextObject Name="Text46" Left="916.65" Width="56.7" Height="28.35" Border.Lines="All" Border.Color="Gray" Text="[RptData.DocDate]" HideZeros="true" Format="Date" Format.Format="dd/MM/yy" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 13pt"/>
+      <DataHeaderBand Name="DataHeader1" Top="60.7" Width="1058.4" Height="28.35" RepeatOnEveryPage="true">
+        <TextObject Name="Text2" Left="-18.9" Width="37.8" Height="28.35" Border.Lines="All" Border.Color="Gray" Text="ลำดับ" VertAlign="Center" Font="DilleniaUPC, 13pt, style=Bold"/>
+        <TextObject Name="Text28" Left="18.9" Width="85.05" Height="28.35" Border.Lines="All" Border.Color="Gray" Text="เล่มที่/เลขที่" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 13pt, style=Bold"/>
+        <TextObject Name="Text29" Left="103.95" Width="66.15" Height="28.35" Border.Lines="All" Border.Color="Gray" Text="เลขอ้างอิง" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 13pt, style=Bold"/>
+        <TextObject Name="Text30" Left="170.1" Width="66.15" Height="28.35" Border.Lines="All" Border.Color="Gray" Text="เลขสัญญา" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 13pt, style=Bold"/>
+        <TextObject Name="Text31" Left="236.25" Width="122.85" Height="28.35" Border.Lines="All" Border.Color="Gray" Text="ชื่อ - สกุล ลูกค้า" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 13pt, style=Bold"/>
+        <TextObject Name="Text32" Left="359.1" Width="151.2" Height="28.35" Border.Lines="All" Border.Color="Gray" Text="พ/ง เก็บเงิน" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 13pt, style=Bold"/>
+        <TextObject Name="Text33" Left="510.3" Width="56.7" Height="28.35" Border.Lines="All" Border.Color="Gray" Text="วันที่ติดตั้ง" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 13pt, style=Bold"/>
+        <TextObject Name="Text34" Left="567" Width="37.8" Height="28.35" Border.Lines="All" Border.Color="Gray" Text="งวดที่" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 13pt, style=Bold"/>
+        <TextObject Name="Text35" Left="604.8" Width="56.7" Height="28.35" Border.Lines="All" Border.Color="Gray" Text="แบบ" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 13pt, style=Bold"/>
+        <TextObject Name="Text36" Left="661.5" Width="56.7" Height="28.35" Border.Lines="All" Border.Color="Gray" Text="ทำสัญญา" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 13pt, style=Bold"/>
+        <TextObject Name="Text37" Left="718.2" Width="37.8" Height="28.35" Border.Lines="All" Border.Color="Gray" Text="ลด" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 13pt, style=Bold"/>
+        <TextObject Name="Text38" Left="756" Width="47.25" Height="28.35" Border.Lines="All" Border.Color="Gray" Text="ส่งเงิน" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 13pt, style=Bold"/>
+        <TextObject Name="Text39" Left="803.25" Width="56.7" Height="28.35" Border.Lines="All" Border.Color="Gray" Text="วันที่เก็บ" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 13pt, style=Bold"/>
+        <TextObject Name="Text40" Left="859.95" Width="56.7" Height="28.35" Border.Lines="All" Border.Color="Gray" Text="วันที่ส่ง" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 13pt, style=Bold"/>
+        <TextObject Name="Text41" Left="973.35" Width="103.95" Height="28.35" Border.Lines="All" Border.Color="Gray" Text="ช่องทาง" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 13pt, style=Bold"/>
+        <TextObject Name="Text45" Left="916.65" Width="66.15" Height="28.35" Border.Lines="Left, Top, Bottom" Border.Color="Gray" Text="วันที่เอกสาร" VertAlign="Center" Font="DilleniaUPC, 13pt, style=Bold"/>
+      </DataHeaderBand>
+      <DataFooterBand Name="DataFooter1" Top="125.4" Width="1058.4" Height="28.35">
+        <TextObject Name="Text47" Left="737.1" Width="66.15" Height="28.35" Text="[Total_PayAmt]" HideZeros="true" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" HorzAlign="Right" VertAlign="Center" WordWrap="false" Font="DilleniaUPC, 13pt" Trimming="EllipsisCharacter"/>
+      </DataFooterBand>
+    </DataBand>
+    <ReportSummaryBand Name="ReportSummary1" Top="157.75" Width="1058.4" Height="28.35" PrintOnBottom="true">
+      <TextObject Name="Text22" Top="9.45" Width="255.15" Height="18.9" Text="ผู้จัดทำ................................................................." VertAlign="Center" Font="DilleniaUPC, 14pt"/>
+      <TextObject Name="Text23" Left="803.25" Top="9.45" Width="255.15" Height="18.9" Text="ผู้ตรวจสอบ.........................................................." VertAlign="Center" Font="DilleniaUPC, 14pt"/>
+    </ReportSummaryBand>
+    <PageFooterBand Name="PageFooter1" Top="190.1" Width="1058.4"/>
+  </ReportPage>
+</Report>

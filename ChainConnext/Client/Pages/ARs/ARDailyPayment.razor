@@ -1,0 +1,100 @@
+﻿@page "/ar/dailypayment"
+@using ChainConnext.Shared.BD
+
+@inject ContextMenuService ContextMenuService
+@inject ILogger<ARDailyPayment> Logger
+@inject DialogService dialogService
+@inject IJSRuntime jsRuntime
+@inject NavigationManager Navigation
+@inject IAccountService _accountService
+@inject NotificationService NotificationService
+@inject HttpClient Http
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+<PageTitle>ChainConnext > บัญชีลูกหนี้ > รับชำระประจำวัน</PageTitle>
+
+@if (!IsAccess)
+{
+    <RadzenText TextStyle="TextStyle.H1">ไม่มีสิทธิในส่วนนี้</RadzenText>
+}
+else
+{
+    <RadzenStack>
+        <RadzenRow AlignItems="AlignItems.Center">
+            <RadzenColumn Size="3">
+                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Wrap="FlexWrap.NoWrap" Gap="0.1rem">
+                    <RadzenButton Icon="chevron_left" Variant="Variant.Outlined" ButtonStyle="ButtonStyle.Info" Click=@(()=>OnButtonDateChange(-1)) IsBusy=@IsLoad />
+                    <RadzenDatePicker TValue="DateTime?" Value=@FindMonth Change="@(args => OnDateChange(args))" DateFormat="MM/yyyy" />
+                    <RadzenButton Icon="chevron_right" Variant="Variant.Outlined" ButtonStyle="ButtonStyle.Info" Click=@(()=>OnButtonDateChange(1)) IsBusy=@IsLoad />
+                </RadzenStack>
+            </RadzenColumn>
+            <RadzenColumn Size="1">
+                <RadzenButton Icon="search" ButtonStyle="ButtonStyle.Success" Class="w-100" IsBusy=@IsLoad Click=@GetMainData />
+            </RadzenColumn>
+            <RadzenColumn Size="1">
+                <RadzenButton Icon="download" ButtonStyle="ButtonStyle.Info" Class="w-100" IsBusy=@IsLoad />
+            </RadzenColumn>
+            <RadzenColumn Size="1">
+                <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Class="w-100" IsBusy=@IsLoad />
+            </RadzenColumn>
+            <RadzenColumn Size="8" SizeMD="5" Offset="3">
+                <RadzenCheckBox @bind-Value=@IsPosted Name="IsPosted" />
+                <RadzenLabel Text="แสดงเฉพาะไม่ติ๊กถังแดง" Component="IsPosted" Style="margin-left: 8px; vertical-align: middle;" />
+            </RadzenColumn>
+        </RadzenRow>
+        <RadzenRow>
+            <RadzenColumn Size="2">
+                <RadzenDataGrid IsLoading="@IsLoad" Data="@ListDate" TItem="BD_debtorpay" AllowColumnResize="true"
+                                AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" LogicalFilterOperator="LogicalFilterOperator.Or"
+                                AllowSorting="true" SelectionMode="DataGridSelectionMode.Single" @bind-Value=@selectedMain CellClick="@OnCellClick"
+                                PagerPosition="PagerPosition.Bottom" Style=@($"height:{(Height - 150)}px")>
+                    <Columns>
+                        <RadzenDataGridColumn TItem="BD_debtorpay" Property="paydate" Title="วันที่" FormatString="{0:dd/MM/yyyy}" />
+                    </Columns>
+                </RadzenDataGrid>
+            </RadzenColumn>
+            <RadzenColumn Size="10">
+                <RadzenDataGrid IsLoading="@IsLoad" Data="@ListDetail" TItem="BD_debtorpay" AllowColumnResize="true"
+                                AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" LogicalFilterOperator="LogicalFilterOperator.Or"
+                                AllowSorting="true" SelectionMode="DataGridSelectionMode.Single" @bind-Value=@selectedDetail
+                                AllowPaging="true" PageSize="20"
+                                PagerPosition="PagerPosition.Bottom" ColumnWidth="150px" Style=@($"height:{(Height - 150)}px")>
+                    <Columns>
+                        <RadzenDataGridColumn TItem="BD_debtorpay" Property="is_red" Title="ถังแดง" Frozen="true" Filterable="false" Sortable="false" Width="80px">
+                            <Template Context="Um">
+                                <RadzenCheckBox TriState="false" TValue="bool?" Value=@Um.is_red />
+                            </Template>
+                            <FooterTemplate>
+                                <b>Row(s)</b>
+                            </FooterTemplate>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="BD_debtorpay" Property="imdate" Title="วันที่ทำ" Frozen="true" FormatString="{0:dd/MM/yyyy}">
+                            <FooterTemplate>
+                                <b>@ListDetail.Count</b>
+                            </FooterTemplate>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="BD_debtorpay" Property="refno" Title="เลขอ้างอิง" Frozen="true">
+                            <FooterTemplate>
+                                <b>@ListDetail.Sum(x => x.amt).ToString("N2")</b>
+                            </FooterTemplate>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="BD_debtorpay" Property="contno" Title="เลชสัญญา" />
+                        <RadzenDataGridColumn TItem="BD_debtorpay" Property="status" Title="สถานะ" />
+                        <RadzenDataGridColumn TItem="BD_debtorpay" Property="mode" Title="กี่งวด" />
+                        <RadzenDataGridColumn TItem="BD_debtorpay" Property="stdate" Title="ณ วันที่" FormatString="{0:dd/MM/yyyy}" />
+                        <RadzenDataGridColumn TItem="BD_debtorpay" Property="model" Title="สินค้า" />
+                        <RadzenDataGridColumn TItem="BD_debtorpay" Property="payperiod" Title="งวดที่" />
+                        <RadzenDataGridColumn TItem="BD_debtorpay" Property="name" Title="ชื่อ - สกุล" />
+                        <RadzenDataGridColumn TItem="BD_debtorpay" Property="paydate" Title="วันที่ชำระ" FormatString="{0:dd/MM/yyyy}" />
+                        <RadzenDataGridColumn TItem="BD_debtorpay" Property="bookno" Title="เลขที่/เล่มที่" />
+                        <RadzenDataGridColumn TItem="BD_debtorpay" Property="invno" Title="เลขที่ใบเสร็จ" />
+                        <RadzenDataGridColumn TItem="BD_debtorpay" Property="amt" Title="จำนวนเงิน">
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="BD_debtorpay" Property="cashcode" Title="พงก." />
+                        <RadzenDataGridColumn TItem="BD_debtorpay" Property="cashname" Title="ชื่อ พงก." />
+                    </Columns>
+                </RadzenDataGrid>
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenStack>
+}

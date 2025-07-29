@@ -1,0 +1,489 @@
+﻿@page "/contractnew_old"
+@inject Radzen.DialogService dialogService
+@inject HttpClient Http
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject ILogger<ContractNew> Logger
+@inject IAccountService _accountService
+@inject NavigationManager Navigation
+@inject NotificationService NotificationService
+
+@if (isloaddata)
+{
+    <p><em>Loading...</em></p>
+    <div class="rz-datatable-loading-content">
+        @*<RadzenIcon Icon="refresh" Style="animation: rotation 500ms linear infinite" />*@
+        <div class="col text-center p-5">
+            <RadzenImage Path="images/community.svg" Style="display: block; width: 200px; margin-bottom: 40px;" />
+            <b>Loading, please wait...</b>
+        </div>
+    </div>
+}
+else
+{
+
+    <RadzenStack>
+        <RadzenRow>
+            <RadzenColumn Size="12" SizeMD="4">
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="5">
+                        <RadzenLabel Text="เลขอ้างอิง" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="5">
+                        <RadzenTextBox class="w-100" @bind-Value=@ConInf.RefNo Name="RefNo" />
+                        <RadzenRequiredValidator Component="RefNo" Text="เลขอ้างอิง is required" Popup="true" Style="position: absolute" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="2" SizeMD="2">
+                        <RadzenButton Icon="search" ButtonStyle="ButtonStyle.Success" IsBusy=@IsLoadRefNo BusyText="กำลังค้นหา" Click=@(() => FindRefNo("RefNo")) />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="4">
+                        <RadzenLabel Text="เลขสัญญา" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="8">
+                        <RadzenTextBox class="w-100" Name="CardNr" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="4">
+                        <RadzenLabel Text="วันที่ทำสัญญา" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="8">
+                        <RadzenDatePicker TValue="DateTime?" Value=@value Change="@(args => value = args)" DateFormat="dd/MM/yyyy" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="4">
+                        <RadzenLabel Text="สัญญาสารกรอง" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="8">
+                        <RadzenTextBox class="w-100" Name="CardNr" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="4">
+                        <RadzenLabel Text="เลขที่สัญญามือ" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="8">
+                        <RadzenTextBox class="w-100" Name="CardNr" />
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="4">
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="4">
+                        <RadzenLabel Text="เลขอ้างอิงใหม่" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="8">
+                        <RadzenTextBox class="w-100" Name="CardNr" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="4">
+                        <RadzenLabel Text="สถานะ" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="8">
+                        <RadzenTextBox class="w-100" Name="CardNr" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="4">
+                        <RadzenLabel Text="ปัญหา" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="8">
+                        <RadzenTextBox class="w-100" Name="CardNr" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="4">
+                        <RadzenLabel Text="คืนซาก" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="8">
+                        <RadzenTextBox class="w-100" Name="CardNr" />
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="4">
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="4">
+                        <RadzenLabel Text="รหัสสาขา" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="8">
+                        <RadzenTextBox class="w-100" Name="CardNr" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="4">
+                        <RadzenLabel Text="ณ วันที่" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="8">
+                        <RadzenDatePicker TValue="DateTime?" Value=@value Change="@(args => value = args)" DateFormat="dd/MM/yyyy">
+                            <FooterTemplate>
+                                <RadzenButton Click=@(args => @value = DateTime.Now) Text="Today" class="my-3 w-100" />
+                            </FooterTemplate>
+                        </RadzenDatePicker>
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="12" SizeMD="12">
+                        <RadzenTextBox class="w-100" Name="CardNr" Placeholder="ปัญหาเพิ่มเติม" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="4">
+                        <RadzenLabel Text="ประเภทการ์ด" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="8">
+                        <RadzenTextBox class="w-100" Name="CardNr" />
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenColumn>
+        </RadzenRow>
+        <RadzenRow>
+            <RadzenColumn Size="12" SizeMD="6">
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="3">
+                        <RadzenLabel Text="พง.ขาย" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="4">
+                        <RadzenTextBox class="w-100" Name="CardNr" Placeholder="รหัส Sale" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="5">
+                        <RadzenTextBox class="w-100" Name="CardNr" Placeholder="ชื่อ - สกุล Sale" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="3">
+                        <RadzenLabel Text="พง.ติดตั้ง" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="4">
+                        <RadzenTextBox class="w-100" Name="CardNr" Placeholder="รหัส Sale ติดตั้ง" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="5">
+                        <RadzenTextBox class="w-100" Name="CardNr" Placeholder="ชื่อ - สกุล ติดตั้ง" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="3">
+                        <RadzenLabel Text="พง.ตรวจสอบ" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="4">
+                        <RadzenTextBox class="w-100" Name="CardNr" Placeholder="รหัส Sale ตรวจสอบ" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="5">
+                        <RadzenTextBox class="w-100" Name="CardNr" Placeholder="ชื่อ - สกุล ตรวจสอบ" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="3">
+                        <RadzenLabel Text="พง.บริการ" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="4">
+                        <RadzenTextBox class="w-100" Name="CardNr" Placeholder="รหัส Sale บริการ" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="5">
+                        <RadzenTextBox class="w-100" Name="CardNr" Placeholder="ชื่อ - สกุล บริการ" />
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="6">
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="3">
+                        <RadzenTextBox class="w-100" Name="CardNr" Placeholder="ทีม" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="4" SizeMD="3">
+                        <RadzenLabel Text="ช่องทางการขาย" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="2">
+                        <RadzenTextBox class="w-100" Name="CardNr" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="3">
+                        <RadzenLabel Text="ไม่ขายผ่าน Tablets" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="9">
+                        <RadzenTextBox class="w-100" Name="CardNr" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="12" SizeMD="12">
+                        <RadzenTextBox class="w-100" Name="CardNr" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="3">
+                        <RadzenButton Text="ใช้พนักงานขาย" ButtonStyle="ButtonStyle.Primary" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="4" SizeMD="3">
+                        <RadzenLabel Text="ช่องทางเทเลเซลล์" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="2">
+                        <RadzenTextBox class="w-100" Name="CardNr" />
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenColumn>
+        </RadzenRow>
+        <RadzenRow>
+            <RadzenColumn Size="12" SizeMD="4">
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="4">
+                        <RadzenLabel Text="ลูกค้า" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="4" SizeMD="3">
+                        <RadzenTextBox class="w-100" Name="CardNr" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="4" SizeMD="5">
+                        <RadzenTextBox class="w-100" Name="CardNr" Placeholder="ชื่อ" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="4">
+                        <RadzenLabel Text="เลขบัตรประชาชน" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="8">
+                        <RadzenTextBox class="w-100" Name="CardNr" />
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="4">
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="5">
+                        <RadzenTextBox class="w-100" Name="CardNr" Placeholder="สกุล" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="4" SizeMD="5">
+                        <RadzenTextBox class="w-100" Name="CardNr" Placeholder="ประเภทบัตร" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="3">
+                        <RadzenLabel Text="วันเกิด" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="4" SizeMD="5">
+                        <RadzenDatePicker TValue="DateTime?" Value=@value Change="@(args => value = args)" DateFormat="dd/MM/yyyy">
+                            <FooterTemplate>
+                                <RadzenButton Click=@(args => @value = DateTime.Now) Text="Today" class="my-3 w-100" />
+                            </FooterTemplate>
+                        </RadzenDatePicker>
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="4">
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="12" SizeMD="12">
+                        <RadzenTextBox class="w-100" Name="CardNr" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="4">
+                        <RadzenLabel Text="บัตรหมดอายุ" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="4" SizeMD="5">
+                        <RadzenDatePicker TValue="DateTime?" Value=@value Change="@(args => value = args)" DateFormat="dd/MM/yyyy" />
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenColumn>
+        </RadzenRow>
+        <RadzenRow>
+            <RadzenColumn Size="12">
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="1">
+                        <RadzenLabel Text="ที่อยู่ติดตั้ง" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="6">
+                        <RadzenTextBox class="w-100" Name="CardNr" Placeholder="ที่อยู่" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="1">
+                        <RadzenLabel Text="ที่อยู่ติดตั้ง" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="3">
+                        <RadzenTextBox class="w-100" Name="CardNr" Placeholder="จังหวัด" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="3">
+                        <RadzenTextBox class="w-100" Name="CardNr" Placeholder="อำเภอ" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="3">
+                        <RadzenTextBox class="w-100" Name="CardNr" Placeholder="ตำบล" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="2">
+                        <RadzenTextBox class="w-100" Name="CardNr" Placeholder="ไปรษณีย์" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="1">
+                        <RadzenLabel Text="เบอร์โทร" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="2">
+                        <RadzenTextBox class="w-100" Name="CardNr" Placeholder="เบอร์โทร" />
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenColumn>
+        </RadzenRow>
+        <RadzenRow>
+            <RadzenColumn Size="12">
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="1">
+                        <RadzenLabel Text="ที่อยู่ตามบัตร" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="6">
+                        <RadzenTextBox class="w-100" Name="CardNr" Placeholder="ที่อยู่" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="1">
+                        <RadzenButton Text="ใช้ที่อยู่ติดตั้ง" ButtonStyle="ButtonStyle.Primary" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="3">
+                        <RadzenTextBox class="w-100" Name="CardNr" Placeholder="จังหวัด" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="3">
+                        <RadzenTextBox class="w-100" Name="CardNr" Placeholder="อำเภอ" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="3">
+                        <RadzenTextBox class="w-100" Name="CardNr" Placeholder="ตำบล" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="2">
+                        <RadzenTextBox class="w-100" Name="CardNr" Placeholder="ไปรษณีย์" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="1">
+                        <RadzenLabel Text="เบอร์โทร" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="2">
+                        <RadzenTextBox class="w-100" Name="CardNr" Placeholder="เบอร์โทร" />
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenColumn>
+        </RadzenRow>
+        <RadzenRow>
+            <RadzenColumn Size="12" SizeMD="4">
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="4">
+                        <RadzenLabel Text="หมายเลขเครื่อง" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="8">
+                        <RadzenTextBox class="w-100" Name="CardNr" />
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenColumn>
+        </RadzenRow>
+        <RadzenRow>
+            <RadzenColumn Size="12" SizeMD="12">
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="2" SizeMD="1">
+                        <RadzenLabel Text="สินค้า" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="8">
+                        <RadzenDropDown @bind-Value=@ConInf.Model Placeholder="Select something" class="w-100"
+                                        Data=@PmdData TextProperty="ModelDesc" ValueProperty="MODEL"
+                                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                        AllowFiltering="true">
+                        </RadzenDropDown>
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenColumn>
+        </RadzenRow>
+        <RadzenRow>
+            <RadzenColumn Size="12" SizeMD="6">
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="2" SizeMD="2">
+                        <RadzenLabel Text="รุ่น/แบบ" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="10" SizeMD="10">
+                        <RadzenTextBox class="w-100" Name="CardNr" />
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="6">
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="2" SizeMD="2">
+                        <RadzenLabel Text="ลักษณะ" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="10" SizeMD="10">
+                        <RadzenTextBox class="w-100" Name="CardNr" />
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenColumn>
+        </RadzenRow>
+        <RadzenRow>
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="5">
+                        <RadzenLabel Text="ราคาเงินสด" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="7">
+                        <RadzenTextBox class="w-100" Name="CardNr" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="5">
+                        <RadzenLabel Text="จำนวนงวด" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="7">
+                        <RadzenTextBox class="w-100" Name="CardNr" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="5">
+                        <RadzenLabel Text="ค่างวดๆ 1" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="7">
+                        <RadzenTextBox class="w-100" Name="CardNr" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="5">
+                        <RadzenLabel Text="หลังหักส่วนลด" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="7">
+                        <RadzenTextBox class="w-100" Name="CardNr" />
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="5">
+                        <RadzenLabel Text="ราคาเงินผ่อน" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="7">
+                        <RadzenTextBox class="w-100" Name="CardNr" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="5">
+                        <RadzenLabel Text="ค่างวดๆ 2 ขึ้นไป" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="7">
+                        <RadzenTextBox class="w-100" Name="CardNr" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="5">
+                        <RadzenLabel Text="ส่วนลด" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="7">
+                        <RadzenTextBox class="w-100" Name="CardNr" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="5">
+                        <RadzenLabel Text="ชำระงวดแรก" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="7">
+                        <RadzenTextBox class="w-100" Name="CardNr" />
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenColumn>
+        </RadzenRow>
+
+        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="1rem" Class="rz-mt-8 rz-mb-4">
+            <RadzenButton ButtonType="ButtonType.Submit" Icon="save" Text="Save" IsBusy=@isLoading BusyText="Saving" />
+            <RadzenButton ButtonStyle="ButtonStyle.Light" Icon="cancel" style="display: inline-block; margin-left: 10px;" Text="Cancel" IsBusy=@isLoading />
+            <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Text="Delete" IsBusy=@isLoading BusyText="Deleting" />
+        </RadzenStack>
+    </RadzenStack>
+
+}

@@ -1,0 +1,432 @@
+﻿@page "/ar/detail"
+
+@inject ContextMenuService ContextMenuService
+@inject ILogger<ARDetail> Logger
+@inject DialogService dialogService
+@inject IJSRuntime jsRuntime
+@inject NavigationManager Navigation
+@inject IAccountService _accountService
+@inject NotificationService NotificationService
+@inject HttpClient Http
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+@if (!IsAccess)
+{
+    <RadzenText TextStyle="TextStyle.H1">ไม่มีสิทธิในส่วนนี้</RadzenText>
+}
+else
+{
+    <RadzenStack>
+        <RadzenRow class="row justify-content-start">
+            <RadzenColumn Size="12" SizeMD="7" class="col-7  d-flex">
+                <RadzenDropDown @bind-Value=@findSelected
+                                Data=@findModes TextProperty="FindName" ValueProperty="FindID"
+                                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                AllowFiltering="true">
+                </RadzenDropDown>
+                <RadzenTextBox type="search" Placeholder="ค้นหา..." Change=@(args => OnChange(args, "Find")) @bind-value=@SearchValue MaxLength="250" Style="text-transform: uppercase;" />
+                <RadzenButton Text="ค้นหา" Icon="search" ButtonStyle="ButtonStyle.Success" IsBusy=@IsLoad BusyText="กำลังค้นหา" Click=@(() => Find(null,"Find")) />
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="5" class="col-5  d-flex justify-content-end">
+
+            </RadzenColumn>
+        </RadzenRow>
+        <RadzenRow>
+            <RadzenColumn Size="12" SizeMD="5">
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="4">
+                        <RadzenLabel Text="เลขอ้างอิง" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="8">
+                        <RadzenTextBox class="w-100" @bind-Value=@Dba.refno Name="refno" ReadOnly="true" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="4">
+                        <RadzenLabel Text="เลขสัญญา" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="8">
+                        <RadzenTextBox class="w-100" @bind-Value=@Dba.contno Name="contno" ReadOnly="true" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenFieldset>
+                    <HeaderTemplate>
+                        <span class="d-inline-flex align-items-center align-middle">
+                            <RadzenIcon Icon="account_box" class="me-1" /><b>สถานะ</b>
+                        </span>
+                    </HeaderTemplate>
+                    <ChildContent>
+                        <RadzenRow AlignItems="AlignItems.Center">
+                            <RadzenColumn Size="4" SizeMD="4">
+                                <RadzenLabel Text="ปฏิบัติการ" />
+                            </RadzenColumn>
+                            <RadzenColumn Size="8" SizeMD="3">
+                                <RadzenTextBox class="w-100" @bind-Value=@Dba.BD_Status Name="refno" Style="text-align: center;" />
+                            </RadzenColumn>
+                            <RadzenColumn Size="8" SizeMD="5">
+                                @if (@Dba.BD_StatusDate != null)
+                                {
+                                    <RadzenTextBox Class="w-100" Value=@Dba.BD_StatusDate.Value.ToString("dd/MM/yyyy") ReadOnly="true" />
+                                }
+                                else
+                                {
+                                    <RadzenTextBox Class="w-100" ReadOnly="true" />
+                                }
+                            </RadzenColumn>
+                        </RadzenRow>
+                        <RadzenRow AlignItems="AlignItems.Center">
+                            <RadzenColumn Size="4" SizeMD="4">
+                                <RadzenLabel Text="N" />
+                            </RadzenColumn>
+                            <RadzenColumn Size="8" SizeMD="3">
+                                <RadzenTextBox class="w-100" @bind-Value=@Dba.status1 Name="refno" Style="text-align: center;" />
+                            </RadzenColumn>
+                            <RadzenColumn Size="8" SizeMD="5">
+                                @if (@Dba.stdate1 != null)
+                                {
+                                    <RadzenTextBox Class="w-100" Value=@Dba.stdate1.Value.ToString("dd/MM/yyyy") ReadOnly="true" />
+                                }
+                                else
+                                {
+                                    <RadzenTextBox Class="w-100" ReadOnly="true" />
+                                }
+                            </RadzenColumn>
+                        </RadzenRow>
+                        <RadzenRow AlignItems="AlignItems.Center">
+                            <RadzenColumn Size="4" SizeMD="4">
+                                <RadzenLabel Text="V" />
+                            </RadzenColumn>
+                            <RadzenColumn Size="8" SizeMD="3">
+                                <RadzenTextBox class="w-100" @bind-Value=@Dba.status2 Name="refno" Style="text-align: center;" ReadOnly="true" />
+                            </RadzenColumn>
+                            <RadzenColumn Size="8" SizeMD="5">
+                                @if (@Dba.stdate2 != null)
+                                {
+                                    <RadzenTextBox Class="w-100" Value=@Dba.stdate2.Value.ToString("dd/MM/yyyy") ReadOnly="true" />
+                                }
+                                else
+                                {
+                                    <RadzenTextBox Class="w-100" ReadOnly="true" />
+                                }
+                            </RadzenColumn>
+                        </RadzenRow>
+                        <RadzenRow AlignItems="AlignItems.Center">
+                            <RadzenColumn Size="4" SizeMD="4">
+                                <RadzenLabel Text="W" />
+                            </RadzenColumn>
+                            <RadzenColumn Size="8" SizeMD="3">
+                                <RadzenTextBox class="w-100" @bind-Value=@Dba.status3 Name="refno" Style="text-align: center;" ReadOnly="true" />
+                            </RadzenColumn>
+                            <RadzenColumn Size="8" SizeMD="5">
+                                @if (@Dba.stdate3 != null)
+                                {
+                                    <RadzenTextBox Class="w-100" Value=@Dba.stdate3.Value.ToString("dd/MM/yyyy") ReadOnly="true" />
+                                }
+                                else
+                                {
+                                    <RadzenTextBox Class="w-100" ReadOnly="true" />
+                                }
+                            </RadzenColumn>
+                        </RadzenRow>
+                        <RadzenRow AlignItems="AlignItems.Center">
+                            <RadzenColumn Size="4" SizeMD="4">
+                                <RadzenLabel Text="B" />
+                            </RadzenColumn>
+                            <RadzenColumn Size="8" SizeMD="3">
+                                <RadzenTextBox class="w-100" @bind-Value=@Dba.status4 Name="refno" Style="text-align: center;" ReadOnly="true" />
+                            </RadzenColumn>
+                            <RadzenColumn Size="8" SizeMD="5">
+                                @if (@Dba.stdate4 != null)
+                                {
+                                    <RadzenTextBox Class="w-100" Value=@Dba.stdate4.Value.ToString("dd/MM/yyyy") ReadOnly="true" />
+                                }
+                                else
+                                {
+                                    <RadzenTextBox Class="w-100" ReadOnly="true" />
+                                }
+                            </RadzenColumn>
+                        </RadzenRow>
+                        <RadzenRow AlignItems="AlignItems.Center">
+                            <RadzenColumn Size="4" SizeMD="4">
+                                <RadzenLabel Text="BB" />
+                            </RadzenColumn>
+                            <RadzenColumn Size="8" SizeMD="3">
+                                <RadzenTextBox class="w-100" @bind-Value=@Dba.status5 Name="refno" Style="text-align: center;" ReadOnly="true" />
+                            </RadzenColumn>
+                            <RadzenColumn Size="8" SizeMD="5">
+                                @if (@Dba.stdate5 != null)
+                                {
+                                    <RadzenTextBox Class="w-100" Value=@Dba.stdate5.Value.ToString("dd/MM/yyyy") ReadOnly="true" />
+                                }
+                                else
+                                {
+                                    <RadzenTextBox Class="w-100" ReadOnly="true" />
+                                }
+                            </RadzenColumn>
+                        </RadzenRow>
+                        <RadzenRow AlignItems="AlignItems.Center">
+                            <RadzenColumn Size="4" SizeMD="4">
+                                <RadzenLabel Text="รับคืนสินค้า" />
+                            </RadzenColumn>
+                            <RadzenColumn Size="8" SizeMD="3">
+                                <RadzenTextBox class="w-100" @bind-Value=@Dba.tocode Name="refno" Style="text-align: center;" ReadOnly="true" />
+                            </RadzenColumn>
+                            <RadzenColumn Size="8" SizeMD="4">
+                                @if (@Dba.todate != null)
+                                {
+                                    <RadzenTextBox Class="w-100" Value=@Dba.todate.Value.ToString("dd/MM/yyyy") ReadOnly="true" />
+                                }
+                                else
+                                {
+                                    <RadzenTextBox Class="w-100" ReadOnly="true" />
+                                }
+                            </RadzenColumn>
+                            <RadzenColumn Size="4" SizeMD="1">
+                                <RadzenButton Icon="link" IsBusy=@IsLoad Click=@(() => FindTo(Dba.torefno)) />
+                            </RadzenColumn>
+                        </RadzenRow>
+                        <RadzenRow AlignItems="AlignItems.Center">
+                            <RadzenColumn Size="4" SizeMD="4">
+                                <RadzenLabel Text="ที่มา" />
+                            </RadzenColumn>
+                            <RadzenColumn Size="8" SizeMD="3">
+                                <RadzenTextBox class="w-100" @bind-Value=@Dba.fromcode Name="refno" Style="text-align: center;" ReadOnly="true" />
+                            </RadzenColumn>
+                            <RadzenColumn Size="8" SizeMD="4">
+                                @if (@Dba.fromdate != null)
+                                {
+                                    <RadzenTextBox Class="w-100" Value=@Dba.fromdate.Value.ToString("dd/MM/yyyy") ReadOnly="true" />
+                                }
+                                else
+                                {
+                                    <RadzenTextBox Class="w-100" ReadOnly="true" />
+                                }
+                            </RadzenColumn>
+                            <RadzenColumn Size="4" SizeMD="1">
+                                <RadzenButton Icon="link" IsBusy=@IsLoad Click=@(() => FindTo(Dba.fromrefno)) />
+                            </RadzenColumn>
+                        </RadzenRow>
+                    </ChildContent>
+                </RadzenFieldset>
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="5">
+                        <RadzenLabel Text="สินค้า" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="7">
+                        <RadzenTextBox class="w-100" @bind-Value=@Dba.model ReadOnly="true" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="5">
+                        <RadzenLabel Text="เลขเครื่อง" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="7">
+                        <RadzenTextBox class="w-100" @bind-Value=@Dba.serialno ReadOnly="true" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="5">
+                        <RadzenLabel Text="สด" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="7" SizeMD="6">
+                        <RadzenNumeric ShowUpDown="false" TValue="double" Format="#,###" @bind-Value=@Dba.sales TextAlign="TextAlign.Right" ReadOnly="true" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="5">
+                        <RadzenLabel Text="ผ่อน" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="7">
+                        <RadzenNumeric ShowUpDown="false" TValue="double" Format="#,###" @bind-Value=@Dba.credit TextAlign="TextAlign.Right" ReadOnly="true" />
+                    </RadzenColumn>
+                    @* <RadzenColumn Size="1" SizeMD="1">
+                        <RadzenLabel Text="สด" />
+                    </RadzenColumn> *@
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="5">
+                        <RadzenLabel Text="จำนวนงวด" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="7">
+                        <RadzenTextBox class="w-100" @bind-Value=@Dba.mode Name="refno" Style="text-align: center;" ReadOnly="true" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="5">
+                        <RadzenLabel Text="งวด1" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="7">
+                        <RadzenNumeric ShowUpDown="false" TValue="double" Format="#,###" @bind-Value=@Dba.premium2 TextAlign="TextAlign.Right" ReadOnly="true" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="5">
+                        <RadzenLabel Text="งวดต่อไป" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="7">
+                        <RadzenNumeric ShowUpDown="false" TValue="double" Format="#,###" @bind-Value=@Dba.premium TextAlign="TextAlign.Right" ReadOnly="true" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="5">
+                        <RadzenLabel Text="ลดงวดแรก" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="7">
+                        <RadzenNumeric ShowUpDown="false" TValue="double" Format="#,###" @bind-Value=@Dba.firstdisc TextAlign="TextAlign.Right" ReadOnly="true" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="5">
+                        <RadzenLabel Text="หลังหัก" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="7">
+                        <RadzenNumeric ShowUpDown="false" TValue="double" Format="#,###" @bind-Value=@Dba.netcredit TextAlign="TextAlign.Right" ReadOnly="true" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="5">
+                        <RadzenLabel Text="รำชะงวดแรก" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="7">
+                        <RadzenNumeric ShowUpDown="false" TValue="double" Format="#,###" @bind-Value=@Dba.nextcredit TextAlign="TextAlign.Right" ReadOnly="true" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="5">
+                        <RadzenLabel Text="ลดอื่นๆ" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="7">
+                        <RadzenNumeric ShowUpDown="false" TValue="double" Format="#,###" @bind-Value=@Dba.disc TextAlign="TextAlign.Right" ReadOnly="true" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="5">
+                        <RadzenLabel Text="ลดตัดสด" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="7">
+                        <RadzenNumeric ShowUpDown="false" TValue="double" Format="#,###" @bind-Value=@Dba.disc1 TextAlign="TextAlign.Right" ReadOnly="true" />
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="4">
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="5">
+                        <RadzenLabel Text="ตั้งหนี้" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="7">
+                        <RadzenNumeric ShowUpDown="false" TValue="double" Format="#,###.00" @bind-Value=@Dba.netcredit TextAlign="TextAlign.Right" ReadOnly="true" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="5">
+                        <RadzenLabel Text="ราคาขาย" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="7">
+                        <RadzenNumeric ShowUpDown="false" TValue="double" Format="#,###.00" @bind-Value=@Dba.credit TextAlign="TextAlign.Right" ReadOnly="true" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="5">
+                        <RadzenLabel Text="รายได้รอตัด" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="7">
+                        <RadzenNumeric ShowUpDown="false" TValue="double" Format="#,###.00" @bind-Value=@Dba.ur TextAlign="TextAlign.Right" ReadOnly="true" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="5">
+                        <RadzenLabel Text="ภาษีรอตัด" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="7">
+                        <RadzenNumeric ShowUpDown="false" TValue="double" Format="#,###.00" @bind-Value=@Dba.uv TextAlign="TextAlign.Right" ReadOnly="true" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="5">
+                        <RadzenLabel Text="อัตราดอกผล" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="7">
+                        <RadzenNumeric ShowUpDown="false" TValue="double" Format="#,###.00" @bind-Value=@Dba.irr TextAlign="TextAlign.Right" ReadOnly="true" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="5">
+                        <RadzenLabel Text="ชำระแล้ว" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="7">
+                        <RadzenNumeric ShowUpDown="false" TValue="double" Format="#,###.00" @bind-Value=@Dba.debitamt TextAlign="TextAlign.Right" ReadOnly="true" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="5">
+                        <RadzenLabel Text="รวมลดหนี้" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="7">
+                        <RadzenNumeric ShowUpDown="false" TValue="double" Format="#,###.00" @bind-Value=@Dba.disc4 TextAlign="TextAlign.Right" ReadOnly="true" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="5">
+                        <RadzenLabel Text="รับชำระสัญญาเดิม" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="7">
+                        <RadzenNumeric ShowUpDown="false" TValue="double" Format="#,###.00" @bind-Value=@Dba.shiftamt TextAlign="TextAlign.Right" ReadOnly="true" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="5">
+                        <RadzenLabel Text="ชำระเกิน" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="7">
+                        <RadzenNumeric ShowUpDown="false" TValue="double" Format="#,###.00" @bind-Value=@Dba.overamt TextAlign="TextAlign.Right" ReadOnly="true" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="5">
+                        <RadzenLabel Text="ค้างชำระ" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="7">
+                        <RadzenNumeric ShowUpDown="false" TValue="double" Format="#,###.00" @bind-Value=@Dba.balance TextAlign="TextAlign.Right" ReadOnly="true" />
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenColumn>
+        </RadzenRow>
+        <RadzenRow>
+            <RadzenColumn Size="12">
+                <RadzenTabs @bind-SelectedIndex=@selectedIndex Change=@LoadTab>
+                    <Tabs>
+                        <RadzenTabsItem Text="รายการชำระค่างวด">
+                            <ARMastPayList pDbta=@Dba pHeight=@Height pWidth=@Width />
+                        </RadzenTabsItem>
+                        <RadzenTabsItem Text="รายการนำส่งภาษีขาย">
+                            <ARTaxList pDbta=@Dba pHeight=@Height pWidth=@Width />
+                        </RadzenTabsItem>
+                        <RadzenTabsItem Text="รายการภาษีรอตัด รายได้รอตัด">
+                            <ARUrUvList pDbta=@Dba pHeight=@Height pWidth=@Width />
+                        </RadzenTabsItem>
+                        <RadzenTabsItem Text="อายุลูกหนี้">
+                            <ARAgingList pDbta=@Dba pHeight=@Height pWidth=@Width />
+                        </RadzenTabsItem>
+                        <RadzenTabsItem Text="ลูกหนี้แบ่งตามกลุ่ม">
+
+                        </RadzenTabsItem>
+                        <RadzenTabsItem Text="รายการเปลี่ยนสัญญา">
+                            @* <RadzenTabs @bind-SelectedIndex=@selectedIndexChg Change=@LoadTabChg>
+                                <Tabs>
+                                    <RadzenTabsItem Text="สวม">
+                                        <ChainConnext.Client.Pages.Contracts.ContractCloneLogList pConInf=@ConInf pHeight=@Height pWidth=@Width bD_ChgConts=@bD_ChgConts IsLoading=@IsLoad />
+                                    </RadzenTabsItem>
+                                    <RadzenTabsItem Text="เปลี่ยน">
+                                        <ChainConnext.Client.Pages.Contracts.ContractReNewLogList pConInf=@ConInf pHeight=@Height pWidth=@Width bD_ChgModels=@bD_ChgModels IsLoading=@IsLoad />
+                                    </RadzenTabsItem>
+                                </Tabs>
+                            </RadzenTabs> *@
+                        </RadzenTabsItem>
+                    </Tabs>
+                </RadzenTabs>
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenStack>
+}

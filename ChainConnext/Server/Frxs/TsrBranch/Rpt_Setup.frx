@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="CSharp" ReportInfo.Created="10/19/2016 10:16:02" ReportInfo.Modified="12/03/2018 09:55:50" ReportInfo.CreatorVersion="2015.1.3.0">
+  <Dictionary>
+    <TableDataSource Name="RptData" ReferenceName="RptData.RptData" DataType="System.Int32" Enabled="true">
+      <Column Name="SetupCode" DataType="System.String"/>
+      <Column Name="SetupName" DataType="System.String"/>
+      <Column Name="ContractDate" DataType="System.DateTime"/>
+      <Column Name="RO" DataType="System.Int32"/>
+      <Column Name="UV" DataType="System.Int32"/>
+      <Column Name="UF" DataType="System.Int32"/>
+      <Column Name="SA" DataType="System.Int32"/>
+      <Column Name="SumAll" DataType="System.Int32"/>
+      <Column Name="BranchCode" DataType="System.String"/>
+      <Column Name="BranchName" DataType="System.String"/>
+      <Column Name="TakeOut" DataType="System.Int32"/>
+      <Column Name="Exchange" DataType="System.Int32"/>
+      <Column Name="SumT" DataType="System.Int32"/>
+    </TableDataSource>
+    <Parameter Name="pStartDate" DataType="System.String"/>
+    <Parameter Name="pEndDate" DataType="System.String"/>
+    <Total Name="Total_RO" Expression="[RptData.RO]" Evaluator="Data1" PrintOn="DataFooter1"/>
+    <Total Name="Total_UV" Expression="[RptData.UV]" Evaluator="Data1" PrintOn="DataFooter1"/>
+    <Total Name="Total_UF" Expression="[RptData.UF]" Evaluator="Data1" PrintOn="DataFooter1"/>
+    <Total Name="Total_SA" Expression="[RptData.SA]" Evaluator="Data1" PrintOn="DataFooter1"/>
+    <Total Name="Total_All" Expression="[RptData.SumAll]" Evaluator="Data1" PrintOn="DataFooter1"/>
+    <Total Name="Total_TakeOut" Expression="[RptData.TakeOut]" Evaluator="Data1" PrintOn="DataFooter1"/>
+    <Total Name="Total_Exchange" Expression="[RptData.Exchange]" Evaluator="Data1" PrintOn="DataFooter1"/>
+    <Total Name="Total_SumT" Expression="[RptData.SumT]" Evaluator="Data1" PrintOn="DataFooter1"/>
+    <Total Name="Total_AAAS" Expression="[RptData.AAAS]" Evaluator="Data1" PrintOn="DataFooter1"/>
+  </Dictionary>
+  <ReportPage Name="Page1" Landscape="true" PaperWidth="290" PaperHeight="210" Columns.Count="2" Columns.Width="130" Columns.Positions="0,130">
+    <ReportTitleBand Name="ReportTitle1" Width="1020.6"/>
+    <PageHeaderBand Name="PageHeader1" Top="4" Width="1020.6" Height="9.45">
+      <TextObject Name="Text19" Top="-18.9" Width="1020.6" Height="28.35" Text="รายงานการติดตั้ง ประจำ[RptData.BranchName] ประจำวันที่ [pStartDate] ถึง [pEndDate]" HorzAlign="Center" Font="DilleniaUPC, 16pt, style=Bold"/>
+    </PageHeaderBand>
+    <GroupHeaderBand Name="GroupHeader1" Top="17.45" Width="491.4" Condition="[RptData.SetupCode]" KeepTogether="true">
+      <DataBand Name="Data1" Top="91.6" Width="491.4" Height="18.9" DataSource="RptData">
+        <TextObject Name="Text1" Width="94.5" Height="18.9" Border.Lines="All" Border.Color="Silver" Text="[RptData.ContractDate]" Format="Date" Format.Format="dd/MM/yyyy" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 14pt"/>
+        <TextObject Name="Text29" Left="94.5" Width="47.25" Height="18.9" Border.Lines="All" Border.Color="Silver" Text="[RptData.RO]" HideZeros="true" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 14pt"/>
+        <TextObject Name="Text30" Left="141.75" Width="47.25" Height="18.9" Border.Lines="All" Border.Color="Silver" Text="[RptData.UV]" HideZeros="true" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 14pt"/>
+        <TextObject Name="Text31" Left="189" Width="47.25" Height="18.9" Border.Lines="All" Border.Color="Silver" Text="[RptData.UF]" HideZeros="true" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 14pt"/>
+        <TextObject Name="Text32" Left="236.25" Width="47.25" Height="18.9" Border.Lines="All" Border.Color="Silver" Text="[RptData.SA]" HideZeros="true" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 14pt"/>
+        <TextObject Name="Text33" Left="340.2" Width="47.25" Height="18.9" Border.Lines="All" Border.Color="Silver" Text="[RptData.SumAll]" HideZeros="true" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 14pt"/>
+        <TextObject Name="Text40" Left="387.45" Width="47.25" Height="18.9" Border.Lines="All" Border.Color="Silver" Text="[RptData.TakeOut]" HideZeros="true" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" HorzAlign="Center" Font="DilleniaUPC, 14pt"/>
+        <TextObject Name="Text41" Left="434.7" Width="47.25" Height="18.9" Border.Lines="All" Border.Color="Silver" Text="[RptData.Exchange]" HideZeros="true" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" HorzAlign="Center" Font="DilleniaUPC, 14pt"/>
+        <TextObject Name="Text47" Left="283.5" Width="56.7" Height="18.9" Border.Lines="All" Border.Color="Silver" Text="[RptData.AAAS]" HideZeros="true" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 14pt"/>
+        <DataHeaderBand Name="DataHeader1" Top="21.45" Width="491.4" Height="66.15" RepeatOnEveryPage="true">
+          <TextObject Name="Text23" Left="94.5" Top="47.25" Width="47.25" Height="18.9" Border.Lines="All" Border.Color="Silver" Text="Roma" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 14pt"/>
+          <TextObject Name="Text24" Left="141.75" Top="47.25" Width="47.25" Height="18.9" Border.Lines="All" Border.Color="Silver" Text="UV" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 14pt"/>
+          <TextObject Name="Text26" Left="189" Top="47.25" Width="47.25" Height="18.9" Border.Lines="All" Border.Color="Silver" Text="UF" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 14pt"/>
+          <TextObject Name="Text28" Left="236.25" Top="47.25" Width="47.25" Height="18.9" Border.Lines="All" Border.Color="Silver" Text="SA" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 14pt"/>
+          <TextObject Name="Text2" Top="28.35" Width="94.5" Height="37.8" Border.Lines="All" Border.Color="Silver" Text="วันที่ติดตั้ง" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 14pt"/>
+          <TextObject Name="Text21" Left="94.5" Top="28.35" Width="245.7" Height="18.9" Border.Lines="All" Border.Color="Silver" Text="จำนวนการติดตั้ง" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 14pt"/>
+          <TextObject Name="Text34" Left="340.2" Top="28.35" Width="47.25" Height="37.8" Border.Lines="All" Border.Color="Silver" Text="รวม" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 14pt"/>
+          <TextObject Name="Text20" Width="330.75" Height="28.35" Text="[RptData.SetupCode] [RptData.SetupName]" HorzAlign="Center" Font="DilleniaUPC, 14pt, style=Bold"/>
+          <TextObject Name="Text42" Left="387.45" Top="28.35" Width="47.25" Height="37.8" Border.Lines="All" Border.Color="Silver" Text="ถอด" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 14pt"/>
+          <TextObject Name="Text43" Left="434.7" Top="28.35" Width="47.25" Height="37.8" Border.Lines="All" Border.Color="Silver" Text="เปลี่ยน" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 14pt"/>
+          <TextObject Name="Text46" Left="283.5" Top="47.25" Width="56.7" Height="18.9" Border.Lines="All" Border.Color="Silver" Text="AA/AS" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 14pt"/>
+        </DataHeaderBand>
+        <DataFooterBand Name="DataFooter1" Top="114.5" Width="491.4" Height="18.9">
+          <TextObject Name="Text3" Left="94.5" Width="47.25" Height="18.9" Border.Lines="All" Border.Color="Silver" Text="[Total_RO]" HideZeros="true" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 14pt"/>
+          <TextObject Name="Text4" Left="141.75" Width="47.25" Height="18.9" Border.Lines="All" Border.Color="Silver" Text="[Total_UV]" HideZeros="true" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 14pt"/>
+          <TextObject Name="Text5" Left="189" Width="47.25" Height="18.9" Border.Lines="All" Border.Color="Silver" Text="[Total_UF]" HideZeros="true" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 14pt"/>
+          <TextObject Name="Text6" Left="236.25" Width="47.25" Height="18.9" Border.Lines="All" Border.Color="Silver" Text="[Total_SA]" HideZeros="true" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 14pt"/>
+          <TextObject Name="Text7" Left="340.2" Width="47.25" Height="18.9" Border.Lines="All" Border.Color="Silver" Text="[Total_All]" HideZeros="true" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 14pt"/>
+          <TextObject Name="Text35" Width="94.5" Height="18.9" Border.Lines="All" Border.Color="Silver" Text="รวม" Format="Date" Format.Format="dd/MM/yyyy" HorzAlign="Center" Font="DilleniaUPC, 14pt"/>
+          <TextObject Name="Text44" Left="387.45" Width="47.25" Height="18.9" Border.Lines="All" Border.Color="Silver" Text="[Total_TakeOut]" HideZeros="true" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 14pt"/>
+          <TextObject Name="Text45" Left="434.7" Width="47.25" Height="18.9" Border.Lines="All" Border.Color="Silver" Text="[Total_Exchange]" HideZeros="true" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 14pt"/>
+          <TextObject Name="Text48" Left="283.5" Width="56.7" Height="18.9" Border.Lines="All" Border.Color="Silver" Text="[Total_AAAS]" HideZeros="true" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" HorzAlign="Center" VertAlign="Center" Font="DilleniaUPC, 14pt"/>
+        </DataFooterBand>
+        <Sort>
+          <Sort Expression="[RptData.ContractDate]"/>
+        </Sort>
+      </DataBand>
+    </GroupHeaderBand>
+  </ReportPage>
+</Report>

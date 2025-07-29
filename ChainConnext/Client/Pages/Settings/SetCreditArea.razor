@@ -1,0 +1,53 @@
+﻿@page "/setting/creditarea"
+@using ChainConnext.Shared.BD;
+@inject HttpClient Http
+@inject ILogger<SetCreditArea> Logger
+@inject IAccountService _accountService
+@inject NavigationManager Navigation
+@inject IJSRuntime jsRuntime
+@inject NotificationService NotificationService
+@inject DialogService dialogService
+
+@if (!IsAccess)
+{
+    <RadzenText TextStyle="TextStyle.H1">ไม่มีสิทธิในส่วนนี้</RadzenText>
+}
+else
+{
+    <RadzenRow>
+        <RadzenColumn Size="4" SizeMD="2">
+            <RadzenButton ButtonStyle="ButtonStyle.Success" Text="เพิ่ม" Class="w-100 mb-4" Icon="add" Click=@(() => OpenEdit(new CArea(),"Add")) Visible=@IsSave />
+        </RadzenColumn>
+        <RadzenColumn Size="4" SizeMD="2">
+            <RadzenButton ButtonStyle="ButtonStyle.Success" Text="Export" Class="w-100 mb-4" Icon="get_app" Click=@ExportToExcel Visible=@IsSave />
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenRow>
+        <RadzenColumn Size="12">
+            <RadzenDataGrid IsLoading="@isLoading" Data="@cAreas" TItem="CArea" AllowVirtualization="false" AllowColumnResize="true"
+                            AllowFiltering="true" PageSize="20" AllowPaging="true" PagerPosition="PagerPosition.Bottom"
+                            FilterMode="FilterMode.Advanced" FilterPopupRenderMode="PopupRenderMode.OnDemand" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" LogicalFilterOperator="LogicalFilterOperator.Or"
+                            AllowSorting="true" SelectionMode="DataGridSelectionMode.Single" @bind-Value=@selectedCArea
+                            ColumnWidth="150px" Style=@($"height:{(Height - 80)}px")>
+                <Columns>
+                    <RadzenDataGridColumn TItem="CArea" Property="ID" Title="แก้ไข" Width="80px" Frozen="true" Filterable="false" Sortable="false" Visible=@IsSave>
+                        <Template Context="data">
+                            <RadzenButton ButtonStyle="ButtonStyle.Warning" Shade="Shade.Lighter" Icon="edit" Click=@(() => OpenEdit(data,"Edit")) />
+                        </Template>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="CArea" Property="ACode" Title="เขต" Frozen="true" Width="100px" />
+                    <RadzenDataGridColumn TItem="CArea" Property="Name" Title="ชื่อ - สกุล" Frozen="true" Width="200px" />
+                    <RadzenDataGridColumn TItem="CArea" Property="CCode" Title="รหัสเก็บเงิน" />
+                    <RadzenDataGridColumn TItem="CArea" Property="EmpId" Title="รหัสพนักงาน" />
+                    <RadzenDataGridColumn TItem="CArea" Property="MCode" Title="รหัส On Mobile" />
+                    <RadzenDataGridColumn TItem="CArea" Property="Department" Title="ฝ่าย/แผนก" />
+                    <RadzenDataGridColumn TItem="CArea" Property="ID" Title="ลบ" Width="80px" Filterable="false" Sortable="false" Visible=@IsDelete>
+                        <Template Context="data">
+                            <RadzenButton ButtonStyle="ButtonStyle.Danger" Shade="Shade.Lighter" Icon="delete" Click=@(() => OpenDelete(data,"Delete")) />
+                        </Template>
+                    </RadzenDataGridColumn>
+                </Columns>
+            </RadzenDataGrid>
+        </RadzenColumn>
+    </RadzenRow>
+}

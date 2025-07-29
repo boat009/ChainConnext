@@ -1,0 +1,14 @@
+﻿@* AllowClear="true" Placeholder="Select something" *@
+            <RadzenDropDown @bind-Value=@findSelected
+                            Data=@findModes TextProperty="FindName" ValueProperty="FindID"
+                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                            AllowFiltering="true">
+            </RadzenDropDown>
+            @* Change=@(args => OnChange(args, "Find")) *@
+            @* <input id="find" type="search" @bind="@SearchValue" /> *@
+            @* <RadzenStack>
+                <input type="search" @bind="message" @bind:event="oninputn" class="form-control" @onkeydown="@Enter" />
+            </RadzenStack> *@
+            @* OnFindChange(args.Value.ToString(), "Find") *@
+            <RadzenTextBox type="search" Placeholder="ค้นหา..." @onkeydown=@FindEnter @oninput=@(args => SearchValue = args.Value.ToString()) @bind-value=@SearchValue MaxLength="250" Style="text-transform: uppercase;" onclick="this.select();" />
+            <RadzenButton Text="ค้นหา" Icon="search" ButtonStyle="ButtonStyle.Success" IsBusy=@IsLoad Click=@(() => FindData()) />

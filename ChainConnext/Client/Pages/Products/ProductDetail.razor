@@ -1,0 +1,50 @@
+﻿@using ChainConnext.Client.Pages.Contracts
+@using ChainConnext.Shared.Contracts;
+@inject HttpClient Http
+@inject ILogger<ProductDetail> Logger
+@inject IAccountService _accountService
+@inject NavigationManager Navigation
+@inject DialogService dialogService
+
+@if (@ConInf == null)
+{
+    <p><em>Loading...</em></p>
+}
+else @if (@isLoadingMain)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <RadzenStack>
+        <RadzenRow>
+            <RadzenColumn Size="12" SizeMD="8">
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="2">
+                        <RadzenLabel Text="สินค้า" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="2" SizeMD="3">
+                        <RadzenTextBox class="w-100" @bind-Value=@ConInf.Model Name="Model" id="ModelCode" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="2" SizeMD="1">
+                        <RadzenButton Icon="search" ButtonStyle="ButtonStyle.Success" Click=@(() => FindModel()) Visible=@IsSave />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="2">
+                        <RadzenLabel Text="ชื่อสินค้า" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="10">
+                        <RadzenTextArea Class="w-100" @bind-Value=@ConInf.ModelDesc />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow>
+                    <ContractSerialNo pContractId=@ConInf.ContractId />
+                </RadzenRow>
+            </RadzenColumn>
+            @* <RadzenColumn Size="12" SizeMD="4">
+                <ContractSerialNo pConInf=@ConInf />
+            </RadzenColumn> *@
+        </RadzenRow>
+    </RadzenStack>
+}

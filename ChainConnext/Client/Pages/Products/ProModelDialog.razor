@@ -1,0 +1,43 @@
+﻿@using ChainConnext.Shared.BD;
+@inject ILogger<ProModelDialog> Logger
+@inject DialogService dialogService
+@inject IJSRuntime jsRuntime
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@inject IAccountService _accountService
+@inject NotificationService NotificationService
+
+<RadzenStack>
+    <RadzenRow>
+        <RadzenColumn Size="2" SizeMD="3">
+            <RadzenTextBox class="w-100" @bind-Value=@SearchValue Name="RefNo" />
+        </RadzenColumn>
+        <RadzenColumn Size="2" SizeMD="2">
+            <RadzenButton ButtonStyle="ButtonStyle.Success" Text="ค้นหา" Class="w-100" Icon="search" Click=@Search IsBusy=@IsModelLoading />
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenRow>
+        <RadzenColumn Size="12">
+            <RadzenDataGrid IsLoading="@IsModelLoading" Data="@proModels" TItem="BDProModel" AllowVirtualization="false" AllowColumnResize="true"
+                            AllowFiltering="true" PageSize="20" AllowPaging="true"
+                            FilterMode="FilterMode.Advanced"
+                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                            LogicalFilterOperator="LogicalFilterOperator.Or"
+                            FilterPopupRenderMode="PopupRenderMode.OnDemand"
+                            AllowSorting="true" SelectionMode="DataGridSelectionMode.Single" @bind-Value=@selectedModel ColumnWidth="100px"
+                            PagerPosition="PagerPosition.Bottom">
+                <Columns>
+                    <RadzenDataGridColumn TItem="BDProModel" Property="MODEL" Title="รหัสสินค้า" Frozen="true" Width="100px" />
+                    <RadzenDataGridColumn TItem="BDProModel" Property="Des" Title="ชื่อสินค้า" Width="250px" />
+                    <RadzenDataGridColumn TItem="BDProModel" Property="CASH" Title="สด" Width="60px" Filterable="false" />
+                    <RadzenDataGridColumn TItem="BDProModel" Property="Sales" Title="ผ่อน" Width="60px" Filterable="false" />
+                    <RadzenDataGridColumn TItem="BDProModel" Property="MODEL" Title="เลือก" Width="60px" Filterable="false" Sortable="false">
+                        <Template Context="data">
+                            <RadzenButton ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Shade="Shade.Lighter" Icon="done" Click=@(() => Selected(data,"Selected")) />
+                        </Template>
+                    </RadzenDataGridColumn>
+                </Columns>
+            </RadzenDataGrid>
+        </RadzenColumn>
+    </RadzenRow>
+</RadzenStack>

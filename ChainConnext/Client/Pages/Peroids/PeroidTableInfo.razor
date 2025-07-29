@@ -1,0 +1,96 @@
+﻿@using ChainConnext.Shared.Contracts;
+@inject HttpClient Http
+@inject ILogger<PeroidTableInfo> Logger
+@inject IAccountService _accountService
+@inject NavigationManager Navigation
+<RadzenDataGrid IsLoading="@isLoading" Data="@aging_Infos" TItem="Aging_Info" AllowVirtualization="false" AllowColumnResize="true"
+                AllowFiltering="true" PageSize="60"
+                FilterMode="FilterMode.Advanced"
+                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                LogicalFilterOperator="LogicalFilterOperator.Or"
+                FilterPopupRenderMode="PopupRenderMode.OnDemand"
+                AllowSorting="true" SelectionMode="DataGridSelectionMode.Single"
+                PagerPosition="PagerPosition.Bottom" AllowPaging="true" ColumnWidth="150px" >
+    <Columns>
+        <RadzenDataGridColumn TItem="Aging_Info" Property="PeroidId" Title="งวด" TextAlign="TextAlign.Center" Frozen="true" Width="100px" />
+        <RadzenDataGridColumn TItem="Aging_Info" Property="DueDate" Title="ดิว" FormatString="{0:dd/MM/yyyy}" Frozen="true" Width="150px" />
+        <RadzenDataGridColumn TItem="Aging_Info" Property="PeroidAmt" Title="ค่างวด" FormatString="{0:N2}" TextAlign="TextAlign.Right" Frozen="true" Width="150px" />
+        <RadzenDataGridColumn TItem="Aging_Info" Property="PayDate" Title="วันที่ชำระเงิน" FormatString="{0:dd/MM/yyyy}" />
+        <RadzenDataGridColumn TItem="Aging_Info" Property="PayAmt" Title="จำนวนชำระเงิน" FormatString="{0:N2}" TextAlign="TextAlign.Right" />
+        <RadzenDataGridColumn TItem="Aging_Info" Property="PeroidBal" Title="คงเหลือ" FormatString="{0:N2}" TextAlign="TextAlign.Right" />
+        <RadzenDataGridColumn TItem="Aging_Info" Property="VatAmt" Title="ภาษีรอตัด" FormatString="{0:N2}" TextAlign="TextAlign.Right" />
+        <RadzenDataGridColumn TItem="Aging_Info" Property="VatBal" Title="ภาษีคงเหลือ" FormatString="{0:N2}" TextAlign="TextAlign.Right" />
+        <RadzenDataGridColumn TItem="Aging_Info" Property="EfectiveAmt" Title="รายได้รอตัด" FormatString="{0:N2}" TextAlign="TextAlign.Right" />
+        <RadzenDataGridColumn TItem="Aging_Info" Property="EfectiveBal" Title="รายได้คงเหลือ" FormatString="{0:N2}" TextAlign="TextAlign.Right" />
+        <RadzenDataGridColumn TItem="Aging_Info" Property="CurrBal" Title="เงินต้นคงเหลือ" FormatString="{0:N2}" TextAlign="TextAlign.Right" />
+        @* <RadzenDataGridColumn TItem="Aging_Info" Property="PayAmt" Title="คัดเงินต้น" FormatString="{0:N2}" TextAlign="TextAlign.Right" /> *@
+        <RadzenDataGridColumn TItem="Aging_Info" Property="RecvID" Title="เลขใบเสร็จ" />
+        @* <RadzenDataGridColumn TItem="Aging_Info" Property="PayAmt" Title="เลขใบกำกับภาษี" /> *@
+    </Columns>
+</RadzenDataGrid>
+@* <RadzenStack>
+    <RadzenRow>
+        <RadzenColumn Size="12" SizeMD="12">
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenDataGrid IsLoading="@isLoading" Data="@aging_Infos" TItem="Aging_Info" AllowVirtualization="false" AllowColumnResize="true"
+                                AllowFiltering="true" PageSize="5"
+                                FilterMode="FilterMode.Advanced"
+                                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                LogicalFilterOperator="LogicalFilterOperator.Or"
+                                FilterPopupRenderMode="PopupRenderMode.OnDemand"
+                                AllowSorting="true" SelectionMode="DataGridSelectionMode.Single"
+                                PagerPosition="PagerPosition.Bottom" AllowPaging="true" ColumnWidth="150px" Style="height:300px">
+                    <Columns>
+                        <RadzenDataGridColumn TItem="Aging_Info" Property="PeroidId" Title="งวด" TextAlign="TextAlign.Center" Frozen="true" Width="100px" />
+                        <RadzenDataGridColumn TItem="Aging_Info" Property="DueDate" Title="ดิว" FormatString="{0:dd/MM/yyyy}" Frozen="true" Width="150px" />
+                        <RadzenDataGridColumn TItem="Aging_Info" Property="PeroidAmt" Title="ค่างวด" FormatString="{0:N2}" TextAlign="TextAlign.Right" Frozen="true" Width="150px" />
+                        <RadzenDataGridColumn TItem="Aging_Info" Property="PayDate" Title="วันที่ชำระเงิน" FormatString="{0:dd/MM/yyyy}" />
+                        <RadzenDataGridColumn TItem="Aging_Info" Property="PayAmt" Title="จำนวนชำระเงิน" FormatString="{0:N2}" TextAlign="TextAlign.Right" />
+                        <RadzenDataGridColumn TItem="Aging_Info" Property="PeroidBal" Title="คงเหลือ" FormatString="{0:N2}" TextAlign="TextAlign.Right" />
+                        <RadzenDataGridColumn TItem="Aging_Info" Property="VatAmt" Title="ภาษีรอตัด" FormatString="{0:N2}" TextAlign="TextAlign.Right" />
+                        <RadzenDataGridColumn TItem="Aging_Info" Property="VatBal" Title="ภาษีคงเหลือ" FormatString="{0:N2}" TextAlign="TextAlign.Right" />
+                        <RadzenDataGridColumn TItem="Aging_Info" Property="EfectiveAmt" Title="รายได้รอตัด" FormatString="{0:N2}" TextAlign="TextAlign.Right" />
+                        <RadzenDataGridColumn TItem="Aging_Info" Property="EfectiveBal" Title="รายได้คงเหลือ" FormatString="{0:N2}" TextAlign="TextAlign.Right" />
+                        <RadzenDataGridColumn TItem="Aging_Info" Property="CurrBal" Title="เงินต้นคงเหลือ" FormatString="{0:N2}" TextAlign="TextAlign.Right" />
+                        <RadzenDataGridColumn TItem="Aging_Info" Property="PayAmt" Title="คัดเงินต้น" FormatString="{0:N2}" TextAlign="TextAlign.Right" />
+                        <RadzenDataGridColumn TItem="Aging_Info" Property="RecvID" Title="เลขใบเสร็จ" />
+                        <RadzenDataGridColumn TItem="Aging_Info" Property="PayAmt" Title="เลขใบกำกับภาษี" />
+                    </Columns>
+                </RadzenDataGrid>
+            </RadzenRow>
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenRow>
+        <RadzenColumn Size="12" SizeMD="12">
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenCard Variant="Variant.Text" class="rz-p-0 rz-material-3-demo-card">
+                    <RadzenDataGrid IsLoading="@isLoading" Data="@aging_Infos" TItem="Aging_Info" AllowVirtualization="false" AllowColumnResize="true"
+                                    AllowFiltering="true" PageSize="5"
+                                    FilterMode="FilterMode.Advanced"
+                                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                    LogicalFilterOperator="LogicalFilterOperator.Or"
+                                    FilterPopupRenderMode="PopupRenderMode.OnDemand"
+                                    AllowSorting="true" SelectionMode="DataGridSelectionMode.Single"
+                                    PagerPosition="PagerPosition.Bottom" AllowPaging="true" ColumnWidth="150px" Style="height:300px">
+                        <Columns>
+                            <RadzenDataGridColumn TItem="Aging_Info" Property="PeroidId" Title="งวด" TextAlign="TextAlign.Center" Frozen="true" Width="100px" />
+                            <RadzenDataGridColumn TItem="Aging_Info" Property="DueDate" Title="ดิว" FormatString="{0:dd/MM/yyyy}" Frozen="true" Width="150px" />
+                            <RadzenDataGridColumn TItem="Aging_Info" Property="PeroidAmt" Title="ค่างวด" FormatString="{0:N2}" TextAlign="TextAlign.Right" Frozen="true" Width="150px" />
+                            <RadzenDataGridColumn TItem="Aging_Info" Property="PayDate" Title="วันที่ชำระเงิน" FormatString="{0:dd/MM/yyyy}" />
+                            <RadzenDataGridColumn TItem="Aging_Info" Property="PayAmt" Title="จำนวนชำระเงิน" FormatString="{0:N2}" TextAlign="TextAlign.Right" />
+                            <RadzenDataGridColumn TItem="Aging_Info" Property="PeroidBal" Title="คงเหลือ" FormatString="{0:N2}" TextAlign="TextAlign.Right" />
+                            <RadzenDataGridColumn TItem="Aging_Info" Property="VatAmt" Title="ภาษีรอตัด" FormatString="{0:N2}" TextAlign="TextAlign.Right" />
+                            <RadzenDataGridColumn TItem="Aging_Info" Property="VatBal" Title="ภาษีคงเหลือ" FormatString="{0:N2}" TextAlign="TextAlign.Right" />
+                            <RadzenDataGridColumn TItem="Aging_Info" Property="EfectiveAmt" Title="รายได้รอตัด" FormatString="{0:N2}" TextAlign="TextAlign.Right" />
+                            <RadzenDataGridColumn TItem="Aging_Info" Property="EfectiveBal" Title="รายได้คงเหลือ" FormatString="{0:N2}" TextAlign="TextAlign.Right" />
+                            <RadzenDataGridColumn TItem="Aging_Info" Property="CurrBal" Title="เงินต้นคงเหลือ" FormatString="{0:N2}" TextAlign="TextAlign.Right" />
+                            <RadzenDataGridColumn TItem="Aging_Info" Property="PayAmt" Title="คัดเงินต้น" FormatString="{0:N2}" TextAlign="TextAlign.Right" />
+                            <RadzenDataGridColumn TItem="Aging_Info" Property="RecvID" Title="เลขใบเสร็จ" />
+                            <RadzenDataGridColumn TItem="Aging_Info" Property="PayAmt" Title="เลขใบกำกับภาษี" />
+                        </Columns>
+                    </RadzenDataGrid>
+                </RadzenCard>
+            </RadzenRow>
+        </RadzenColumn>
+    </RadzenRow>
+</RadzenStack> *@

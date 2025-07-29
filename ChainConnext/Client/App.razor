@@ -1,0 +1,31 @@
+﻿<CascadingAuthenticationState>
+    <Router AppAssembly="@typeof(App).Assembly">
+        <Found Context="routeData">
+            @*<AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+            <FocusOnNavigate RouteData="@routeData" Selector="h1" />*@
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+                <Authorizing>
+                    <text>Please wait, we are authorizint the user.</text>
+                </Authorizing>
+                <NotAuthorized>
+                    @*@{
+                    var returnUrl =
+                    Navigation.ToBaseRelativePath(Navigation.Uri);
+                    <RedirectToLogin ReturnUrl="@returnUrl" />
+
+                    }*@
+                    <RedirectToLogin />
+                    @*<text> You are not authorized to access this page. </text>*@
+                </NotAuthorized>
+            </AuthorizeRouteView>
+        </Found>
+        <NotFound>
+            <PageTitle>Not found</PageTitle>
+            <LayoutView Layout="@typeof(MainLayout)">
+                <p role="alert">Sorry, there's nothing at this address.</p><br />
+                <h3>หรือใช้โปรแกรมใหม่คลิก link ข้างล่างนี้</h3><br />
+                <a href="https://app.sabuyconnext.com/ccn2024/" target="_blank">@($">>Chain Connext New Version Click hear<<")</a>
+            </LayoutView>
+        </NotFound>
+    </Router>
+</CascadingAuthenticationState>

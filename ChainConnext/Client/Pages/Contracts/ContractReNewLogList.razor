@@ -1,0 +1,30 @@
+﻿@using ChainConnext.Shared.BD
+@inject IAccountService _accountService
+@inject NavigationManager Navigation
+@inject HttpClient Http
+@inject ILogger<ContractReNewLogList> Logger
+@inject Radzen.DialogService dialogService
+@inject IJSRuntime jsRuntime
+
+<RadzenStack>
+    <RadzenRow>
+        <RadzenColumn Size="12">
+            <RadzenDataGrid IsLoading="@IsLoading" Data="@bD_ChgModels" TItem="BD_ChgModel" AllowVirtualization="false" AllowColumnResize="true"
+                            AllowFiltering="true" PageSize="20" AllowPaging="true"
+                            FilterMode="FilterMode.Advanced"
+                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                            LogicalFilterOperator="LogicalFilterOperator.Or"
+                            FilterPopupRenderMode="PopupRenderMode.OnDemand"
+                            AllowSorting="true" SelectionMode="DataGridSelectionMode.Single"
+                            PagerPosition="PagerPosition.Bottom" ColumnWidth="150px" Style=@($"height:{(pHeight - 200)}px")>
+                <Columns>
+                    <RadzenDataGridColumn TItem="BD_ChgModel" Property="DocDate" Title="วันที่เปลี่ยน" FormatString="{0:dd/MM/yyyy HH:mm:ss}" Width="150px" Frozen="true" />
+                    <RadzenDataGridColumn TItem="BD_ChgModel" Property="Serder" Title="ผู้ส่งเครื่อง" Width="250px" />
+                    <RadzenDataGridColumn TItem="BD_ChgModel" Property="SerialNo" Title="เลขเครื่องใหม่" Width="150px" />
+                    <RadzenDataGridColumn TItem="BD_ChgModel" Property="OldSerialNo" Title="เลขเครื่องเดิม" Width="150px" />
+                    <RadzenDataGridColumn TItem="BD_ChgModel" Property="RemarkText" Title="หมายเหตุ" Width="300px" />
+                </Columns>
+            </RadzenDataGrid>
+        </RadzenColumn>
+    </RadzenRow>
+</RadzenStack>

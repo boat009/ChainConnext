@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup Label="Globals" />
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+	  <Version>2024.04.22.1500</Version>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="wwwroot\**" />
+    <Content Remove="wwwroot\**" />
+    <EmbeddedResource Remove="wwwroot\**" />
+    <None Remove="wwwroot\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Remove="App.razor" />
+    <Content Remove="_Imports.razor" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="file_exam\Data_BHCheck.xlsx" />
+    <None Remove="file_exam\ExcelImportStatus.xlsx" />
+    <None Remove="file_exam\Imp_Card_Trans.xlsx" />
+    <None Remove="file_exam\Load_ProModel.xlsx" />
+    <None Remove="file_exam\~%24Imp_Card_Trans.xlsx" />
+    <None Remove="Frxs\Rpt_Contract_Clone.frx" />
+    <None Remove="Frxs\TsrBranch\Rpt_Case.frx" />
+    <None Remove="Frxs\TsrBranch\Rpt_Contract.frx" />
+    <None Remove="Frxs\TsrBranch\Rpt_Credit_Check.frx" />
+    <None Remove="Frxs\TsrBranch\Rpt_Credit_Check2.frx" />
+    <None Remove="Frxs\TsrBranch\Rpt_Credit_Check_Area.frx" />
+    <None Remove="Frxs\TsrBranch\Rpt_Credit_OverDue.frx" />
+    <None Remove="Frxs\TsrBranch\Rpt_OverDay.frx" />
+    <None Remove="Frxs\TsrBranch\Rpt_Recv.frx" />
+    <None Remove="Frxs\TsrBranch\Rpt_Recv1.frx" />
+    <None Remove="Frxs\TsrBranch\Rpt_RecvCheck.frx" />
+    <None Remove="Frxs\TsrBranch\Rpt_Setup.frx" />
+    <None Remove="Frxs\TsrBranch\Rpt_Status.frx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="file_exam\Data_BHCheck.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="file_exam\ExcelImportStatus.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="file_exam\Imp_Card_Trans.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="file_exam\Load_ProModel.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Frxs\Rpt_Contract_Clone.frx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Frxs\TsrBranch\Rpt_Case.frx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Frxs\TsrBranch\Rpt_Credit_Check.frx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Frxs\TsrBranch\Rpt_Credit_Check2.frx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Frxs\TsrBranch\Rpt_Credit_Check_Area.frx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Frxs\TsrBranch\Rpt_Credit_OverDue.frx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Frxs\TsrBranch\Rpt_OverDay.frx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Frxs\TsrBranch\Rpt_Recv.frx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Frxs\TsrBranch\Rpt_Recv1.frx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Frxs\TsrBranch\Rpt_RecvCheck.frx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Frxs\TsrBranch\Rpt_Setup.frx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Frxs\TsrBranch\Rpt_Contract.frx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Frxs\TsrBranch\Rpt_Status.frx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="ExcelDataReader" Version="3.6.0" />
+    <PackageReference Include="ExcelDataReader.DataSet" Version="3.6.0" />
+    <PackageReference Include="FastReport.OpenSource" Version="2024.2.1" />
+    <PackageReference Include="FastReport.OpenSource.Export.PdfSimple" Version="2024.2.1" />
+    <PackageReference Include="FastReport.OpenSource.Web" Version="2024.2.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Client\ChainConnext.Client.csproj" />
+    <ProjectReference Include="..\Shared\ChainConnext.Shared.csproj" />
+  </ItemGroup>
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="powershell.exe -ExecutionPolicy Unrestricted -NoProfile -NonInteractive -File $(ProjectDir)\post-build.ps1 -ProjectDir $(ProjectDir) -ProjectPath $(ProjectPath)" />
+  </Target>
+</Project>

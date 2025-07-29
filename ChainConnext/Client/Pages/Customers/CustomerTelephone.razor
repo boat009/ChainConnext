@@ -1,0 +1,28 @@
+﻿@inject HttpClient Http
+@inject ILogger<CustomerTelephone> Logger
+@inject IAccountService _accountService
+@inject NavigationManager Navigation
+@inject DialogService dialogService
+@inject NotificationService NotificationService
+
+<RadzenStack>
+    <RadzenRow>
+        <RadzenColumn Size="12">
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenColumn Size="5" SizeMD="4">
+                    <RadzenDropDown @bind-Value=@customer_Telephone.TelTypeId AllowClear="false" Placeholder="Select something" Class="w-100"
+                                    Data=@TelType TextProperty="TelTypeName" ValueProperty="TelTypeId"
+                                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                    AllowFiltering="true">
+                    </RadzenDropDown>
+                </RadzenColumn>
+                <RadzenColumn Size="5" SizeMD="5">
+                    <RadzenTextBox Name="CardNr" Placeholder="เบอร์โทร" class="w-100" @bind-Value=@customer_Telephone.TelNumber />
+                </RadzenColumn>
+                <RadzenColumn Size="2" SizeMD="3">
+                    <RadzenButton Text="Save" Icon="save" ButtonStyle="ButtonStyle.Info" class="w-100" Click=@OnSave Visible=@IsSaveCust />
+                </RadzenColumn>
+            </RadzenRow>
+        </RadzenColumn>
+    </RadzenRow>
+</RadzenStack>

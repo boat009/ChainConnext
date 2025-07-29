@@ -1,0 +1,82 @@
+﻿@inject HttpClient Http
+@inject ILogger<CustomerAddress> Logger
+@inject IAccountService _accountService
+@inject NavigationManager Navigation
+@inject DialogService dialogService
+@inject NotificationService NotificationService
+
+@if (isloaddata)
+{
+    <p><em>Loading...</em></p>
+    <div class="rz-datatable-loading-content">
+        @*<RadzenIcon Icon="refresh" Style="animation: rotation 500ms linear infinite" />*@
+        <div class="col text-center p-5">
+            <RadzenImage Path="images/community.svg" Style="display: block; width: 200px; margin-bottom: 40px;" />
+            <b>Loading, please wait...</b>
+        </div>
+    </div>
+}
+else
+{
+    <RadzenStack>
+        <RadzenRow>
+            <RadzenColumn Size="12">
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="9" SizeMD="9">
+                        <RadzenDropDown @bind-Value=@customer_Address.AddressTypeId AllowClear="false" Placeholder="Select something" Class="w-100"
+                                        Data=@AddrType TextProperty="AddressTypeName" ValueProperty="AddressTypeId"
+                                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                        AllowFiltering="true">
+                        </RadzenDropDown>
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="12">
+                        <RadzenTextBox Name="CardNr" Placeholder="ที่อยู่ 1" class="w-100" @bind-Value=@customer_Address.AddressTitle />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="12">
+                        <RadzenTextBox Name="CardNr" Placeholder="ที่อยู่ 2" class="w-100" @bind-Value=@customer_Address.AddressTitle2 />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="9">
+                        <RadzenDropDown @bind-Value=@customer_Address.AddressProvince1 AllowClear="true" Placeholder="จังหวัด" class="w-100"
+                                        Data=@info_Provinces TextProperty="Province_Name" ValueProperty="Province_Code"
+                                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                        AllowFiltering="true"
+                                        Change=@(args => OnProvinceChange(args, "Province"))>
+                        </RadzenDropDown>
+                    </RadzenColumn>
+                    <RadzenColumn Size="3">
+                        <RadzenTextBox Placeholder="รหัสไปรษณีย์" class="w-100" @bind-Value=@customer_Address.AddressZipcode />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="6">
+                        <RadzenDropDown @bind-Value=@customer_Address.AddressDistrict1 AllowClear="true" Placeholder="อำเภอ/แขวง" class="w-100"
+                                        Data=@info_Amphurs TextProperty="Amphur_Name" ValueProperty="Amphur_Code"
+                                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                        AllowFiltering="true"
+                                        Change=@(args => OnAmphurChange(args, "Amphur"))>
+                        </RadzenDropDown>
+                    </RadzenColumn>
+                    <RadzenColumn Size="6">
+                        <RadzenDropDown @bind-Value=@customer_Address.AddressSubdistrict1 AllowClear="true" Placeholder="ตำบล/เขต" class="w-100"
+                                        Data=@info_Districts TextProperty="District_Name" ValueProperty="District_Code"
+                                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                        AllowFiltering="true"
+                                        Change=@(args => OnDistrictChange(args, "District"))>
+                        </RadzenDropDown>
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="8" SizeMD="9">
+                        <RadzenButton Text="Save" Icon="save" ButtonStyle="ButtonStyle.Info" Class="mb-4" Click=@OnSave Visible=@IsSaveCust />
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenStack>
+}

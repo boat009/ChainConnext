@@ -1,0 +1,29 @@
+﻿@using ChainConnext.Shared.BD
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@inject IAccountService _accountService
+@inject ILogger<ARUrUvList> Logger
+@inject NotificationService NotificationService
+
+<RadzenRow>
+    <RadzenDataGrid IsLoading="@isLoading" Data="@bD_Debtorbs" TItem="BD_debtorb" AllowVirtualization="false" AllowColumnResize="true"
+                    AllowFiltering="true" PageSize="60"
+                    FilterMode="FilterMode.Advanced"
+                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                    LogicalFilterOperator="LogicalFilterOperator.Or"
+                    FilterPopupRenderMode="PopupRenderMode.OnDemand"
+                    AllowSorting="true" SelectionMode="DataGridSelectionMode.Single"
+                    PagerPosition="PagerPosition.Bottom" AllowPaging="true" ColumnWidth="150px" Style=@($"height:{(pHeight - 200)}px")>
+        <Columns>
+            <RadzenDataGridColumn TItem="BD_debtorb" Property="period" Title="งวดที่" TextAlign="TextAlign.Center" Frozen="true" Width="100px" />
+            <RadzenDataGridColumn TItem="BD_debtorb" Property="premium" Title="ค่างวด" FormatString="{0:N2}" TextAlign="TextAlign.Right" />
+            <RadzenDataGridColumn TItem="BD_debtorb" Property="unpaid" Title="คงเหลือ" FormatString="{0:N2}" TextAlign="TextAlign.Right" />
+            <RadzenDataGridColumn TItem="BD_debtorb" Property="uv1" Title="ภาษีรอตัด" FormatString="{0:N2}" TextAlign="TextAlign.Right" />
+            <RadzenDataGridColumn TItem="BD_debtorb" Property="uv2" Title="ภาษีคงเหลือ" FormatString="{0:N2}" TextAlign="TextAlign.Right" />
+            <RadzenDataGridColumn TItem="BD_debtorb" Property="ur1" Title="รายได้รอตัด" FormatString="{0:N2}" TextAlign="TextAlign.Right" />
+            <RadzenDataGridColumn TItem="BD_debtorb" Property="ur2" Title="รายได้รอตัดคงเหลือ" FormatString="{0:N2}" TextAlign="TextAlign.Right" />
+            <RadzenDataGridColumn TItem="BD_debtorb" Property="bal" Title="เงินต้นคงเหลือ" FormatString="{0:N2}" TextAlign="TextAlign.Right" />
+            <RadzenDataGridColumn TItem="BD_debtorb" Property="amt1" Title="ตัดเงินต้น" FormatString="{0:N2}" TextAlign="TextAlign.Right" />
+        </Columns>
+    </RadzenDataGrid>
+</RadzenRow>

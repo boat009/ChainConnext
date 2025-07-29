@@ -1,0 +1,53 @@
+﻿@using ChainConnext.Shared.Contracts;
+@inject IAccountService _accountService
+@inject NavigationManager Navigation
+@inject HttpClient Http
+@inject ILogger<ContractSerialNo> Logger
+@inject Radzen.DialogService dialogService
+@inject IJSRuntime jsRuntime
+@inject NotificationService NotificationService
+
+<RadzenStack>
+    <RadzenRow>
+        <RadzenColumn Size="12">
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenColumn Size="4" SizeMD="2">
+                    <RadzenLabel Text="เลขเครื่อง" />
+                </RadzenColumn>
+                <RadzenColumn Size="3" SizeMD="5">
+                    <RadzenTextBox Class="w-100" @bind-Value=@CSn.SerialNo />
+                </RadzenColumn>
+                <RadzenColumn Size="3" SizeMD="3">
+                    <RadzenDropDown @bind-Value=@CSn.SerialNoTypeId AllowClear="false" Placeholder="เลือกประเภท" Class="w-100"
+                                    Data=@SnType TextProperty="SerialNoTypeName" ValueProperty="SerialNoTypeId"
+                                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                    AllowFiltering="true">
+                    </RadzenDropDown>
+                </RadzenColumn>
+                <RadzenColumn Size="2" SizeMD="2">
+                    <RadzenButton Text="Save" Icon="save" ButtonStyle="ButtonStyle.Info" class="w-100" Click=@SaveSerialNo IsBusy=@isLoading BusyText="Saving..." Disabled=@DisableSaveSn Visible=@IsSavePro />
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenDataGrid IsLoading="@isLoading" Data="@contract_SerialNos" TItem="Contract_SerialNo" AllowVirtualization="false" AllowColumnResize="true"
+                                AllowFiltering="true" PageSize="5"
+                                FilterMode="FilterMode.Advanced"
+                                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                LogicalFilterOperator="LogicalFilterOperator.Or"
+                                FilterPopupRenderMode="PopupRenderMode.OnDemand" CellClick="@OnSnCellClick"
+                                AllowSorting="true" SelectionMode="DataGridSelectionMode.Single" @bind-Value=@selectedSn
+                                PagerPosition="PagerPosition.Bottom" AllowPaging="true">
+                    <Columns>
+                        <RadzenDataGridColumn TItem="Contract_SerialNo" Property="SerialNoTypeName" Title="ประเภท" Width="150px" />
+                        <RadzenDataGridColumn TItem="Contract_SerialNo" Property="SerialNo" Title="เลขเครื่อง" />
+                        <RadzenDataGridColumn TItem="Contract_SerialNo" Property="SerialNoId" Title="ลบ" Width="80px" Filterable="false" Sortable="false" Visible=@IsDelete>
+                            <Template Context="data">
+                                <RadzenButton ButtonStyle="ButtonStyle.Danger" Shade="Shade.Lighter" Icon="delete" Click=@(() => OpenModelDelete(data,"Delete")) />
+                            </Template>
+                        </RadzenDataGridColumn>
+                    </Columns>
+                </RadzenDataGrid>
+            </RadzenRow>
+        </RadzenColumn>
+    </RadzenRow>
+</RadzenStack>

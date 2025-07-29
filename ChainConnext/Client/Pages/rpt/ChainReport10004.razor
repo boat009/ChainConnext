@@ -1,0 +1,58 @@
+﻿@page "/rpt/ChainReport/{pRptName}/{pRptId:int}"
+
+@inject ILogger<ChainReport10004> Logger
+@inject DialogService dialogService
+@inject IJSRuntime jsRuntime
+@inject NavigationManager Navigation
+@inject IAccountService _accountService
+@inject NotificationService NotificationService
+@inject HttpClient Http
+@inject IPrintingService PrintingService
+
+<PageTitle>@TitlePage</PageTitle>
+<h1>@TitlePage</h1>
+@if (!IsAccess)
+{
+    <RadzenText TextStyle="TextStyle.H1">ไม่มีสิทธิในส่วนนี้</RadzenText>
+}
+else
+{
+    <RadzenStack>
+        <RadzenRow>
+            <RadzenColumn Size="12">
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="2">
+                        <RadzenLabel Text="วันที่" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="4" SizeMD="2">
+                        <RadzenDatePicker Name="DateFrom" @bind-Value=@Rpt.DateFrom DateFormat="dd/MM/yyyy" Placeholder="จาก">
+                            <FooterTemplate>
+                                <RadzenButton Click=@(args => @Rpt.DateFrom = DateTime.Now) Text="Today" class="my-3 w-100" />
+                            </FooterTemplate>
+                        </RadzenDatePicker>
+                    </RadzenColumn>
+                    <RadzenColumn Size="4" SizeMD="2">
+                        <RadzenDatePicker Name="PayDateTo" @bind-Value=@Rpt.DateTo DateFormat="dd/MM/yyyy" Placeholder="ถึง">
+                            <FooterTemplate>
+                                <RadzenButton Click=@(args => @Rpt.DateTo = DateTime.Now) Text="Today" class="my-3 w-100" />
+                            </FooterTemplate>
+                        </RadzenDatePicker>
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center" class="my-3">
+                    <RadzenColumn Size="4" SizeMD="2" OffsetMD="2" Offset="4">
+                        <RadzenButton Text="Find" Icon="search" Class="w-100" ButtonStyle="ButtonStyle.Info" Click=@(() => Find()) IsBusy=@IsLoading />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center" class="my-3">
+                    @* <RadzenColumn Size="4" SizeMD="2" OffsetMD="2" Offset="4">
+                        <RadzenButton Text="Print" Icon="print" Class="w-100" ButtonStyle="ButtonStyle.Primary" Click=@(() => Print()) IsBusy=@IsLoading Visible=@IsPdfData />
+                    </RadzenColumn> *@
+                    <RadzenColumn Size="4" SizeMD="2" OffsetMD="2" Offset="4">
+                        <RadzenButton Text="Excel" Icon="view_list" Class="w-100" ButtonStyle="ButtonStyle.Success" Click=@(() => ExportExcel()) IsBusy=@IsLoading Visible=@IsData />
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenStack>
+}

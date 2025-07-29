@@ -1,0 +1,46 @@
+﻿@using ChainConnext.Shared.BD
+
+@inject ILogger<ARAccStatusDetailList> Logger
+@inject DialogService dialogService
+@inject IJSRuntime jsRuntime
+@inject NavigationManager Navigation
+@inject IAccountService _accountService
+@inject NotificationService NotificationService
+@inject HttpClient Http
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+<RadzenDataGrid IsLoading="@IsLoad" Data="@ListDetail" TItem="BD_accstatus" AllowColumnResize="true"
+                AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" LogicalFilterOperator="LogicalFilterOperator.Or"
+                AllowSorting="true" SelectionMode="DataGridSelectionMode.Single" @bind-Value=@selectedDetail
+                AllowPaging="true" PageSize="10"
+                PagerPosition="PagerPosition.Bottom" ColumnWidth="150px" Style=@($"height:{(Height - 150)}px")>
+    <Columns>
+        <RadzenDataGridColumn TItem="BD_accstatus" Property="todebtor" Title="ตั้งหนี้" Frozen="true" Filterable="false" Sortable="false" Width="50px">
+            <Template Context="Um">
+                <RadzenCheckBox TriState="false" TValue="bool?" Value=@Um.is_todebtor />
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="BD_accstatus" Property="refno" Title="เลขอ้างอิง" Frozen="true">
+            <FooterTemplate>
+                <b>@ListDetail.Count</b>
+            </FooterTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="BD_accstatus" Property="torefno" Title="เปลี่ยนไป" />
+        <RadzenDataGridColumn TItem="BD_accstatus" Property="tocode" Title="รหัส" Width="50px" />
+        <RadzenDataGridColumn TItem="BD_accstatus" Property="fromrefno" Title="ที่มา" />
+        <RadzenDataGridColumn TItem="BD_accstatus" Property="contno" Title="เลชสัญญา" />
+        <RadzenDataGridColumn TItem="BD_accstatus" Property="name" Title="ชื่อ - สกุล" />
+        <RadzenDataGridColumn TItem="BD_accstatus" Property="model" Title="สินค้า" />
+        <RadzenDataGridColumn TItem="BD_accstatus" Property="serialno" Title="เลขเครื่อง" />
+        <RadzenDataGridColumn TItem="BD_accstatus" Property="mode" Title="งวด" />
+        <RadzenDataGridColumn TItem="BD_accstatus" Property="sales" Title="ราคาเงินสด" />
+        <RadzenDataGridColumn TItem="BD_accstatus" Property="credit" Title="ราคาเช่าซื้อ" />
+        <RadzenDataGridColumn TItem="BD_accstatus" Property="premium2" Title="งวดแรก" />
+        <RadzenDataGridColumn TItem="BD_accstatus" Property="premium" Title="งวดต่อไป" />
+        <RadzenDataGridColumn TItem="BD_accstatus" Property="firstdisc" Title="ส่วนลด" />
+        <RadzenDataGridColumn TItem="BD_accstatus" Property="netcredit" Title="หักส่วนลด" />
+        <RadzenDataGridColumn TItem="BD_accstatus" Property="nextcredit" Title="ชำระงวดแรก" />
+        <RadzenDataGridColumn TItem="BD_accstatus" Property="chanel" Title="ช่องทางขาย" />
+        <RadzenDataGridColumn TItem="BD_accstatus" Property="bcode" Title="สาขา" />
+    </Columns>
+</RadzenDataGrid>

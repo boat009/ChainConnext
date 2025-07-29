@@ -1,0 +1,52 @@
+﻿@page "/ar/report"
+
+@inject ContextMenuService ContextMenuService
+@inject ILogger<ARReport> Logger
+@inject DialogService dialogService
+@inject IJSRuntime jsRuntime
+@inject NavigationManager Navigation
+@inject IAccountService _accountService
+@inject NotificationService NotificationService
+@inject HttpClient Http
+@inject ILocalStorageService localStorage
+
+<RadzenRow>
+    <RadzenColumn Size="12" SizeMD="6">
+        <RadzenRow AlignItems="AlignItems.Center">
+            <RadzenColumn Size="12" SizeMD="5">
+                <RadzenDatePicker TValue="DateTime?" @bind-Value=@DateFrom Change="@(args => @DateFrom = DateFromChange(args))" DateFormat="dd/MM/yyyy">
+                    <FooterTemplate>
+                        <RadzenButton Click=@(args => @DateFrom = DateTime.Now) Text="Today" class="my-3 w-100" />
+                    </FooterTemplate>
+                </RadzenDatePicker>
+            </RadzenColumn>
+            <RadzenColumn Size="1" SizeMD="1">
+                <RadzenIcon Icon="arrow_forward" />
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="5">
+                <RadzenDatePicker TValue="DateTime?" @bind-Value=@DateTo Change="@(args => @DateTo = args)" DateFormat="dd/MM/yyyy">
+                    <FooterTemplate>
+                        <RadzenButton Click=@(args => @DateTo = DateTime.Now) Text="Today" class="my-3 w-100" />
+                    </FooterTemplate>
+                </RadzenDatePicker>
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="6">
+        <RadzenRow AlignItems="AlignItems.Center">
+
+        </RadzenRow>
+    </RadzenColumn>
+</RadzenRow>
+<RadzenRow>
+    <RadzenTabs RenderMode="TabRenderMode.Client" @bind-SelectedIndex=@selectedIndex>
+        <Tabs>
+            <RadzenTabsItem Text="ข้อมูล">
+                
+            </RadzenTabsItem>
+            <RadzenTabsItem Text="แตกต่าง">
+                
+            </RadzenTabsItem>
+        </Tabs>
+    </RadzenTabs>
+</RadzenRow>

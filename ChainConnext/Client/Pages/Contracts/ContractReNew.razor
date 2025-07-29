@@ -1,0 +1,120 @@
+﻿@inject ILogger<ContractClone> Logger
+@inject DialogService dialogService
+@inject IJSRuntime jsRuntime
+@inject NavigationManager Navigation
+@inject IAccountService _accountService
+@inject NotificationService NotificationService
+
+@inject HttpClient Http
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+<RadzenStack>
+    <RadzenFieldset Text="เครื่องเดิม">
+        <RadzenRow>
+            <RadzenColumn Size="12">
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="2">
+                        <RadzenLabel Text="เลขอ้างอิง" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="4">
+                        <RadzenTextBox class="w-100" @bind-Value=@ConInf.RefNo Name="RefNo" Change=@(args => OnChangeFocus(args,"ContNoID")) />
+                    </RadzenColumn>
+                    <RadzenColumn Size="4" SizeMD="2">
+                        <RadzenLabel Text="เลขสัญญา" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="4">
+                        <RadzenTextBox class="w-100" @bind-Value=@ConInf.ContractNo Name="ContNo" id="ContNoID" Change=@(args => OnChangeFocus(args,"CustName")) />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="2">
+                        <RadzenLabel Text="ชื่อลูกค้า" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="6">
+                        <RadzenTextBox class="w-100" @bind-Value=@ConInf.CustomerName Name="CustomerName" id="CustName" ReadOnly="true" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="2">
+                        <RadzenLabel Text="สินค้า" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="2" SizeMD="2">
+                        <RadzenTextBox class="w-100" @bind-Value=@ConInf.Model Name="Model" id="ModelCode" ReadOnly="true" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="6" SizeMD="8">
+                        <RadzenTextBox class="w-100" @bind-Value=@ConInf.ModelDesc Name="ModelDesc" id="ModelName" ReadOnly="true" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="2">
+                        <RadzenLabel Text="หมายเลขเครื่อง" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="6">
+                        <RadzenTextBox class="w-100" @bind-Value=@ConInf.SerialNo Name="Model" id="SerialNo" ReadOnly="true" />
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenFieldset>
+    <RadzenFieldset Text="เครื่องใหม่">
+        <RadzenRow>
+            <RadzenColumn Size="12">
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="2">
+                        <RadzenLabel Text="วันที่" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="6">
+                        <RadzenDatePicker TValue="DateTime?" @bind-Value=@ConInfNew.ChangeDate Change="@(args => @ConInfNew.ChangeDate = args)" DateFormat="dd/MM/yyyy" id="ChangeDate">
+                            <FooterTemplate>
+                                <RadzenButton Click=@(args => @ConInfNew.ChangeDate = DateTime.Now) Text="Today" class="my-3 w-100" />
+                            </FooterTemplate>
+                        </RadzenDatePicker>
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="2">
+                        <RadzenLabel Text="สินค้า" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="2" SizeMD="2">
+                        <RadzenTextBox class="w-100" @bind-Value=@ConInfNew.Model Name="Model" id="NewModelCode" Change=@(args => OnChangeFocus(args,"NewModelName")) />
+                    </RadzenColumn>
+                    <RadzenColumn Size="6" SizeMD="8">
+                        <RadzenTextBox class="w-100" @bind-Value=@ConInfNew.ModelDesc Name="ModelDesc" id="NewModelName" Change=@(args => OnChangeFocus(args,"SerialNoNew")) />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="2">
+                        <RadzenLabel Text="หมายเลขเครื่องใหม่" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="6">
+                        <RadzenTextBox class="w-100" @bind-Value=@ConInfNew.SerialNo Name="Model" id="SerialNoNew" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="2">
+                        <RadzenLabel Text="ผู้ส่งเครื่อง" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="2" SizeMD="6">
+                        <RadzenTextBox class="w-100" @bind-Value=@Sender Name="Model" id="ModelCode" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="2">
+                        <RadzenLabel Text="หมายเหตุ" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="2" SizeMD="10">
+                        <RadzenTextArea class="w-100" @bind-Value=@Remark Name="ContractRemark" id="Remark" />
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenColumn>
+        </RadzenRow>
+        <RadzenRow Style="margin-top:10px;">
+            <RadzenColumn Size="12">
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="4" Offset="2">
+                        <RadzenButton Text="Save" Icon="save" ButtonStyle="ButtonStyle.Success" Click=@OnSave />
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenFieldset>
+</RadzenStack>

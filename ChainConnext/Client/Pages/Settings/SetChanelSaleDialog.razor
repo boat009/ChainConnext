@@ -1,0 +1,97 @@
+﻿@using ChainConnext.Shared.BD;
+@inject HttpClient Http
+@inject Radzen.DialogService dialogService
+@inject ILogger<SetCreditAreaDialog> Logger
+@inject IJSRuntime jsRuntime
+@inject IAccountService _accountService
+@inject NotificationService NotificationService
+@inject NavigationManager Navigation
+<RadzenStack>
+    <RadzenRow>
+        <RadzenColumn Size="12">
+            <RadzenTemplateForm TItem="Chanel" Data=@chanel Submit=@OnSubmit InvalidSubmit=@OnInvalidSubmit>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="6" SizeMD="4">
+                        <RadzenLabel Text="รหัส" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="6" SizeMD="3">
+                        <RadzenTextBox Class="w-100" @bind-Value=@chanel.code Name="code" MaxLength="3" />
+                        <RadzenRequiredValidator Component="code" Text="รหัส is required" Style="position: absolute" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="6" SizeMD="4">
+                        <RadzenLabel Text="ชื่อช่องทาง" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="6" SizeMD="8">
+                        <RadzenTextBox Class="w-100" @bind-Value=@chanel.name Name="name" MaxLength="50" />
+                        <RadzenRequiredValidator Component="name" Text="ชื่อช่องทาง is required" Style="position: absolute" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="6" SizeMD="4">
+                        <RadzenLabel Text="สาย" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="6" SizeMD="3">
+                        <RadzenTextBox Class="w-100" @bind-Value=@chanel.aline Name="aline" MaxLength="3" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="6" SizeMD="4">
+                        <RadzenLabel Text="ทีม" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="6" SizeMD="6">
+                        <RadzenTextBox Class="w-100" @bind-Value=@chanel.ateam Name="ateam" MaxLength="100" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="6" SizeMD="4">
+                        <RadzenLabel Text="หน่วยที่" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="6" SizeMD="2">
+                        <RadzenTextBox Class="w-100" @bind-Value=@chanel.teamno Name="teamno" MaxLength="2" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="6" SizeMD="4">
+                        <RadzenLabel Text="ฝ่าย" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="6" SizeMD="6">
+                        <RadzenDropDown @bind-Value=@chanel.ChanelDep AllowClear="false" Placeholder="Select something" Class="w-100"
+                                        Data=@nPT_Departs TextProperty="DepName" ValueProperty="DepID"
+                                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                        AllowFiltering="true">
+                        </RadzenDropDown>
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="6" SizeMD="4">
+                        <RadzenLabel Text="Map" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="6" SizeMD="6">
+                        <RadzenTextBox Class="w-100" @bind-Value=@chanel.ChanelMap Name="ChanelMap" MaxLength="3" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="6" SizeMD="4">
+                        <RadzenLabel Text="Tag" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="6" SizeMD="8">
+                        <RadzenTextBox Class="w-100" @bind-Value=@chanel.ChanelTag Name="ChanelTag" MaxLength="100" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="8" SizeMD="5" Offset="6" OffsetMD="4">
+                        <RadzenCheckBox @bind-Value=@chanel.Used Name="Used" />
+                        <RadzenLabel Text="ใช้งาน" Component="Used" Style="margin-left: 8px; vertical-align: middle;" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center" class="my-2">
+                    <RadzenColumn Size="6" SizeMD="4" Offset="6" OffsetMD="4">
+                        <RadzenButton ButtonType="ButtonType.Submit" Text="Save" Icon="save" ButtonStyle="ButtonStyle.Success" IsBusy=@IsLoading Class="w-100" />
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenTemplateForm>
+        </RadzenColumn>
+    </RadzenRow>
+</RadzenStack>

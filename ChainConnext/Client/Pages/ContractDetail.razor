@@ -1,0 +1,397 @@
+﻿@page "/contract"
+@page "/contract/{pRefNo}"
+
+@* @rendermode InteractiveWebAssemblyRenderMode *@
+
+@using ChainConnext.Client.Pages.Contracts
+@using ChainConnext.Client.Pages.Products
+@inject ContextMenuService ContextMenuService
+@inject ILogger<ContractDetail> Logger
+@inject DialogService dialogService
+@inject IJSRuntime jsRuntime
+@inject NavigationManager Navigation
+@inject IAccountService _accountService
+@inject NotificationService NotificationService
+
+@inject HttpClient Http
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+@*<RadzenStack ContextMenu=@(args => ShowContextMenuWithItems(args))>*@
+@if (!IsAccess)
+{
+    <RadzenText TextStyle="TextStyle.H1">ไม่มีสิทธิในส่วนนี้</RadzenText>
+
+
+    <RadzenButton Text="ตรวจสอบสิทธิใหม่" Click="CheckPermMenu" IsBusy=@IsLoading></RadzenButton>
+    <RadzenButton Text="Login ใหม่" Click="Logout" IsBusy=@IsLoading></RadzenButton>
+}
+else
+{
+    <RadzenStack>
+        <RadzenRow class="row justify-content-start">
+            <RadzenColumn Size="12" SizeMD="7" class="col-7  d-flex">
+                <FindComponent OnFindData="@OnFindData" OnFindEnter="@OnFindEnter" />
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="5" class="col-5  d-flex justify-content-end">
+                <RadzenButton Text="เปลี่ยนเครื่อง" Icon="autorenew" ButtonStyle="ButtonStyle.Info" Click=@(() => OpenReNew(null,"เปลี่ยนเครื่อง")) Disabled=!EnableBt Visible=@IsChange />
+                <RadzenButton Text="โคลนสัญญา" Icon="content_copy" ButtonStyle="ButtonStyle.Info" Click=@(() => OpenClone(null,"โคลนสัญญา")) Disabled=!EnableBt Visible=@IsClone />
+                @* <RadzenButton Text="เพิ่มใหม่" Icon="add" ButtonStyle="ButtonStyle.Success" Class="mb-4" Click=@(() => OpenEdit(null,"New")) /> *@
+            </RadzenColumn>
+        </RadzenRow>
+        @* <RadzenRow class="row justify-content-start">
+    <RadzenColumn Size="12" SizeMD="7" class="col-7  d-flex">
+    <FindComponent OnFindData="@OnFindData" OnFindEnter="@OnFindEnter" />
+    </RadzenColumn>
+    </RadzenRow> *@
+        <RadzenRow>
+            <RadzenStack>
+                <RadzenRow>
+                    <RadzenColumn Size="12" SizeMD="8">
+                        <RadzenRow AlignItems="AlignItems.Center">
+                            <RadzenColumn Size="4" SizeMD="2">
+                                <RadzenLabel Text="เลขอ้างอิง" />
+                            </RadzenColumn>
+                            <RadzenColumn Size="8" SizeMD="4">
+                                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Wrap="FlexWrap.NoWrap" Gap="0.1rem">
+                                    <RadzenTextBox class="w-100" @bind-Value=@ConInf.RefNo Name="RefNo" Change=@(args => OnChangeFocus(args,"ContNoID")) />
+                                    <RadzenButton Icon="save" Variant="Variant.Outlined" ButtonStyle="ButtonStyle.Info" Click=@(() => OnEditRefNoContNo("RefNo")) IsBusy=@IsLoad Disabled=!EnableBt Visible=@IsEditRefNo />
+                                </RadzenStack>
+                            </RadzenColumn>
+                            <RadzenColumn Size="4" SizeMD="2">
+                                <RadzenLabel Text="เลขสัญญา" />
+                            </RadzenColumn>
+                            <RadzenColumn Size="8" SizeMD="4">
+                                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Wrap="FlexWrap.NoWrap" Gap="0.1rem">
+                                    <RadzenTextBox class="w-100" @bind-Value=@ConInf.ContractNo Name="ContNo" id="ContNoID" Change=@(args => OnChangeFocus(args,"CustName")) />
+                                    <RadzenButton Icon="save" Variant="Variant.Outlined" ButtonStyle="ButtonStyle.Info" Click=@(() => OnEditRefNoContNo("ContNo")) IsBusy=@IsLoad Disabled=!EnableBt Visible=@IsEditRefContNo />
+                                </RadzenStack>
+                            </RadzenColumn>
+                        </RadzenRow>
+                        <RadzenRow AlignItems="AlignItems.Center">
+                            <RadzenColumn Size="4" SizeMD="2">
+                                <RadzenLabel Text="สัญญามือ" />
+                            </RadzenColumn>
+                            <RadzenColumn Size="8" SizeMD="4">
+                                <RadzenTextBox class="w-100" @bind-Value=@ConInf.HandNo Name="HandNo" />
+                            </RadzenColumn>
+                        </RadzenRow>
+                        <RadzenRow AlignItems="AlignItems.Center">
+                            <RadzenColumn Size="4" SizeMD="2">
+                                <RadzenLabel Text="ชื่อลูกค้า" />
+                            </RadzenColumn>
+                            <RadzenColumn Size="2" SizeMD="3">
+                                <RadzenDropDown @bind-Value=@ConInf.Title Placeholder="Select something" class="w-100"
+                                                Data=@customer_Titles TextProperty="TitleName" ValueProperty="TitleID"
+                                                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                                AllowFiltering="true">
+                                </RadzenDropDown>
+                            </RadzenColumn>
+                            <RadzenColumn Size="4" SizeMD="4">
+                                <RadzenTextBox class="w-100" @bind-Value=@ConInf.FirstName Placeholder="ชื่อ" id="CustName" />
+                            </RadzenColumn>
+                            <RadzenColumn Size="4" SizeMD="3">
+                                <RadzenTextBox class="w-100" @bind-Value=@ConInf.LastName Placeholder="สกุล" />
+                            </RadzenColumn>
+                        </RadzenRow>
+                        <RadzenRow AlignItems="AlignItems.Center">
+                            <RadzenColumn Size="4" SizeMD="2">
+                                <RadzenButton Text="สินค้า" ButtonStyle="ButtonStyle.Success" Click=@(() => FindModel()) class="w-100" Disabled=!EnableBt />
+                            </RadzenColumn>
+                            <RadzenColumn Size="2" SizeMD="3">
+                                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Wrap="FlexWrap.NoWrap" Gap="0.1rem">
+                                    <RadzenTextBox class="w-100" @bind-Value=@ConInf.Model Name="Model" id="ModelCode" Change=@(args => OnChangeFocus(args,"ModelName")) />
+                                    <RadzenButton Icon="search" Variant="Variant.Outlined" ButtonStyle="ButtonStyle.Info" Click=@(() => FindModelNonDlg()) IsBusy=@IsLoad Disabled=!EnableBt />
+                                </RadzenStack>
+                            </RadzenColumn>
+                            <RadzenColumn Size="6" SizeMD="7">
+                                <RadzenTextBox class="w-100" @bind-Value=@ConInf.ModelDesc Name="ModelDesc" id="ModelName" Change=@(args => OnChangeFocus(args,"SerialNo")) />
+                            </RadzenColumn>
+                        </RadzenRow>
+                        <RadzenRow AlignItems="AlignItems.Center">
+                            <RadzenColumn Size="4" SizeMD="2">
+                                <RadzenButton Text="เลขเครื่อง" ButtonStyle="ButtonStyle.Success" Click=@(() => ShowSerialNo()) class="w-100" Disabled=!EnableBt />
+                            </RadzenColumn>
+                            <RadzenColumn Size="4" SizeMD="4">
+                                <RadzenTextBox class="w-100" @bind-Value=@ConInf.SerialNo Name="SerialNo" id="SerialNo" Change=@(args => OnChangeFocus(args,"")) />
+                            </RadzenColumn>
+                        </RadzenRow>
+                        <RadzenRow AlignItems="AlignItems.Center">
+                            <RadzenColumn Size="4" SizeMD="2">
+                                <RadzenLabel Text="วันที่ติดตั้ง" />
+                            </RadzenColumn>
+                            <RadzenColumn Size="8" SizeMD="3">
+                                <RadzenDatePicker TValue="DateTime?" @bind-Value=@ConInf.EffDate Change="@(args => @ConInf.EffDate = args)" DateFormat="dd/MM/yyyy" id="EffDate">
+                                    <FooterTemplate>
+                                        <RadzenButton Click=@(args => @ConInf.EffDate = DateTime.Now) Text="Today" class="my-3 w-100" />
+                                    </FooterTemplate>
+                                </RadzenDatePicker>
+                            </RadzenColumn>
+                            <RadzenColumn Size="3" SizeMD="2">
+                                <RadzenButton Text="สถานะ" ButtonStyle="ButtonStyle.Info" Click=@(() => ShowStatusLog()) class="w-100" Disabled=!EnableBt />
+                            </RadzenColumn>
+                            <RadzenColumn Size="2" SizeMD="2">
+                                <RadzenDropDown @bind-Value=@ConInf.ContractStatus AllowClear="false" Placeholder="-" Class="w-100"
+                                                Data=@contract_Statuses TextProperty="ContractStatusName" ValueProperty="ContractStatus"
+                                                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                                AllowFiltering="true">
+                                </RadzenDropDown>
+                            </RadzenColumn>
+                            <RadzenColumn Size="7" SizeMD="3">
+                                <RadzenDatePicker TValue="DateTime?" @bind-Value=@ConInf.ContractStatusDate Change="@(args => @ConInf.ContractStatusDate = args)" DateFormat="dd/MM/yyyy" id="ContractStatusDate">
+                                    <FooterTemplate>
+                                        <RadzenButton Click=@(args => @ConInf.ContractStatusDate = DateTime.Now) Text="Today" class="my-3 w-100" />
+                                    </FooterTemplate>
+                                </RadzenDatePicker>
+                            </RadzenColumn>
+                        </RadzenRow>
+                        <RadzenRow AlignItems="AlignItems.Center">
+                            <RadzenColumn Size="4" SizeMD="2">
+                                <RadzenLabel Text="สาขา" />
+                            </RadzenColumn>
+                            <RadzenColumn Size="2" SizeMD="2">
+                                <RadzenTextBox class="w-100" @bind-Value=@ConInf.BranchCode Name="BranchCode" Change=@(args => OnChange(args, "BranchCode")) />
+                            </RadzenColumn>
+                            <RadzenColumn Size="6" SizeMD="8">
+                                <RadzenTextBox class="w-100" @bind-Value=@ConInf.BranchName Name="BranchName" />
+                            </RadzenColumn>
+                        </RadzenRow>
+                        <RadzenRow AlignItems="AlignItems.Center">
+                            <RadzenColumn Size="4" SizeMD="2">
+                                <RadzenLabel Text="ช่องทาง" />
+                            </RadzenColumn>
+                            <RadzenColumn Size="2" SizeMD="2">
+                                <RadzenTextBox class="w-100" @bind-Value=@ConInf.ChanelCode Name="ChanelCode" Change=@(args => OnChange(args, "ChanelCode")) />
+                            </RadzenColumn>
+                            <RadzenColumn Size="6" SizeMD="8">
+                                <RadzenTextBox class="w-100" @bind-Value=@ConInf.ChanelName Name="ChanelName" />
+                            </RadzenColumn>
+                        </RadzenRow>
+                        <RadzenRow AlignItems="AlignItems.Center">
+                            <RadzenColumn Size="4" SizeMD="2">
+                                @* <RadzenLabel Text="Sale/Cash Code" /> *@
+                            </RadzenColumn>
+                            <RadzenColumn Size="4" SizeMD="4">
+                                <RadzenFormField Text=@($"พนักงานขาย - {@ConInf.SaleName}") Style="width: 100%;">
+                                    <RadzenTextBox class="w-100" @bind-Value=@ConInf.SaleCode Name="SaleCode" id="SaleCode" Placeholder="SaleCode" />
+                                </RadzenFormField>
+                            </RadzenColumn>
+                            <RadzenColumn Size="4" SizeMD="4">
+                                <RadzenFormField Text=@($"พนักงานเก็บเงิน - {@ConInf.CashName}") Style="width: 100%;">
+                                    <RadzenTextBox class="w-100" @bind-Value=@ConInf.CashCode Name="CashCode" id="CashCode" Placeholder="CashCode" />
+                                </RadzenFormField>
+                            </RadzenColumn>
+                        </RadzenRow>
+                        <RadzenRow AlignItems="AlignItems.Center">
+                            <RadzenColumn Size="4" SizeMD="2">
+                                <RadzenLabel Text="วันที่เปิด/ปิด" />
+                            </RadzenColumn>
+                            <RadzenColumn Size="4" SizeMD="3">
+                                <RadzenDatePicker TValue="DateTime?" @bind-Value=@ConInf.OpenDate Change="@(args => @ConInf.OpenDate = args)" DateFormat="dd/MM/yyyy">
+                                    <FooterTemplate>
+                                        <RadzenButton Click=@(args => @ConInf.OpenDate = DateTime.Now) Text="Today" class="my-3 w-100" />
+                                    </FooterTemplate>
+                                </RadzenDatePicker>
+                            </RadzenColumn>
+                            <RadzenColumn Size="4" SizeMD="3">
+                                <RadzenDatePicker TValue="DateTime?" @bind-Value=@ConInf.CloseDate Change="@(args => @ConInf.CloseDate = args)" DateFormat="dd/MM/yyyy">
+                                    <FooterTemplate>
+                                        <RadzenButton Click=@(args => @ConInf.CloseDate = DateTime.Now) Text="Today" class="my-3 w-100" />
+                                    </FooterTemplate>
+                                </RadzenDatePicker>
+                            </RadzenColumn>
+                            <RadzenColumn Size="12" SizeMD="2">
+                                <RadzenButton Text="Save" Icon="save" ButtonStyle="ButtonStyle.Success" Click=@SaveFnDate BusyText="Saving..." IsBusy=@IsLoadSaveFnDate Disabled=!EnableBt Visible=@IsSaveFn />
+                            </RadzenColumn>
+                        </RadzenRow>
+                    </RadzenColumn>
+                    <RadzenColumn Size="12" SizeMD="4">
+                        <RadzenTabs @bind-SelectedIndex=@selectedIndexTop>
+                            <Tabs>
+                                <RadzenTabsItem Text="ข้อมูลค่างวด">
+                                    <RadzenRow AlignItems="AlignItems.Center">
+                                        <RadzenColumn Size="4" SizeMD="5">
+                                            <RadzenLabel Text="สด/ดาวน์" />
+                                        </RadzenColumn>
+                                        <RadzenColumn Size="8" SizeMD="7">
+                                            <RadzenNumeric ShowUpDown="false" TValue="decimal" Format="#,###" @bind-Value=@ConInf.Sales TextAlign="TextAlign.Right" />
+                                        </RadzenColumn>
+                                    </RadzenRow>
+                                    <RadzenRow AlignItems="AlignItems.Center">
+                                        <RadzenColumn Size="4" SizeMD="5">
+                                            <RadzenLabel Text="ผ่อน" />
+                                        </RadzenColumn>
+                                        <RadzenColumn Size="8" SizeMD="7">
+                                            <RadzenNumeric ShowUpDown="false" TValue="decimal" Format="#,###" @bind-Value=@ConInf.Credit TextAlign="TextAlign.Right" />
+                                        </RadzenColumn>
+                                    </RadzenRow>
+                                    <RadzenRow AlignItems="AlignItems.Center">
+                                        <RadzenColumn Size="4" SizeMD="5">
+                                            <RadzenLabel Text="จำนวนงวด" />
+                                        </RadzenColumn>
+                                        <RadzenColumn Size="8" SizeMD="7">
+                                            <RadzenNumeric ShowUpDown="false" TValue="int" @bind-Value=@ConInf.ContractPeriod Style="text-align: center;" />
+                                        </RadzenColumn>
+                                    </RadzenRow>
+                                    <RadzenRow AlignItems="AlignItems.Center">
+                                        <RadzenColumn Size="4" SizeMD="5">
+                                            <RadzenLabel Text="งวด 2 ขึ้นไป" />
+                                        </RadzenColumn>
+                                        <RadzenColumn Size="8" SizeMD="7">
+                                            <RadzenNumeric ShowUpDown="false" TValue="decimal" Format="#,###" @bind-Value=@ConInf.ContractPeriodAmount TextAlign="TextAlign.Right" />
+                                        </RadzenColumn>
+                                    </RadzenRow>
+                                    <RadzenRow AlignItems="AlignItems.Center">
+                                        <RadzenColumn Size="4" SizeMD="5">
+                                            <RadzenLabel Text="งวด 1" />
+                                        </RadzenColumn>
+                                        <RadzenColumn Size="8" SizeMD="7">
+                                            <RadzenNumeric ShowUpDown="false" TValue="decimal" Format="#,###" @bind-Value=@ConInf.ContractFirstPeriodAmount TextAlign="TextAlign.Right" />
+                                        </RadzenColumn>
+                                    </RadzenRow>
+                                    <RadzenRow AlignItems="AlignItems.Center">
+                                        <RadzenColumn Size="4" SizeMD="5">
+                                            <RadzenLabel Text="ส่วนลด" />
+                                        </RadzenColumn>
+                                        <RadzenColumn Size="8" SizeMD="7">
+                                            <RadzenNumeric ShowUpDown="false" TValue="decimal" Format="#,###" @bind-Value=@ConInf.ContractDiscount TextAlign="TextAlign.Right" Change=@(args => OnChangeContractDiscount(args,"ContractDiscount")) />
+                                        </RadzenColumn>
+                                    </RadzenRow>
+                                    <RadzenRow AlignItems="AlignItems.Center">
+                                        <RadzenColumn Size="4" SizeMD="5">
+                                            <RadzenLabel Text="หลังหักส่วนลด" />
+                                        </RadzenColumn>
+                                        <RadzenColumn Size="8" SizeMD="7">
+                                            <RadzenNumeric ShowUpDown="false" TValue="decimal" Format="#,###" @bind-Value=@ConInf.AfterDiscount TextAlign="TextAlign.Right" />
+                                        </RadzenColumn>
+                                    </RadzenRow>
+                                    <RadzenRow AlignItems="AlignItems.Center">
+                                        <RadzenColumn Size="4" SizeMD="5">
+                                            <RadzenLabel Text="ชำระงวดแรก" />
+                                        </RadzenColumn>
+                                        <RadzenColumn Size="8" SizeMD="7">
+                                            <RadzenNumeric ShowUpDown="false" TValue="decimal" Format="#,###" @bind-Value=@ConInf.ContractFirstPay TextAlign="TextAlign.Right" />
+                                        </RadzenColumn>
+                                    </RadzenRow>
+                                </RadzenTabsItem>
+                                <RadzenTabsItem Text="ข้อมูลชำระ">
+                                    <RadzenRow AlignItems="AlignItems.Center">
+                                        <RadzenColumn Size="4" SizeMD="5">
+                                            <RadzenLabel Text="หลังหักส่วนลด" />
+                                        </RadzenColumn>
+                                        <RadzenColumn Size="8" SizeMD="7">
+                                            <RadzenNumeric ShowUpDown="false" TValue="decimal" Format="#,###" @bind-Value=@ConInf.AfterDiscount TextAlign="TextAlign.Right" />
+                                        </RadzenColumn>
+                                    </RadzenRow>
+                                    <RadzenRow AlignItems="AlignItems.Center">
+                                        <RadzenColumn Size="4" SizeMD="5">
+                                            <RadzenLabel Text="รวมชำระแล้ว" />
+                                        </RadzenColumn>
+                                        <RadzenColumn Size="8" SizeMD="7">
+                                            <RadzenNumeric ShowUpDown="false" TValue="decimal" Format="#,###" @bind-Value=@ConInf.SmPay TextAlign="TextAlign.Right" ReadOnly="true" />
+                                        </RadzenColumn>
+                                    </RadzenRow>
+                                    <RadzenRow AlignItems="AlignItems.Center">
+                                        <RadzenColumn Size="4" SizeMD="5">
+                                            <RadzenLabel Text="คงเหลือ" />
+                                        </RadzenColumn>
+                                        <RadzenColumn Size="8" SizeMD="7">
+                                            <RadzenNumeric ShowUpDown="false" TValue="decimal" Format="#,###" @bind-Value=@ConInf.RmPay TextAlign="TextAlign.Right" ReadOnly="true" />
+                                        </RadzenColumn>
+                                    </RadzenRow>
+                                    <RadzenRow AlignItems="AlignItems.Center">
+                                        <RadzenColumn Size="4" SizeMD="5">
+                                            <RadzenLabel Text="ชำระถึงงวด" />
+                                        </RadzenColumn>
+                                        <RadzenColumn Size="8" SizeMD="7">
+                                            <RadzenNumeric ShowUpDown="false" TValue="int" @bind-Value=@ConInf.LastPayPeroid TextAlign="TextAlign.Center" ReadOnly="true" />
+                                        </RadzenColumn>
+                                    </RadzenRow>
+                                    <RadzenRow AlignItems="AlignItems.Center">
+                                        <RadzenColumn Size="4" SizeMD="5">
+                                            <RadzenLabel Text="วันที่ชำระล่าสุด" />
+                                        </RadzenColumn>
+                                        <RadzenColumn Size="8" SizeMD="7">
+                                            <RadzenDatePicker TValue="DateTime?" Value=@ConInf.LastPayDate DateFormat="dd/MM/yyyy" ReadOnly="true" ShowButton="false" />
+                                        </RadzenColumn>
+                                    </RadzenRow>
+                                    <RadzenRow AlignItems="AlignItems.Center">
+                                        <RadzenColumn Size="4" SizeMD="5">
+                                            <RadzenLabel Text="ชำระล่าสุด" />
+                                        </RadzenColumn>
+                                        <RadzenColumn Size="8" SizeMD="7">
+                                            <RadzenNumeric ShowUpDown="false" TValue="decimal" Format="#,###" @bind-Value=@ConInf.LastPayAmt TextAlign="TextAlign.Right" ReadOnly="true" />
+                                        </RadzenColumn>
+                                    </RadzenRow>
+                                </RadzenTabsItem>
+                            </Tabs>
+                        </RadzenTabs>
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenStack>
+        </RadzenRow>
+        @*<CascadingValue Value=btn_clicked >*@
+        <RadzenRow>
+            <RadzenColumn Size="12">
+                <RadzenTabs @bind-SelectedIndex=@selectedIndex Change=@LoadTab>
+                    <Tabs>
+                        <RadzenTabsItem Text="ใบเสร็จ">
+                            <RadzenTabs @bind-SelectedIndex=@selectedIndexBill Change=@LoadTabBill>
+                                <Tabs>
+                                    <RadzenTabsItem Text="ใบเสร็จค่างวด">
+                                        <ChainConnext.Client.Pages.Bills.BillList1 pConInf=@ConInf pHeight=@Height pWidth=@Width payment_Infos=@payment_Infos isLoading=@IsLoad />
+                                    </RadzenTabsItem>
+                                    <RadzenTabsItem Text="ใบเสร็จย่อย">
+                                        <ChainConnext.Client.Pages.Bills.BillList2 pConInf=@ConInf pHeight=@Height pWidth=@Width payment_Infos=@paytrans_Infos isLoading=@IsLoad />
+                                    </RadzenTabsItem>
+                                </Tabs>
+                            </RadzenTabs>
+                        </RadzenTabsItem>
+                        <RadzenTabsItem Text="พนักงาน">
+                            <ChainConnext.Client.Pages.Contracts.ContractInfo pConInf=@ConInf ConInfEmp=@ConInfEmp IsLoading=@IsLoad OnSaveEmp=@OnContSaveEmp OnSaveDue=@OnContSaveDue />
+                        </RadzenTabsItem>
+                        <RadzenTabsItem Text="ลูกค้า">
+                            <ChainConnext.Client.Pages.Customers.CustomerInfo pCustomerId=@ConInf.CustomerId pContractId=@ConInf.ContractId />
+                        </RadzenTabsItem>
+                        <RadzenTabsItem Text="สินค้า">
+                            <ChainConnext.Client.Pages.Products.ProductInfo ConInf=@ConInf />
+                        </RadzenTabsItem>
+                        <RadzenTabsItem Text="ตารางงวด">
+                            <ChainConnext.Client.Pages.Peroids.PeroidInfo pContractId=@ConInf.ContractId />
+                        </RadzenTabsItem>
+                        <RadzenTabsItem Text="ปัญหา">
+                            <ChainConnext.Client.Pages.Probs.ProbInfo pConInf=@ConInf pHeight=@Height pWidth=@Width />
+                        </RadzenTabsItem>
+                        <RadzenTabsItem Text="เครื่องเปลี่ยน/สวม">
+                            <RadzenTabs @bind-SelectedIndex=@selectedIndexChg Change=@LoadTabChg>
+                                <Tabs>
+                                    <RadzenTabsItem Text="สวม">
+                                        <ContractCloneLogList pConInf=@ConInf pHeight=@Height pWidth=@Width bD_ChgConts=@bD_ChgConts IsLoading=@IsLoad />
+                                    </RadzenTabsItem>
+                                    <RadzenTabsItem Text="เปลี่ยน">
+                                        <ContractReNewLogList pConInf=@ConInf pHeight=@Height pWidth=@Width bD_ChgModels=@bD_ChgModels IsLoading=@IsLoad />
+                                    </RadzenTabsItem>
+                                </Tabs>
+                            </RadzenTabs>
+                        </RadzenTabsItem>
+                        <RadzenTabsItem Text="เครื่องเทิร์น">
+                            <ProductTurn pConInf=@ConInf pHeight=@Height pWidth=@Width />
+                        </RadzenTabsItem>
+                        <RadzenTabsItem Text="บันทึกเพิ่มเติม">
+                            <RadzenButton Text="Save" Icon="save" ButtonStyle="ButtonStyle.Success" Click=@SaveMemo BusyText="Saving..." IsBusy=@IsLoadSaveFnDate Disabled=!EnableBt Visible=@IsSaveMemo />
+                            <RadzenTextArea class="w-100" @bind-Value=@ConInf.Memo Name="Memo" Rows="10" />
+                        </RadzenTabsItem>
+                    </Tabs>
+                </RadzenTabs>
+            </RadzenColumn>
+        </RadzenRow>
+        @*</CascadingValue>*@
+        @* <RadzenRow>
+    <RadzenColumn Size="7" class="col-7 d-flex">
+    <RadzenButton Text="Save" Icon="save" ButtonStyle="ButtonStyle.Success" Class="mb-4" Disabled=!EnableBt />
+    </RadzenColumn>
+    <RadzenColumn Size="5" class="col-5 d-flex justify-content-end">
+
+    </RadzenColumn>
+    </RadzenRow> *@
+    </RadzenStack>
+}

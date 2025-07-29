@@ -1,0 +1,29 @@
+﻿@using ChainConnext.Shared
+
+@inject IAccountService _accountService
+@inject NavigationManager Navigation
+@inject HttpClient Http
+@inject ILogger<EditorLogDialog> Logger
+@inject Radzen.DialogService dialogService
+@inject IJSRuntime jsRuntime
+@inject NotificationService NotificationService
+
+<RadzenStack>
+    <RadzenRow>
+        <RadzenColumn Size="12">
+            <RadzenTemplateForm TItem="Editor_Log" Data=@editor Submit=@OnSubmit InvalidSubmit=@OnInvalidSubmit>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="12">
+                        <RadzenTextArea class="w-100" @bind-Value=@editor.EditRemark Name="EditRemark" Rows="4" MaxLength="500" />
+                        <RadzenRequiredValidator Component="EditRemark" Text="Remark is required" Style="position: absolute" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="12">
+                        <RadzenButton ButtonType="ButtonType.Submit" Text="Save" Icon="save" ButtonStyle="ButtonStyle.Success" IsBusy=@IsLoading Class="w-100" />
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenTemplateForm>
+        </RadzenColumn>
+    </RadzenRow>
+</RadzenStack>

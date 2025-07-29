@@ -1,0 +1,29 @@
+﻿@using ChainConnext.Shared.Payments;
+
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@inject IAccountService _accountService
+
+<RadzenRow>
+    <RadzenDataGrid IsLoading="@isLoading" Data="@payment_Infos" TItem="Payment_Info" AllowVirtualization="false" AllowColumnResize="true"
+                    AllowFiltering="true" PageSize="60"
+                    FilterMode="FilterMode.Advanced"
+                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                    LogicalFilterOperator="LogicalFilterOperator.Or"
+                    FilterPopupRenderMode="PopupRenderMode.OnDemand"
+                    AllowSorting="true" SelectionMode="DataGridSelectionMode.Single"
+                    PagerPosition="PagerPosition.Bottom" AllowPaging="true" ColumnWidth="150px" Style=@($"height:{(pHeight - 200)}px")>
+        <Columns>
+            <RadzenDataGridColumn TItem="Payment_Info" Property="PayPeroid" Title="งวด" TextAlign="TextAlign.Center" Frozen="true" Width="100px" />
+            <RadzenDataGridColumn TItem="Payment_Info" Property="PayDate" Title="วันที่ชำระเงิน" FormatString="{0:dd/MM/yyyy}" />
+            <RadzenDataGridColumn TItem="Payment_Info" Property="PayAmt" Title="จำนวนชำระเงิน" FormatString="{0:N2}" TextAlign="TextAlign.Right" />
+            <RadzenDataGridColumn TItem="Payment_Info" Property="BookNo" Title="เล่มที่" TextAlign="TextAlign.Center" />
+            <RadzenDataGridColumn TItem="Payment_Info" Property="NumNo" Title="เลขที่" TextAlign="TextAlign.Center" />
+            <RadzenDataGridColumn TItem="Payment_Info" Property="InvNo" Title="Invoice" TextAlign="TextAlign.Center" />
+            <RadzenDataGridColumn TItem="Payment_Info" Property="DocDate" Title="วันที่เอกสาร" FormatString="{0:dd/MM/yyyy}" />
+            <RadzenDataGridColumn TItem="Payment_Info" Property="DueDate" Title="กำหนดชำระ" FormatString="{0:dd/MM/yyyy}" />
+            <RadzenDataGridColumn TItem="Payment_Info" Property="CashCode" Title="พนักงาน" TextAlign="TextAlign.Center" />
+            <RadzenDataGridColumn TItem="Payment_Info" Property="CashName" Title="ชื่อพนักงาน" TextAlign="TextAlign.Center" />
+        </Columns>
+    </RadzenDataGrid>
+</RadzenRow>

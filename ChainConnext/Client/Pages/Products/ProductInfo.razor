@@ -1,0 +1,16 @@
+﻿<RadzenStack>
+    <RadzenRow>
+        <RadzenColumn Size="12">
+            <RadzenTabs @bind-SelectedIndex=@selectedIndex>
+                <Tabs>
+                    <RadzenTabsItem Text="รายละเอียด">
+                        <ProductDetail ConInf=@ConInf />
+                    </RadzenTabsItem>
+                    <RadzenTabsItem Text="สัญญาอื่น">
+                        <ProductRef ConInf=@ConInf />
+                    </RadzenTabsItem>
+                </Tabs>
+            </RadzenTabs>
+        </RadzenColumn>
+    </RadzenRow>
+</RadzenStack>

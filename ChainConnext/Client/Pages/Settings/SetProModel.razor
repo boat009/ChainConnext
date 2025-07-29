@@ -1,0 +1,103 @@
+﻿@page "/setting/promodel"
+@using ChainConnext.Shared.BD;
+@inject HttpClient Http
+@inject ILogger<SetProModel> Logger
+@inject IAccountService _accountService
+@inject NavigationManager Navigation
+@inject IJSRuntime jsRuntime
+@inject NotificationService NotificationService
+@inject DialogService dialogService
+@inject ILocalStorageService localStorage
+@inject ContextMenuService ContextMenuService
+
+@if (!IsAccess)
+{
+    <RadzenText TextStyle="TextStyle.H1">ไม่มีสิทธิในส่วนนี้</RadzenText>
+}
+else
+{
+    <RadzenRow>
+        <RadzenColumn Size="4">
+            <RadzenRow>
+                <RadzenColumn Size="12" SizeMD="12">
+                    <RadzenButton ButtonStyle="ButtonStyle.Success" Text="เพิ่มหมวดสินค้า" Class="w-100 mb-4" Icon="add" Click=@(() => OpenKindEdit(new BDProKind(),"Add")) Visible=@IsSave IsBusy=@IsKindLoading />
+                </RadzenColumn>
+            </RadzenRow>
+        </RadzenColumn>
+        <RadzenColumn Size="8">
+            <RadzenRow>
+                <RadzenColumn Size="12" SizeMD="12">
+                    <RadzenButton ButtonStyle="ButtonStyle.Success" IsBusy=@IsModelLoading 
+                        Text=@($"เพิ่มสินค้า ของ {selectedKind?.FirstOrDefault()?.code} - {selectedKind?.FirstOrDefault()?.name}") Class="w-100 mb-4"
+                                  Click=@(() => OpenModelEdit(new BDProModel { cate = selectedKind?.FirstOrDefault()?.code},"Add"))
+                    Icon="add" Visible=@IsSave Disabled=!IsKindSelected />
+                </RadzenColumn>
+            </RadzenRow>
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenRow>
+        <RadzenColumn Size="4">
+            <RadzenDataGrid IsLoading="@IsKindLoading" Data="@proKinds" TItem="BDProKind" AllowVirtualization="false" AllowColumnResize="true"
+                            AllowFiltering="true" PageSize="20" AllowPaging="true" PageNumbersCount="2"
+                            FilterMode="FilterMode.Advanced"
+                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                            LogicalFilterOperator="LogicalFilterOperator.Or"
+                            FilterPopupRenderMode="PopupRenderMode.OnDemand"
+                            AllowSorting="true" SelectionMode="DataGridSelectionMode.Single" @bind-Value=@selectedKind
+                            PagerPosition="PagerPosition.Bottom" ColumnWidth="250px" Style=@($"height:{(Height - 80)}px")
+                            CellClick="@OnKindCellClick">
+                <Columns>
+                    <RadzenDataGridColumn TItem="BDProKind" Property="code" Title="รหัส" Frozen="true" Width="100px" />
+                    <RadzenDataGridColumn TItem="BDProKind" Property="name" Title="ชื่อหมวดสินค้า" />
+                    <RadzenDataGridColumn TItem="BDProKind" Property="ID" Title="แก้ไข" Width="80px" Frozen="true" Filterable="false" Sortable="false" Visible=@IsSave>
+                        <Template Context="data">
+                            <RadzenButton ButtonStyle="ButtonStyle.Warning" Shade="Shade.Lighter" Icon="edit" Click=@(() => OpenKindEdit(data,"Edit")) />
+                        </Template>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="BDProKind" Property="ID" Title="ลบ" Width="80px" Filterable="false" Sortable="false" Visible=@IsDelete>
+                        <Template Context="data">
+                            <RadzenButton ButtonStyle="ButtonStyle.Danger" Shade="Shade.Lighter" Icon="delete" Click=@(() => OpenKindDelete(data,"Delete")) />
+                        </Template>
+                    </RadzenDataGridColumn>
+                </Columns>
+            </RadzenDataGrid>
+        </RadzenColumn>
+        <RadzenColumn Size="8">
+            <RadzenDataGrid IsLoading="@IsModelLoading" Data="@proModels" TItem="BDProModel" AllowVirtualization="false" AllowColumnResize="true"
+                            AllowFiltering="true" PageSize="20" AllowPaging="true"
+                            FilterMode="FilterMode.Advanced"
+                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                            LogicalFilterOperator="LogicalFilterOperator.Or"
+                            FilterPopupRenderMode="PopupRenderMode.OnDemand" CellContextMenu="@OnCellContextMenu"
+                            AllowSorting="true" SelectionMode="DataGridSelectionMode.Single" @bind-Value=@selectedModel
+                            PagerPosition="PagerPosition.Bottom" ColumnWidth="150px" Style=@($"height:{(Height - 150)}px")>
+                <Columns>
+                    <RadzenDataGridColumn TItem="BDProModel" Property="MODEL" Title="รหัสสินค้า" Frozen="true" />
+                    <RadzenDataGridColumn TItem="BDProModel" Property="Des" Title="ชื่อสินค้า" Width="350px" />
+                    <RadzenDataGridColumn TItem="BDProModel" Property="MODE" Title="จำนวนงวด" />
+                    <RadzenDataGridColumn TItem="BDProModel" Property="CASH" Title="ราคาเงินสด" />
+                    <RadzenDataGridColumn TItem="BDProModel" Property="Sales" Title="ราคาเงินผ่อน" />
+                    <RadzenDataGridColumn TItem="BDProModel" Property="credit2" Title="งวด 1" />
+                    <RadzenDataGridColumn TItem="BDProModel" Property="CREDIT" Title="ค่างวด" />
+                    <RadzenDataGridColumn TItem="BDProModel" Property="rate" Title="คะแนน" />
+                    <RadzenDataGridColumn TItem="BDProModel" Property="WPrice" Title="ส่วนลด" />
+                    <RadzenDataGridColumn TItem="BDProModel" Property="ID" Title="แก้ไข" Width="80px" Frozen="true" Filterable="false" Sortable="false" Visible=@IsSave>
+                        <Template Context="data">
+                            <RadzenButton ButtonStyle="ButtonStyle.Warning" Shade="Shade.Lighter" Icon="edit" Click=@(() => OpenModelEdit(data,"Edit")) />
+                        </Template>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="BDProModel" Property="ID" Title="ลบ" Width="80px" Filterable="false" Sortable="false" Visible=@IsDelete>
+                        <Template Context="data">
+                            <RadzenButton ButtonStyle="ButtonStyle.Danger" Shade="Shade.Lighter" Icon="delete" Click=@(() => OpenModelDelete(data,"Delete")) />
+                        </Template>
+                    </RadzenDataGridColumn>
+                </Columns>
+            </RadzenDataGrid>
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenRow>
+        <RadzenColumn Size="12" SizeMD="2">
+            <RadzenButton Text="Excel" Icon="view_list" Class="w-100" ButtonStyle="ButtonStyle.Success" IsBusy=@IsLoading Click=@ExportToExcel />
+        </RadzenColumn>
+    </RadzenRow>
+}

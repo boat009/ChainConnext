@@ -1,0 +1,30 @@
+﻿@using ChainConnext.Shared.BD;
+
+@inject IAccountService _accountService
+@inject NavigationManager Navigation
+@inject HttpClient Http
+@inject ILogger<TranStDialog> Logger
+@inject Radzen.DialogService dialogService
+@inject IJSRuntime jsRuntime
+
+<RadzenStack>
+    <RadzenRow>
+        <RadzenColumn Size="12">
+            <RadzenDataGrid IsLoading="@IsLoading" Data="@tranSts" TItem="TranSt" AllowVirtualization="false" AllowColumnResize="true"
+                            AllowFiltering="true" PageSize="20" AllowPaging="true"
+                            FilterMode="FilterMode.Advanced"
+                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                            LogicalFilterOperator="LogicalFilterOperator.Or"
+                            FilterPopupRenderMode="PopupRenderMode.OnDemand"
+                            AllowSorting="true" SelectionMode="DataGridSelectionMode.Single"
+                            PagerPosition="PagerPosition.Bottom" ColumnWidth="150px">
+                <Columns>
+                    <RadzenDataGridColumn TItem="TranSt" Property="Status" Title="Status" Frozen="true" Width="50px" />
+                    <RadzenDataGridColumn TItem="TranSt" Property="StDate" Title="StDate" FormatString="{0:dd/MM/yyyy}" />
+                    <RadzenDataGridColumn TItem="TranSt" Property="ChgDate" Title="ChgDate" FormatString="{0:dd/MM/yyyy}" />
+                    <RadzenDataGridColumn TItem="TranSt" Property="Auser" Title="Auser" />
+                </Columns>
+            </RadzenDataGrid>
+        </RadzenColumn>
+    </RadzenRow>
+</RadzenStack>

@@ -1,0 +1,45 @@
+﻿@using ChainConnext.Shared.BD
+
+@inject ILogger<ARContractDetailList> Logger
+@inject DialogService dialogService
+@inject IJSRuntime jsRuntime
+@inject NavigationManager Navigation
+@inject IAccountService _accountService
+@inject NotificationService NotificationService
+@inject HttpClient Http
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+<RadzenDataGrid IsLoading="@IsLoad" Data="@ListDetailMastCont" TItem="BD_MastCont" AllowColumnResize="true"
+                AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" LogicalFilterOperator="LogicalFilterOperator.Or"
+                AllowSorting="true" SelectionMode="DataGridSelectionMode.Single" @bind-Value=@selectedDetailMastCont
+                AllowPaging="true" PageSize="10"
+                PagerPosition="PagerPosition.Bottom" ColumnWidth="150px" Style=@($"height:{(Height - 150)}px")>
+    <Columns>
+        <RadzenDataGridColumn TItem="BD_MastCont" Property="toacc" Title="เข้า" Frozen="true" Filterable="false" Sortable="false" Width="50px">
+            <Template Context="Um">
+                <RadzenCheckBox TriState="false" TValue="bool?" Value=@Um.is_toacc />
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="BD_MastCont" Property="RefNo" Title="เลขอ้างอิง" Frozen="true">
+            <FooterTemplate>
+                <b>@ListDetailMastCont.Count</b>
+            </FooterTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="BD_MastCont" Property="torefno" Title="เปลี่ยนไป" />
+        <RadzenDataGridColumn TItem="BD_MastCont" Property="tocode" Title="รหัส" Width="50px" />
+        <RadzenDataGridColumn TItem="BD_MastCont" Property="fromrefno" Title="ที่มา" />
+        <RadzenDataGridColumn TItem="BD_MastCont" Property="CONTNO" Title="เลชสัญญา" />
+        <RadzenDataGridColumn TItem="BD_MastCont" Property="MODEL" Title="สินค้า" />
+        <RadzenDataGridColumn TItem="BD_MastCont" Property="SERIALNO" Title="เลขเครื่อง" />
+        <RadzenDataGridColumn TItem="BD_MastCont" Property="MODE" Title="งวด" />
+        <RadzenDataGridColumn TItem="BD_MastCont" Property="SALES" Title="ราคาเงินสด" />
+        <RadzenDataGridColumn TItem="BD_MastCont" Property="CREDIT" Title="ราคาเช่าซื้อ" />
+        <RadzenDataGridColumn TItem="BD_MastCont" Property="premium2" Title="งวดแรก" />
+        <RadzenDataGridColumn TItem="BD_MastCont" Property="PREMIUM" Title="งวดต่อไป" />
+        <RadzenDataGridColumn TItem="BD_MastCont" Property="discfirst" Title="ส่วนลด" />
+        <RadzenDataGridColumn TItem="BD_MastCont" Property="netcredit" Title="หักส่วนลด" />
+        <RadzenDataGridColumn TItem="BD_MastCont" Property="nextcredit" Title="ชำระงวดแรก" />
+        <RadzenDataGridColumn TItem="BD_MastCont" Property="chanel" Title="ช่องทางขาย" />
+        <RadzenDataGridColumn TItem="BD_MastCont" Property="CHECKER" Title="สาขา" />
+    </Columns>
+</RadzenDataGrid>

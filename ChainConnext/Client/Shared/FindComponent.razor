@@ -1,0 +1,158 @@
+﻿@using ChainConnext.Shared
+
+@inject HttpClient Http
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Wrap="FlexWrap.NoWrap" Gap="0">
+    <RadzenDropDown @bind-Value=@findSelected
+                    Data=@findModes TextProperty="FindName" ValueProperty="FindID"
+                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                    AllowFiltering="true" Visible=@VisibleFindOption>
+    </RadzenDropDown>
+    <RadzenTextBox type="search" Placeholder="ค้นหา..." @onkeydown=@FindEnter @oninput=@(args => SearchValue = args.Value.ToString()) @bind-value=@SearchValue MaxLength="250" Style="text-transform: uppercase;" onclick="this.select();" />
+    <RadzenButton Text="ค้นหา" Icon="search" ButtonStyle="ButtonStyle.Success" IsBusy=@IsLoad Click=@(() => FindData()) Visible=@VisibleSearchButton />
+</RadzenStack>
+
+@code {
+    [Parameter]
+    public EventCallback<ExecResult> OnFindEnter { get; set; }
+    [Parameter]
+    public EventCallback<ExecResult> OnFindData { get; set; }
+
+    List<FindMode> findModes = new List<FindMode>();
+    [Parameter]
+    public int findSelected { get; set; } = 1;
+    [Parameter]
+    public string SearchValue { get; set; } = "";
+
+    bool IsLoad = false;
+    [Parameter]
+    public bool VisibleSearchButton { get; set; } = true;
+    [Parameter]
+    public bool VisibleFindOption { get; set; } = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        IsLoad = true;
+        await GetFindModeData();
+        await CheckDefaultValues();
+        IsLoad = false;
+    }
+
+    private async Task GetFindModeData()
+    {
+        var postBody = new FindMode();
+        var response = await Http.PostAsJsonAsync("Find/ListFindMode", postBody);
+
+        ExecResult? Rs = await response.Content.ReadFromJsonAsync<ExecResult>();
+        if (Rs != null)
+        {
+            if (Rs.Rows > 0)
+            {
+                findModes = Newtonsoft.Json.JsonConvert.DeserializeObject<List<FindMode>>(Rs.Data.ToString());
+            }
+        }
+    }
+
+    async Task FindEnter(KeyboardEventArgs e)
+    {
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+        {
+            //SearchValue = FindSearchValue;
+            //await OnChange(SearchValue, "Find");
+            await FindInvoke("Enter");
+        }
+    }
+
+    async Task FindData()
+    {
+        await FindInvoke("Find");
+    }
+
+    async Task FindInvoke(string Mode)
+    {
+        if (string.IsNullOrEmpty(SearchValue.Trim()))
+        {
+            return;
+        }
+        IsLoad = true;
+        switch (findSelected)
+        {
+            case 1:
+            case 2:
+                {
+                    int len = 9;
+                    switch (findSelected)
+                    {
+                        case 1: len = 9; break;
+                        case 2: len = 8; break;
+                    }
+                    SearchValue = BaseShared.FillRefNo(SearchValue.Trim(), len).ToUpper();
+                }
+                break;
+            default: break;
+        }
+        ExecResult Rs = new ExecResult();
+        Rs.Data = SearchValue.ToUpper();
+        Rs.ID = findSelected.ToString();
+        if (Mode == "Enter")
+        {
+            await OnFindEnter.InvokeAsync(Rs);
+        }
+        else
+        {
+            await OnFindData.InvokeAsync(Rs);
+        }
+        await SetDefaultValues();
+        IsLoad = false;
+    }
+    async Task CheckDefaultValues()
+    {
+        string Key = ShareValues.GetTokenUrl() + "_DefaultValues";
+        try
+        {
+            UserDefaultValues? userDefault;
+            userDefault = await localStorage.GetItemAsync<UserDefaultValues>(Key);
+            if (userDefault != null)
+            {
+                findSelected = userDefault.ContFindMode;
+            }
+        }
+        catch
+        {
+            await localStorage.RemoveItemAsync(Key);
+        }
+    }
+    async Task SetDefaultValues()
+    {
+        string Key = ShareValues.GetTokenUrl() + "_DefaultValues";
+        try
+        {
+            bool is_change = false;
+            UserDefaultValues? userDefault;
+            userDefault = await localStorage.GetItemAsync<UserDefaultValues>(Key);
+            if (userDefault != null)
+            {
+                if (userDefault.ContFindMode != findSelected)
+                {
+                    userDefault.ContFindMode = findSelected;
+                    is_change = true;
+                }
+            }
+            else
+            {
+                userDefault = new UserDefaultValues();
+                userDefault.ContFindMode = findSelected;
+                is_change = true;
+            }
+            if (is_change)
+            {
+                await localStorage.SetItemAsync(Key, userDefault);
+            }
+        }
+        catch
+        {
+            await localStorage.RemoveItemAsync(Key);
+        }
+    }
+}

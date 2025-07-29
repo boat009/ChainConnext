@@ -1,0 +1,273 @@
+﻿@page "/setting/permission"
+@using ChainConnext.Shared.Authen;
+@using Microsoft.AspNetCore.Authorization;
+@attribute [Authorize(Roles = "IsSetting")]
+
+@inject IAccountService _accountService
+@inject NavigationManager Navigation
+@inject HttpClient Http
+@inject ILogger<SetPermission> Logger
+@inject NotificationService NotificationService
+
+@if (!IsAccess)
+{
+    <RadzenText TextStyle="TextStyle.H1">ไม่มีสิทธิในส่วนนี้</RadzenText>
+}
+else
+{
+    <RadzenStack>
+        <RadzenRow>
+            <RadzenColumn Size="12" SizeMD="6">
+                <RadzenRow AlignItems="AlignItems.Center">
+                    @if (IsLoadUmData)
+                    {
+                        <RadzenLabel Text="กำลังโหลดข้อมูลพนักงาน" />
+                    }
+                    else
+                    {
+                        <RadzenColumn Size="8" SizeMD="9" Offset="3">
+                            <RadzenDropDown @bind-Value=@UserID AllowClear="false" Placeholder="Select something" Class="w-100"
+                                            Data=@UmData TextProperty="EmpName" ValueProperty="UsrID"
+                                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                            AllowFiltering="true"
+                                            Change=@(args => OnUserChange(args, "User"))>
+                            </RadzenDropDown>
+                        </RadzenColumn>
+                    }
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="3">
+                        <RadzenLabel Text="ID" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="4">
+                        <RadzenTextBox Class="w-100" @bind-Value=@Um.UsrID ReadOnly="true" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="3">
+                        <RadzenLabel Text="ชื่อ - สกุล" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="9">
+                        <RadzenTextBox Class="w-100" @bind-Value=@Um.EmpName ReadOnly="true" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="8" SizeMD="5" Offset="3">
+                        <RadzenCheckBoxList @bind-Value=@values TValue="string" Orientation=Orientation.Vertical class="w-100">
+                            <Items>
+                                @foreach (var item in UmMainPerms)
+                                {
+                                    <RadzenCheckBoxListItem Text=@item.PermsDesc Value=@item.PermsName />
+                                }
+                            </Items>
+                        </RadzenCheckBoxList>
+                    </RadzenColumn>
+                </RadzenRow>
+                @* <RadzenRow AlignItems="AlignItems.Center">
+            <RadzenColumn Size="8" SizeMD="5" Offset="3">
+            <RadzenCheckBox @bind-Value=@Um.IsSave Name="IsSave" />
+            <RadzenLabel Text="Save" Component="IsSave" Style="margin-left: 8px; vertical-align: middle;" />
+            </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow AlignItems="AlignItems.Center">
+            <RadzenColumn Size="8" SizeMD="5" Offset="3">
+            <RadzenCheckBox @bind-Value=@Um.IsDelete Name="IsDelete" />
+            <RadzenLabel Text="Delete" Component="IsDelete" Style="margin-left: 8px; vertical-align: middle;" />
+            </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow AlignItems="AlignItems.Center">
+            <RadzenColumn Size="8" SizeMD="5" Offset="3">
+            <RadzenCheckBox @bind-Value=@Um.IsPrint Name="IsPrint" />
+            <RadzenLabel Text="Print" Component="IsPrint" Style="margin-left: 8px; vertical-align: middle;" />
+            </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow AlignItems="AlignItems.Center">
+            <RadzenColumn Size="8" SizeMD="5" Offset="3">
+            <RadzenCheckBox @bind-Value=@Um.IsSetting Name="IsSetting" />
+            <RadzenLabel Text="Setting" Component="IsSetting" Style="margin-left: 8px; vertical-align: middle;" />
+            </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow AlignItems="AlignItems.Center">
+            <RadzenColumn Size="8" SizeMD="5" Offset="3">
+            <RadzenCheckBox @bind-Value=@Um.IsReport Name="IsReport" />
+            <RadzenLabel Text="Report" Component="IsReport" Style="margin-left: 8px; vertical-align: middle;" />
+            </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow AlignItems="AlignItems.Center">
+            <RadzenColumn Size="8" SizeMD="5" Offset="3">
+            <RadzenCheckBox @bind-Value=@Um.IsImport Name="IsImport" />
+            <RadzenLabel Text="Import" Component="IsImport" Style="margin-left: 8px; vertical-align: middle;" />
+            </RadzenColumn>
+            </RadzenRow> *@
+                
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="6">
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="4" SizeMD="3">
+                        <RadzenLabel Text="Main Menu" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="8" SizeMD="9">
+                        <RadzenDropDown @bind-Value=@MenuGroup AllowClear="false" Placeholder="Select something" Class="w-100"
+                                        Data=@MenuGroupData TextProperty="MenuGroup" ValueProperty="MenuGroup"
+                                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                        AllowFiltering="true"
+                                        Change=@(args => OnMenuGroupChange(args, "MenuGroup"))>
+                        </RadzenDropDown>
+                    </RadzenColumn>
+                </RadzenRow>
+                @* @bind-Value=@selectedMenu CellClick="@OnMenuCellClick" *@
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenDataGrid IsLoading="@isLoading" Data="@MenuData" TItem="User_Menu" AllowColumnResize="true"
+                                    AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" LogicalFilterOperator="LogicalFilterOperator.Or"
+                                    AllowSorting="true" SelectionMode="DataGridSelectionMode.Multiple"
+                                    CellClick="@OnCellMenuDataClick" @bind-Value=@selectedMenu
+                                    PagerPosition="PagerPosition.Bottom" AllowPaging="true" ColumnWidth="50px" PageSize="20"
+                                    Class="w-100">
+                        <Columns>
+                            @* <RadzenDataGridColumn TItem="User_Menu" Title="Icon" Sortable="false" Width="50px" Pickable="false">
+                                <Template Context="data">
+                                    <RadzenStack>
+                                        <RadzenIcon Icon="@data.MenuIcon" />
+                                    </RadzenStack>
+                                </Template>
+                            </RadzenDataGridColumn> *@
+                            @* <RadzenDataGridColumn TItem="User_Menu" Width="60px" Sortable="false" Filterable="false">
+                                <HeaderTemplate>
+                                    <RadzenCheckBox TriState="false" TValue="bool?"
+                                                    Value="@(selectedMenu == null || selectedMenu?.Any() != true ? false : !MenuData.All(i => selectedMenu.Contains(i)) ? null : MenuData.Any(i => selectedMenu.Contains(i)))"
+                                                    Change="@(args => selectedMenu = args == true ? MenuData.ToList() : null)" />
+                                </HeaderTemplate>
+                                <Template Context="data">
+                                    <RadzenCheckBox TriState="false" Value="@(selectedMenu != null && selectedMenu.Contains(data))"
+                                                    TValue="bool" Change=@(args => { if(!allowRowSelectOnRowClick) { grid.SelectRow(data); }}) />
+                                </Template>
+                            </RadzenDataGridColumn> *@
+                            <RadzenDataGridColumn TItem="User_Menu" Property="MenuDesc" Title="เมนู" Width="150px" />
+                            <RadzenDataGridColumn TItem="User_Menu" Property="IsAccess" Title="ใช้งาน" Filterable="false" Sortable="false">
+                                <HeaderTemplate>
+                                    @* <RadzenCheckBox TriState="false" TValue="bool?"
+                                                    Value="@(mIsAccess != true ? false : !MenuData.All(i => i.IsAccess) ? null : MenuData.Any(i => i.IsAccess))"
+                                                    Change="@(args => selectedMenu = args == true ? MenuData.ToList() : null)" /> *@
+                                    <RadzenCheckBox @bind-Value=@mIsAccess TriState="false" TValue="bool" Name="mIsAccess" Change=@(arg => MenuData.ForEach(x=>x.IsAccess=arg )) />
+                                    <RadzenLabel Text="ใช้งาน" Component="mIsAccess" Style="margin-left: 8px; vertical-align: middle;" />
+                                </HeaderTemplate>
+                                <Template Context="Um">
+                                    <RadzenCheckBox TriState="false" TValue="bool" Value="@Um.IsAccess" Change=@(x=> Um.IsAccess = x) />
+                                </Template>
+                            </RadzenDataGridColumn>
+                            <RadzenDataGridColumn TItem="User_Menu" Property="IsSave" Title="บันทึก" Filterable="false" Sortable="false">
+                                <HeaderTemplate>
+                                    <RadzenCheckBox @bind-Value=@mIsSave TriState="false" TValue="bool" Name="mIsSave" Change=@(arg => MenuData.ForEach(x=>x.IsSave=arg )) />
+                                    <RadzenLabel Text="บันทึก" Component="mIsSave" Style="margin-left: 8px; vertical-align: middle;" />
+                                </HeaderTemplate>
+                                <Template Context="Um">
+                                    <RadzenCheckBox TriState="false" TValue="bool" Value="@Um.IsSave" Change=@(x=> Um.IsSave = x) />
+                                </Template>
+                            </RadzenDataGridColumn>
+                            <RadzenDataGridColumn TItem="User_Menu" Property="IsDelete" Title="ลบ" Filterable="false" Sortable="false">
+                                <HeaderTemplate>
+                                    <RadzenCheckBox @bind-Value=@mIsDelete TriState="false" TValue="bool" Name="mIsDelete" Change=@(arg => MenuData.ForEach(x=>x.IsDelete=arg )) />
+                                    <RadzenLabel Text="ลบ" Component="mIsDelete" Style="margin-left: 8px; vertical-align: middle;" />
+                                </HeaderTemplate>
+                                <Template Context="Um">
+                                    <RadzenCheckBox TriState="false" TValue="bool" Value="@Um.IsDelete" Change=@(x=> Um.IsDelete = x) />
+                                </Template>
+                            </RadzenDataGridColumn>
+                        </Columns>
+                    </RadzenDataGrid>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    @if (@MenuSubData.Count > 0)
+                    {
+                        <RadzenDataGrid IsLoading="@isLoading" Data="@MenuSubData" TItem="User_Menu" AllowColumnResize="true"
+                                        AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" LogicalFilterOperator="LogicalFilterOperator.Or"
+                                        AllowSorting="true" SelectionMode="DataGridSelectionMode.Single"
+                                        CellClick="@OnCellMenuSubDataClick" @bind-Value=@selectedMenuSub
+                                        PagerPosition="PagerPosition.Bottom" AllowPaging="true" ColumnWidth="50px" PageSize="20"
+                                        Class="w-100">
+                            <Columns>
+                                <RadzenDataGridColumn TItem="User_Menu" Property="MenuDesc" Title=@MunuSubTitle Width="150px" />
+                                <RadzenDataGridColumn TItem="User_Menu" Property="IsAccess" Title="ใช้งาน" Filterable="false" Sortable="false">
+                                    <HeaderTemplate>
+                                        @* <RadzenCheckBox TriState="false" TValue="bool?"
+                                                        Value="@(selectedMenuSub == null || selectedMenuSub?.Any() != true ? false : !MenuSubData.All(i => selectedMenuSub.Contains(i)) ? null : MenuSubData.Any(i => selectedMenuSub.Contains(i)))"
+                                                        Change="@(args => selectedMenuSub = args == true ? MenuSubData.ToList() : null)" /> *@
+                                        <RadzenCheckBox @bind-Value=@mIsAccess2 TriState="false" TValue="bool" Name="mIsAccess" Change=@(arg => MenuSubData.ForEach(x=>x.IsAccess=arg )) />
+                                        <RadzenLabel Text="ใช้งาน" Component="mIsAccess" Style="margin-left: 8px; vertical-align: middle;" />
+                                    </HeaderTemplate>
+                                    <Template Context="Um">
+                                        <RadzenCheckBox TriState="false" TValue="bool" Value="@Um.IsAccess" Change=@(x=> Um.IsAccess = x) />
+                                    </Template>
+                                </RadzenDataGridColumn>
+                                <RadzenDataGridColumn TItem="User_Menu" Property="IsSave" Title="บันทึก" Filterable="false" Sortable="false">
+                                    <HeaderTemplate>
+                                        <RadzenCheckBox @bind-Value=@mIsSave2 TriState="false" TValue="bool" Name="mIsSave" Change=@(arg => MenuSubData.ForEach(x=>x.IsSave=arg )) />
+                                        <RadzenLabel Text="บันทึก" Component="mIsSave" Style="margin-left: 8px; vertical-align: middle;" />
+                                    </HeaderTemplate>
+                                    <Template Context="Um">
+                                        <RadzenCheckBox TriState="false" TValue="bool" Value="@Um.IsSave" Change=@(x=> Um.IsSave = x) />
+                                    </Template>
+                                </RadzenDataGridColumn>
+                                <RadzenDataGridColumn TItem="User_Menu" Property="IsDelete" Title="ลบ" Filterable="false" Sortable="false">
+                                    <HeaderTemplate>
+                                        <RadzenCheckBox @bind-Value=@mIsDelete2 TriState="false" TValue="bool" Name="mIsDelete" Change=@(arg => MenuSubData.ForEach(x=>x.IsDelete=arg )) />
+                                        <RadzenLabel Text="ลบ" Component="mIsDelete" Style="margin-left: 8px; vertical-align: middle;" />
+                                    </HeaderTemplate>
+                                    <Template Context="Um">
+                                        <RadzenCheckBox TriState="false" TValue="bool" Value="@Um.IsDelete" Change=@(x=> Um.IsDelete = x) />
+                                    </Template>
+                                </RadzenDataGridColumn>
+                            </Columns>
+                        </RadzenDataGrid>
+                    }
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    @if (@MenuSub2Data.Count > 0)
+                    {
+                        <RadzenDataGrid IsLoading="@isLoading" Data="@MenuSub2Data" TItem="User_Menu" AllowColumnResize="true"
+                                        AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" LogicalFilterOperator="LogicalFilterOperator.Or"
+                                        AllowSorting="true" SelectionMode="DataGridSelectionMode.Single"
+                                        PagerPosition="PagerPosition.Bottom" AllowPaging="true" ColumnWidth="50px" PageSize="20"
+                                        Class="w-100">
+                            <Columns>
+                                <RadzenDataGridColumn TItem="User_Menu" Property="MenuDesc" Title=@MunuSub2Title Width="150px" />
+                                <RadzenDataGridColumn TItem="User_Menu" Property="IsAccess" Title="ใช้งาน" Filterable="false" Sortable="false">
+                                    <HeaderTemplate>
+                                        <RadzenCheckBox @bind-Value=@mIsAccess3 TriState="false" TValue="bool" Name="mIsAccess" Change=@(arg => MenuSub2Data.ForEach(x=>x.IsAccess=arg )) />
+                                        <RadzenLabel Text="ใช้งาน" Component="mIsAccess" Style="margin-left: 8px; vertical-align: middle;" />
+                                    </HeaderTemplate>
+                                    <Template Context="Um">
+                                        <RadzenCheckBox TriState="false" TValue="bool" Value="@Um.IsAccess" Change=@(x=> Um.IsAccess = x) />
+                                    </Template>
+                                </RadzenDataGridColumn>
+                                <RadzenDataGridColumn TItem="User_Menu" Property="IsSave" Title="บันทึก" Filterable="false" Sortable="false">
+                                    <HeaderTemplate>
+                                        <RadzenCheckBox @bind-Value=@mIsSave3 TriState="false" TValue="bool" Name="mIsSave" Change=@(arg => MenuSub2Data.ForEach(x=>x.IsSave=arg )) />
+                                        <RadzenLabel Text="บันทึก" Component="mIsSave" Style="margin-left: 8px; vertical-align: middle;" />
+                                    </HeaderTemplate>
+                                    <Template Context="Um">
+                                        <RadzenCheckBox TriState="false" TValue="bool" Value="@Um.IsSave" Change=@(x=> Um.IsSave = x) />
+                                    </Template>
+                                </RadzenDataGridColumn>
+                                <RadzenDataGridColumn TItem="User_Menu" Property="IsDelete" Title="ลบ" Filterable="false" Sortable="false">
+                                    <HeaderTemplate>
+                                        <RadzenCheckBox @bind-Value=@mIsDelete3 TriState="false" TValue="bool" Name="mIsDelete" Change=@(arg => MenuSub2Data.ForEach(x=>x.IsDelete=arg )) />
+                                        <RadzenLabel Text="ลบ" Component="mIsDelete" Style="margin-left: 8px; vertical-align: middle;" />
+                                    </HeaderTemplate>
+                                    <Template Context="Um">
+                                        <RadzenCheckBox TriState="false" TValue="bool" Value="@Um.IsDelete" Change=@(x=> Um.IsDelete = x) />
+                                    </Template>
+                                </RadzenDataGridColumn>
+                            </Columns>
+                        </RadzenDataGrid>
+                    }
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="8" SizeMD="9" Offset="3">
+                        <RadzenButton Text="Save" Icon="save" ButtonStyle="ButtonStyle.Success" Class="mb-4" Click=@Save Visible=@IsSave />
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenStack>
+}

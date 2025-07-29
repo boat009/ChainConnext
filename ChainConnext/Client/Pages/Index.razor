@@ -1,0 +1,117 @@
+﻿@page "/"
+@using ChainConnext.Shared
+@using ChainConnext.Shared.Authen
+
+@inject NavigationManager Navigation
+@inject IAccountService _accountService
+@inject ILogger<Index> Logger
+
+@* <PageTitle>Index</PageTitle> *@
+
+@*<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+<SurveyPrompt Title="How is Blazor working for you?" />
+*@
+@if (IsAccess)
+{
+    <ContractDetail />
+}
+else
+{
+    <RadzenText TextStyle="TextStyle.H1">ไม่มีสิทธิในส่วนนี้</RadzenText>
+    <RadzenText TextStyle="TextStyle.H1">หรือ เลือกเมนูอื่นด้านซ้าย</RadzenText>
+
+    <RadzenButton Text="ตรวจสอบสิทธิใหม่" Click="CheckPermMenu" IsBusy=@IsLoading></RadzenButton>
+    <RadzenButton Text="Login ใหม่" Click="Logout" IsBusy=@IsLoading></RadzenButton>
+}
+@* <ContractNew/> *@
+
+@code
+{
+    [CascadingParameter]
+    private Task<AuthenticationState>? authenticationState { get; set; }
+    [CascadingParameter] 
+    public MainLayout Layout { get; set; }
+
+    Authens userData = new Authens();
+    bool IsLoading = false;
+    bool IsAccess = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        IsLoading = true;
+        await CheckPermission();
+        IsLoading = false;
+
+        await Layout.GetServerDetail();
+    }
+
+    async Task CheckPermission()
+    {
+
+        userData = await _accountService.GetAuthensAsync(Navigation.Uri);
+
+        if (userData.MenuList.Count > 0)
+        {
+            var menu2 = userData.MenuList.Find(x => x.MenuId == 76);
+            if (menu2 != null)
+            {
+                IsAccess = menu2.IsAccess;
+            }
+            else
+            {
+                IsAccess = false;
+            }
+            //Logger.LogInformation(menu2.IsAccess.ToString());
+        }
+
+        StateHasChanged();
+    }
+
+    async Task CheckPermMenu()
+    {
+        try
+        {
+            IsLoading = true;
+            await _accountService.UpdatePermsAsync();
+
+           //await CheckPermission();
+
+            IsLoading = false;
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex.Message);
+        }
+    }
+
+    public async Task Logout()
+    {
+        //await GetGeolocation();
+        string UserID = "";
+        var authState = await authenticationState;
+        var user = authState.User;
+        if (user.Identity.IsAuthenticated)
+        {
+            var UserData = Newtonsoft.Json.JsonConvert.DeserializeObject<Authens>(user.Identity.GetData());
+            if (UserData != null)
+            {
+                UserID = UserData.UserID;
+            }
+        }
+
+        var postBody = new LogoutRequest { UserID = UserID };
+
+        //var response = await Http.PostAsJsonAsync("Authen/Logout", postBody);
+        //var UserMainData = await response.Content.ReadFromJsonAsync<Authens>();
+        //if (UserMainData != null)
+        //{
+        //    //sidebar1Expanded = false;
+        await _accountService.LogoutAsync(postBody);
+        Navigation.NavigateTo("login");
+        //}
+        //Navigation.NavigateTo("logout");
+    }
+}

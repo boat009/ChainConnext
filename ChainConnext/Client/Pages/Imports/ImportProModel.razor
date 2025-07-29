@@ -1,0 +1,93 @@
+﻿@page "/imp/promodel"
+
+@using ChainConnext.Shared.BD
+@using ChainConnext.Shared.Contracts;
+@using ChainConnext.Shared.Imps;
+
+@inject ILogger<ContractDetail> Logger
+@inject DialogService dialogService
+@inject IJSRuntime jsRuntime
+@inject NavigationManager Navigation
+@inject IAccountService _accountService
+@inject NotificationService NotificationService
+@inject HttpClient Http
+@inject IPrintingService PrintingService
+
+<PageTitle>@TitlePage</PageTitle>
+
+    @if (!IsAccess)
+{
+    <RadzenText TextStyle="TextStyle.H1">ไม่มีสิทธิในส่วนนี้</RadzenText>
+}
+else
+{
+    <RadzenStack>
+        <RadzenRow>
+            <RadzenColumn Size="12">
+                <RadzenRow AlignItems="AlignItems.Center" class="my-2">
+                    <RadzenColumn Size="4" SizeMD="4">
+                        <RadzenUpload Url="upload/single" Accept="excel/*.xlsx" Progress=@TrackProgress Error=@UploadError Complete=@CompleteUpload ChooseText="เลือกไฟล์ Excel" Icon="upload" class="w-100" />
+                        <RadzenProgressBar Value=@progress class="mt-2" Visible=@showProgress />
+                        <RadzenButton Text="Cancel" Click=@(args => CancelUpload()) class="d-block mt-2" Visible=@showProgress />
+                    </RadzenColumn>
+                    <RadzenColumn Size="4" SizeMD="4">
+                        <RadzenButton Text="ไฟล์ตัวอย่าง" Icon="download" Class="w-100" ButtonStyle="ButtonStyle.Info" IsBusy=@IsLoading Click=@FileExamDownload />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="12">
+                        <RadzenLabel Visible=@showComplete class="mt-2" Text=@completionMessage />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="12" SizeMD="2">
+                        <RadzenButton Text="Save" Icon="save" Class="w-100" ButtonStyle="ButtonStyle.Primary" IsBusy=@IsLoading Visible=@IsData Click=@ShowBusyDialogProgress Disabled=@IsSaveDisable />
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenColumn>
+        </RadzenRow>
+        <RadzenRow>
+            <RadzenColumn Size="2">
+                <RadzenLabel Text=@StatusRow />
+            </RadzenColumn>
+            <RadzenColumn Size="12">
+                <RadzenProgressBar ProgressBarStyle="ProgressBarStyle.Primary" Max="100" @bind-Value=@currentPregress />
+            </RadzenColumn>
+        </RadzenRow>
+        <RadzenRow>
+            <RadzenColumn Size="12">
+                <RadzenDataGrid IsLoading="@IsLoading" Data="@ContData" TItem="BDProModel" AllowVirtualization="false" AllowColumnResize="true"
+                                AllowFiltering="true"
+                                FilterMode="FilterMode.Advanced"
+                                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                LogicalFilterOperator="LogicalFilterOperator.Or"
+                                FilterPopupRenderMode="PopupRenderMode.OnDemand"
+                                AllowSorting="true" SelectionMode="DataGridSelectionMode.Single" @bind-Value=@selectedData
+                                PagerPosition="PagerPosition.Bottom" ColumnWidth="150px" Style=@($"height:{(Height - 250)}px")>
+                    <Columns>
+                        <RadzenDataGridColumn TItem="BDProModel" Property="ErpItemCode" Title="ItemCode" />
+                        <RadzenDataGridColumn TItem="BDProModel" Property="Des" Title="ชื่อสินค้า" />
+                        <RadzenDataGridColumn TItem="BDProModel" Property="InvDesc" Title="ชื่ออกใบเสร็จ" />
+                        <RadzenDataGridColumn TItem="BDProModel" Property="vatdesc" Title="ชื่ออกใบกำกับ" />
+                        <RadzenDataGridColumn TItem="BDProModel" Property="MODEL" Title="รหัส" />
+                        <RadzenDataGridColumn TItem="BDProModel" Property="MODE" Title="จำนวนงวด" />
+                        <RadzenDataGridColumn TItem="BDProModel" Property="CREDIT" Title="งวด 2 ขึ้นไป" />
+                        <RadzenDataGridColumn TItem="BDProModel" Property="credit2" Title="งวด 1" />
+                        <RadzenDataGridColumn TItem="BDProModel" Property="Sales" Title="ราคาเงินผ่อน" />
+                        <RadzenDataGridColumn TItem="BDProModel" Property="CASH" Title="ราคาเงินสด" />
+                        <RadzenDataGridColumn TItem="BDProModel" Property="WPrice" Title="ส่วนลด" />
+                        <RadzenDataGridColumn TItem="BDProModel" Property="cate" Title="หมวดสินค้า" />
+                        <RadzenDataGridColumn TItem="BDProModel" Property="KindDesc" Title="kindDesc" />
+                        <RadzenDataGridColumn TItem="BDProModel" Property="ProStartDate" Title="วันที่เริ่มโปร" FormatString="{0:dd/MM/yyyy}" />
+                        <RadzenDataGridColumn TItem="BDProModel" Property="ProEndDate" Title="วันที่สิ้นสุด" FormatString="{0:dd/MM/yyyy}" />
+                    </Columns>
+                </RadzenDataGrid>
+            </RadzenColumn>
+        </RadzenRow>
+        <RadzenRow>
+            <RadzenColumn Size="12" SizeMD="2">
+                <RadzenButton Text="Excel" Icon="view_list" Class="w-100" ButtonStyle="ButtonStyle.Success" IsBusy=@IsLoading Visible=@IsData Click=@ShowBusyDialogExportExcel />
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenStack>
+}

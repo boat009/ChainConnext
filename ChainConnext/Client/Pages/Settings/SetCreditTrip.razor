@@ -1,0 +1,85 @@
+﻿@page "/setting/credittrip"
+@using ChainConnext.Shared.BD;
+@inject HttpClient Http
+@inject ILogger<SetCreditTrip> Logger
+@inject IAccountService _accountService
+@inject NavigationManager Navigation
+@inject IJSRuntime jsRuntime
+@inject NotificationService NotificationService
+@inject DialogService dialogService
+
+@if (!IsAccess)
+{
+    <RadzenText TextStyle="TextStyle.H1">ไม่มีสิทธิในส่วนนี้</RadzenText>
+}
+else
+{
+    <RadzenRow>
+        <RadzenColumn Size="4">
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenColumn Size="4" SizeMD="3">
+                    <RadzenLabel Text="ปี" />
+                </RadzenColumn>
+                <RadzenColumn Size="6" SizeMD="4">
+                    <RadzenNumeric TValue="int" @bind-Value=@bD_CreditTip.ayear TextAlign="TextAlign.Center" Change=@OnYearChange />
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenColumn Size="4" SizeMD="3">
+                    <RadzenLabel Text="เดือน" />
+                </RadzenColumn>
+                <RadzenColumn Size="6" SizeMD="3">
+                    <RadzenNumeric TValue="int" @bind-Value=@bD_CreditTip.periodno TextAlign="TextAlign.Center" Change=@(args => OnMonthChange(args)) Min="1" />
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenColumn Size="4" SizeMD="3">
+                    <RadzenLabel Text="วันที่เปิด" />
+                </RadzenColumn>
+                <RadzenColumn Size="6" SizeMD="6">
+                    <RadzenDatePicker Name="DateFrom" @bind-Value=@bD_CreditTip.OpenDate DateFormat="dd/MM/yyyy">
+                        <FooterTemplate>
+                            <RadzenButton Click=@(args => @bD_CreditTip.OpenDate = DateTime.Now) Text="Today" class="my-3 w-100" />
+                        </FooterTemplate>
+                    </RadzenDatePicker>
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenColumn Size="4" SizeMD="3">
+                    <RadzenLabel Text="วันที่ปิด" />
+                </RadzenColumn>
+                <RadzenColumn Size="6" SizeMD="6">
+                    <RadzenDatePicker Name="DateFrom" @bind-Value=@bD_CreditTip.CloseDate DateFormat="dd/MM/yyyy">
+                        <FooterTemplate>
+                            <RadzenButton Click=@(args => @bD_CreditTip.CloseDate = DateTime.Now) Text="Today" class="my-3 w-100" />
+                        </FooterTemplate>
+                    </RadzenDatePicker>
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow AlignItems="AlignItems.Center" class="my-2">
+                <RadzenColumn Size="6" SizeMD="6" Offset="6" OffsetMD="3">
+                    <RadzenButton ButtonType="ButtonType.Submit" Text="Save" Icon="save" ButtonStyle="ButtonStyle.Success" IsBusy=@isLoading Class="w-100" Click=@OnSave />
+                </RadzenColumn>
+            </RadzenRow>
+        </RadzenColumn>
+        <RadzenColumn Size="8">
+            <RadzenDataGrid IsLoading="@isLoading" Data="@bD_CreditTips" TItem="BD_CreditTip" AllowVirtualization="false" AllowColumnResize="true"
+                            AllowFiltering="true" PageSize="20" AllowPaging="true" PagerPosition="PagerPosition.Bottom"
+                            FilterMode="FilterMode.Advanced" FilterPopupRenderMode="PopupRenderMode.OnDemand" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" LogicalFilterOperator="LogicalFilterOperator.Or"
+                            AllowSorting="true" SelectionMode="DataGridSelectionMode.Single" @bind-Value=@selectedCreditTips CellClick="@OnTripCellClick"
+                            ColumnWidth="150px" Style=@($"height:{(Height - 80)}px")>
+                <Columns>
+                    <RadzenDataGridColumn TItem="BD_CreditTip" Property="periodno" Title="เดือน" Frozen="true" Width="100px" />
+                    <RadzenDataGridColumn TItem="BD_CreditTip" Property="ayear" Title="ปี" Frozen="true" />
+                    <RadzenDataGridColumn TItem="BD_CreditTip" Property="OpenDate" Title="วันที่เปิด" FormatString="{0:dd/MM/yyyy}" />
+                    <RadzenDataGridColumn TItem="BD_CreditTip" Property="CloseDate" Title="วันที่ปิด" FormatString="{0:dd/MM/yyyy}" />
+                    <RadzenDataGridColumn TItem="BD_CreditTip" Property="ID" Title="ลบ" Width="80px" Filterable="false" Sortable="false" Visible=@IsDelete>
+                        <Template Context="data">
+                            <RadzenButton ButtonStyle="ButtonStyle.Danger" Shade="Shade.Lighter" Icon="delete" Click=@(() => OpenDelete(data,"Delete")) />
+                        </Template>
+                    </RadzenDataGridColumn>
+                </Columns>
+            </RadzenDataGrid>
+        </RadzenColumn>
+    </RadzenRow>
+}

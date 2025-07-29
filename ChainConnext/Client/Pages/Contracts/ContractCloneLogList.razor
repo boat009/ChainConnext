@@ -1,0 +1,93 @@
+﻿@using ChainConnext.Shared.BD;
+
+@inject IAccountService _accountService
+@inject NavigationManager Navigation
+@inject HttpClient Http
+@inject ILogger<ContractCloneLogList> Logger
+@inject Radzen.DialogService dialogService
+@inject IJSRuntime jsRuntime
+
+<RadzenStack>
+    <RadzenRow>
+        <RadzenColumn Size="12" SizeMD="6">
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenColumn Size="4" SizeMD="4">
+                    <RadzenLabel Text="วันที่ทำ" />
+                </RadzenColumn>
+                <RadzenColumn Size="8" SizeMD="6">
+                    @if (@bdc.DocDate != null)
+                    {
+                        <RadzenTextBox Class="w-100" Value=@bdc.DocDate.Value.ToString("dd/MM/yyyy HH:mm:ss") ReadOnly="true" />
+                    }
+                    else
+                    {
+                        <RadzenTextBox Class="w-100" ReadOnly="true" />
+                    }
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenColumn Size="4" SizeMD="4">
+                    <RadzenLabel Text="รหัส" />
+                </RadzenColumn>
+                <RadzenColumn Size="8" SizeMD="2">
+                    <RadzenTextBox Class="w-100" Value=@bdc.tocode ReadOnly="true" />
+                </RadzenColumn>
+                <RadzenColumn Size="8" SizeMD="4">
+                    @if (@bdc.accdate != null)
+                    {
+                        <RadzenTextBox Class="w-100" Value=@bdc.accdate.Value.ToString("dd/MM/yyyy") ReadOnly="true" />
+                    }
+                    else
+                    {
+                        <RadzenTextBox Class="w-100" ReadOnly="true" />
+                    }
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenColumn Size="4" SizeMD="4">
+                    <RadzenLabel Text=@OldRefNoTitle />
+                </RadzenColumn>
+                <RadzenColumn Size="8" SizeMD="6">
+                    <RadzenTextBox Class="w-100" Value=@bdc.OldRefNo ReadOnly="true" />
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenColumn Size="4" SizeMD="4">
+                    <RadzenLabel Text=@OldContNoTitle />
+                </RadzenColumn>
+                <RadzenColumn Size="8" SizeMD="6">
+                    <RadzenTextBox Class="w-100" Value=@bdc.OLDCONTNO ReadOnly="true" />
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenColumn Size="4" SizeMD="4">
+                    <RadzenLabel Text="หมายเหตุ" />
+                </RadzenColumn>
+                <RadzenColumn Size="8" SizeMD="8">
+                    <RadzenTextBox Class="w-100" Value=@bdc.tonote ReadOnly="true" />
+                </RadzenColumn>
+            </RadzenRow>
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenRow>
+        <RadzenColumn Size="12">
+            <RadzenDataGrid IsLoading="@IsLoading" Data="@bD_ChgConts" TItem="BD_ChgCont" AllowVirtualization="false" AllowColumnResize="true"
+                            AllowFiltering="true" PageSize="20" AllowPaging="true"
+                            FilterMode="FilterMode.Advanced"
+                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                            LogicalFilterOperator="LogicalFilterOperator.Or"
+                            FilterPopupRenderMode="PopupRenderMode.OnDemand"
+                            AllowSorting="true" SelectionMode="DataGridSelectionMode.Single"
+                            PagerPosition="PagerPosition.Bottom" ColumnWidth="150px" Style=@($"height:{(pHeight - 300)}px")>
+                <Columns>
+                    <RadzenDataGridColumn TItem="BD_ChgCont" Property="DocDate" Title="วันที่ทำ" FormatString="{0:dd/MM/yyyy HH:mm:ss}" />
+                    @* <RadzenDataGridColumn TItem="BD_ChgCont" Property="ChgDate" Title="วันที่เปลี่ยน" FormatString="{0:dd/MM/yyyy}" /> *@
+                    <RadzenDataGridColumn TItem="BD_ChgCont" Property="OldRefNo" Title=@OldRefNoTitle />
+                    <RadzenDataGridColumn TItem="BD_ChgCont" Property="OLDCONTNO" Title=@OldContNoTitle />
+                    <RadzenDataGridColumn TItem="BD_ChgCont" Property="OldEffDate" Title="วันที่ติดตั้ง" FormatString="{0:dd/MM/yyyy}" />
+                    <RadzenDataGridColumn TItem="BD_ChgCont" Property="OldName" Title="มาจากลูกค้า" />
+                </Columns>
+            </RadzenDataGrid>
+        </RadzenColumn>
+    </RadzenRow>
+</RadzenStack>

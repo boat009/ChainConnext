@@ -1,0 +1,137 @@
+﻿@page "/counter"
+
+@inject NotificationService NotificationService
+@inject IJSRuntime jsRuntime
+
+
+<PageTitle>Counter</PageTitle>
+
+<h1>Counter</h1>
+
+<p role="status">Current count: <h1>@currentCount</h1></p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+
+<h1>@dtm.ToString()</h1>
+
+<RadzenButton Text="Clear Offline Cache" Click="@CheckCache"></RadzenButton>
+
+<RadzenTextBox @oninput="OnInput" @onkeydown="@Enter" @bind-value=@message type="search" />
+<RadzenTextBox @oninput=@(args => message = args.Value.ToString()) @onkeydown="@Enter" @bind-value=@message type="search" Style="text-transform: uppercase;" onclick="this.select();" />
+
+<input type="search" @bind="message" @bind:event="oninput" class="form-control" @onkeydown="@Enter" />
+
+<p>@message</p>
+
+<RadzenButton Text="Get DeviceID" Click="@GetDeviceID"></RadzenButton>
+
+<EventConsole @ref=@console />
+
+@code {
+    EventConsole console;
+
+    private int currentCount = 0;
+
+    private void IncrementCount()
+    {
+        dtm = DateTime.Now;
+        currentCount++;
+        ShowMsg();
+    }
+
+    private System.Threading.Timer? timer;
+    DateTime dtm = DateTime.Now;
+
+    protected override async Task OnInitializedAsync()
+    {
+        //await RunTest();
+        //await ShowMsg();
+    }
+
+    async Task RunTest()
+    {
+        await Task.Run(() => dtm = DateTime.Now);
+        timer = new System.Threading.Timer(async (object? stateInfo) =>
+        {
+            await Task.Run(() => dtm = DateTime.Now);
+            await ShowMsg();
+            currentCount++;
+            StateHasChanged(); // NOTE: MUST CALL StateHasChanged() BECAUSE THIS IS TRIGGERED BY A TIMER INSTEAD OF A USER EVENT
+        }, new System.Threading.AutoResetEvent(false), 2000, 5000); // fire every 5000 milliseconds
+    }
+
+    async Task ShowMsg()
+    {
+        NotificationSeverity nfs;
+        Random rnd = new Random();
+        int nfs_rnd = rnd.Next(0, 5);
+        switch (nfs_rnd)
+        {
+            // case 0:
+            //     {
+            //         nfs = NotificationSeverity.Info;
+            //     }break;
+            case 1:
+                {
+                    nfs = NotificationSeverity.Warning;
+                }
+                break;
+            case 2:
+                {
+                    nfs = NotificationSeverity.Error;
+                }
+                break;
+            case 3:
+                {
+                    nfs = NotificationSeverity.Success;
+                }
+                break;
+            default:
+                {
+                    nfs = NotificationSeverity.Info;
+                }break;
+        }
+        await Task.Run(()=>
+
+            //new NotificationMessage { Severity = NotificationSeverity.Info, Summary = "Info Click Summary", Detail = "Click Me", Duration = 4000, Click=NotificationClick, CloseOnClick = true, Payload = DateTime.Now })
+            //NotificationService.Notify(NotificationSeverity.Info, "Test Notify", dtm.ToString
+            NotificationService.Notify(new NotificationMessage { Severity = nfs, Summary = "Test Notify", Detail = $"{dtm.ToString()} - {currentCount}", Duration = 5000 })
+        );
+    }
+
+    string message;
+
+    void OnInput(ChangeEventArgs e)
+    {
+        message = (string)e.Value;
+
+        console.Log($"value changed to {e.Value}");
+    }
+
+    public void Enter(KeyboardEventArgs e)
+    {
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+        {
+            console.Log($"value Enter to {message}");
+            NotificationService.Notify(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Info,
+                    Summary = "Enter Notify",
+                    Detail = $"{message}",
+                    Duration = 5000
+                });
+        }
+    }
+
+    async Task CheckCache()
+    {
+        await jsRuntime.InvokeVoidAsync("ClearCache");
+    }
+
+    void GetDeviceID()
+    {
+        string dvid = "";
+
+        console.Log($"device id : {dvid} ");
+    }
+}

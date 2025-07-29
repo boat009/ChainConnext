@@ -1,0 +1,49 @@
+﻿@using ChainConnext.Shared.BD
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@inject IAccountService _accountService
+@inject ILogger<ARAgingList> Logger
+@inject NotificationService NotificationService
+
+<RadzenRow>
+    <RadzenDataGrid IsLoading="@isLoading" Data="@bD_Debtoragis" TItem="BD_debtoragi" AllowVirtualization="false" AllowColumnResize="true"
+                    AllowFiltering="true" PageSize="60"
+                    FilterMode="FilterMode.Advanced"
+                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                    LogicalFilterOperator="LogicalFilterOperator.Or"
+                    FilterPopupRenderMode="PopupRenderMode.OnDemand"
+                    AllowSorting="true" SelectionMode="DataGridSelectionMode.Single"
+                    PagerPosition="PagerPosition.Bottom" AllowPaging="true" ColumnWidth="150px" Style=@($"height:{(pHeight - 200)}px")>
+        <Columns>
+            <RadzenDataGridColumn Width="60px" TItem="BD_debtoragi" Property="lock_txt" Title="ล็อค" Frozen="true" Sortable="false" Filterable="false">
+                <Template Context="data">
+                    <RadzenCheckBox TriState="false" Value="@(data.lock_txt == "Y")" />
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="BD_debtoragi" Property="flag" Title="?" TextAlign="TextAlign.Center" Width="60px" />
+            <RadzenDataGridColumn TItem="BD_debtoragi" Property="duedate" Title="ดิวชำระ" FormatString="{0:dd/MM/yyyy}" />
+            <RadzenDataGridColumn TItem="BD_debtoragi" Property="no1" Title="N1" TextAlign="TextAlign.Center" Width="60px" />
+            <RadzenDataGridColumn TItem="BD_debtoragi" Property="no2" Title="N2" TextAlign="TextAlign.Center" Width="60px" />
+            <RadzenDataGridColumn TItem="BD_debtoragi" Property="no3" Title="N3" TextAlign="TextAlign.Center" Width="60px" />
+            <RadzenDataGridColumn TItem="BD_debtoragi" Property="no4" Title="N4" TextAlign="TextAlign.Center" Width="60px" />
+            <RadzenDataGridColumn TItem="BD_debtoragi" Property="inbal" Title="ค้างยกมา" FormatString="{0:N0}" />
+            <RadzenDataGridColumn TItem="BD_debtoragi" Property="payamt" Title="ชำระจริง" FormatString="{0:N0}" />
+            <RadzenDataGridColumn TItem="BD_debtoragi" Property="balance" Title="คงค้าง" FormatString="{0:N0}" />
+            <RadzenDataGridColumn TItem="BD_debtoragi" Property="vatbal" Title="ภาษียกมา" FormatString="{0:N0}" />
+            <RadzenDataGridColumn TItem="BD_debtoragi" Property="vat" Title="ภาษีส่ง" FormatString="{0:N0}" />
+            <RadzenDataGridColumn TItem="BD_debtoragi" Property="uv" Title="ภาษีรอส่ง" FormatString="{0:N0}" />
+            <RadzenDataGridColumn TItem="BD_debtoragi" Property="urbal" Title="ดอกยกมา" FormatString="{0:N0}" />
+            <RadzenDataGridColumn TItem="BD_debtoragi" Property="ur" Title="ดอกรับรู้" FormatString="{0:N0}" />
+            <RadzenDataGridColumn TItem="BD_debtoragi" Property="netur" Title="ดอกรอตัด" FormatString="{0:N0}" />
+            <RadzenDataGridColumn TItem="BD_debtoragi" Property="netbal" Title="ค้างสุทธิ" FormatString="{0:N0}" />
+            <RadzenDataGridColumn TItem="BD_debtoragi" Property="curr" Title="ปัจจุบัน" FormatString="{0:N0}" />
+            <RadzenDataGridColumn TItem="BD_debtoragi" Property="period1" Title="1" FormatString="{0:N0}" />
+            <RadzenDataGridColumn TItem="BD_debtoragi" Property="period2" Title="2" FormatString="{0:N0}" />
+            <RadzenDataGridColumn TItem="BD_debtoragi" Property="period3" Title="3" FormatString="{0:N0}" />
+            <RadzenDataGridColumn TItem="BD_debtoragi" Property="period4" Title="4" FormatString="{0:N0}" />
+            <RadzenDataGridColumn TItem="BD_debtoragi" Property="period5" Title="5" FormatString="{0:N0}" />
+            <RadzenDataGridColumn TItem="BD_debtoragi" Property="period6" Title="6" FormatString="{0:N0}" />
+            <RadzenDataGridColumn TItem="BD_debtoragi" Property="period7" Title="7" FormatString="{0:N0}" />
+        </Columns>
+    </RadzenDataGrid>
+</RadzenRow>

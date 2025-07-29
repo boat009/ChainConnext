@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="CSharp" ReportInfo.Created="08/09/2022 09:12:08" ReportInfo.Modified="10/06/2023 11:46:43" ReportInfo.CreatorVersion="2019.2.0.0">
+  <Dictionary>
+    <TableDataSource Name="RptData" ReferenceName="RptData" DataType="System.Int32" Enabled="true">
+      <Column Name="xitem" DataType="System.Int64"/>
+      <Column Name="xcode" DataType="System.String"/>
+      <Column Name="xtonote" DataType="System.String"/>
+      <Column Name="xtodate" DataType="System.DateTime"/>
+      <Column Name="xoldrefno" DataType="System.String"/>
+      <Column Name="xoldcontno" DataType="System.String"/>
+      <Column Name="xoldeffdate" DataType="System.DateTime"/>
+      <Column Name="xoldname" DataType="System.String"/>
+      <Column Name="xoldsalecode" DataType="System.String"/>
+      <Column Name="xoldmodel" DataType="System.String"/>
+      <Column Name="xoldserialno" DataType="System.String"/>
+      <Column Name="xoldcredit" DataType="System.Double"/>
+      <Column Name="xoldpremium" DataType="System.Double"/>
+      <Column Name="xolddiscfirst" DataType="System.Double"/>
+      <Column Name="xoldnetcredit" DataType="System.Double"/>
+      <Column Name="xrefno" DataType="System.String"/>
+      <Column Name="xcontno" DataType="System.String"/>
+      <Column Name="xeffdate" DataType="System.DateTime"/>
+      <Column Name="xname" DataType="System.String"/>
+      <Column Name="xsalecode" DataType="System.String"/>
+      <Column Name="xmodel" DataType="System.String"/>
+      <Column Name="xserialno" DataType="System.String"/>
+      <Column Name="xcredit" DataType="System.Double"/>
+      <Column Name="xpremium" DataType="System.Double"/>
+      <Column Name="xdiscfirst" DataType="System.Double"/>
+      <Column Name="xnetcredit" DataType="System.Double"/>
+      <Column Name="Date" DataType="System.String"/>
+      <Column Name="xtodate_th" DataType="System.String"/>
+      <Column Name="xoldeffdate_th" DataType="System.String"/>
+      <Column Name="xeffdate_th" DataType="System.String"/>
+    </TableDataSource>
+  </Dictionary>
+  <ReportPage Name="Page1" Landscape="true" PaperWidth="297" PaperHeight="210" RawPaperSize="9" Watermark.Font="Arial, 60pt">
+    <PageHeaderBand Name="PageHeader1" Width="1047.06" Height="54.81">
+      <TextObject Name="Text1" Width="1047.06" Height="30.24" Text="รายงานประวัติสัญญา เปลี่ยน/สวม" HorzAlign="Center" Font="DilleniaUPC, 16pt, style=Bold"/>
+      <TextObject Name="Text2" Top="30.24" Width="1047.06" Height="24.57" Text="ประจำวันที่  [RptData.Date]" HorzAlign="Center" Font="DilleniaUPC, 14pt"/>
+      <TextObject Name="Text39" Left="952.56" Top="18.9" Width="94.5" Height="18.9" Text="หน้า [Page]" HorzAlign="Right" Font="DilleniaUPC, 14pt"/>
+    </PageHeaderBand>
+    <DataBand Name="Data1" Top="81.84" Width="1047.06" Height="45.36" DataSource="RptData">
+      <TextObject Name="Text3" Width="34.02" Height="45.36" Border.Lines="Left, Bottom" Border.Color="Gray" Border.Width="0.25" Text="[RptData.xitem]" HorzAlign="Center" VertAlign="Center" WordWrap="false" Font="DilleniaUPC, 14pt"/>
+      <TextObject Name="Text4" Left="66.15" Width="73.71" Height="22.68" Border.Lines="Left" Border.Color="Gray" Border.Width="0.25" Text="[RptData.xoldrefno]" HorzAlign="Center" WordWrap="false" Font="DilleniaUPC, 14pt"/>
+      <TextObject Name="Text5" Left="66.15" Top="22.68" Width="73.71" Height="22.68" Border.Lines="Left, Bottom" Border.Color="Gray" Border.Width="0.25" Text="[RptData.xrefno]" HorzAlign="Center" WordWrap="false" Font="DilleniaUPC, 14pt"/>
+      <TextObject Name="Text9" Left="34.02" Width="32.13" Height="45.36" Border.Lines="Left, Bottom" Border.Color="Gray" Border.Width="0.25" Text="[RptData.xcode]" HorzAlign="Center" VertAlign="Center" WordWrap="false" Font="DilleniaUPC, 14pt"/>
+      <TextObject Name="Text11" Left="139.86" Width="73.71" Height="22.68" Border.Lines="Left" Border.Color="Gray" Border.Width="0.25" Text="[RptData.xoldcontno]" HorzAlign="Center" WordWrap="false" Font="DilleniaUPC, 14pt"/>
+      <TextObject Name="Text12" Left="139.86" Top="22.68" Width="73.71" Height="22.68" Border.Lines="Left, Bottom" Border.Color="Gray" Border.Width="0.25" Text="[RptData.xcontno]" HorzAlign="Center" WordWrap="false" Font="DilleniaUPC, 14pt"/>
+      <TextObject Name="Text14" Left="213.57" Width="73.71" Height="22.68" Border.Lines="Left" Border.Color="Gray" Border.Width="0.25" Text="[RptData.xoldeffdate_th]" HorzAlign="Center" WordWrap="false" Font="DilleniaUPC, 14pt"/>
+      <TextObject Name="Text15" Left="213.57" Top="22.68" Width="73.71" Height="22.68" Border.Lines="Left, Bottom" Border.Color="Gray" Border.Width="0.25" Text="[RptData.xeffdate_th]" HorzAlign="Center" WordWrap="false" Font="DilleniaUPC, 14pt"/>
+      <TextObject Name="Text17" Left="287.28" Width="139.86" Height="22.68" Border.Lines="Left" Border.Color="Gray" Border.Width="0.25" Text="[RptData.xoldname]" WordWrap="false" Font="DilleniaUPC, 14pt"/>
+      <TextObject Name="Text18" Left="287.28" Top="22.68" Width="139.86" Height="22.68" Border.Lines="Left, Bottom" Border.Color="Gray" Border.Width="0.25" Text="[RptData.xname]" WordWrap="false" Font="DilleniaUPC, 14pt"/>
+      <TextObject Name="Text20" Left="427.14" Width="62.37" Height="22.68" Border.Lines="Left" Border.Color="Gray" Border.Width="0.25" Text="[RptData.xoldmodel]" HorzAlign="Center" WordWrap="false" Font="DilleniaUPC, 14pt"/>
+      <TextObject Name="Text21" Left="427.14" Top="22.68" Width="62.37" Height="22.68" Border.Lines="Left, Bottom" Border.Color="Gray" Border.Width="0.25" Text="[RptData.xmodel]" HorzAlign="Center" WordWrap="false" Font="DilleniaUPC, 14pt"/>
+      <TextObject Name="Text23" Left="489.51" Width="96.39" Height="22.68" Border.Lines="Left" Border.Color="Gray" Border.Width="0.25" Text="[RptData.xoldserialno]" HorzAlign="Center" WordWrap="false" Font="DilleniaUPC, 14pt"/>
+      <TextObject Name="Text24" Left="489.51" Top="22.68" Width="96.39" Height="22.68" Border.Lines="Left, Bottom" Border.Color="Gray" Border.Width="0.25" Text="[RptData.xserialno]" HorzAlign="Center" WordWrap="false" Font="DilleniaUPC, 14pt"/>
+      <TextObject Name="Text26" Left="585.9" Width="62.37" Height="22.68" Border.Lines="Left" Border.Color="Gray" Border.Width="0.25" Text="[RptData.xoldcredit]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" HorzAlign="Right" WordWrap="false" Font="DilleniaUPC, 14pt"/>
+      <TextObject Name="Text27" Left="585.9" Top="22.68" Width="62.37" Height="22.68" Border.Lines="Left, Bottom" Border.Color="Gray" Border.Width="0.25" Text="[RptData.xcredit]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" HorzAlign="Right" WordWrap="false" Font="DilleniaUPC, 14pt"/>
+      <TextObject Name="Text29" Left="648.27" Width="62.37" Height="22.68" Border.Lines="Left" Border.Color="Gray" Border.Width="0.25" Text="[RptData.xoldpremium]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" HorzAlign="Right" WordWrap="false" Font="DilleniaUPC, 14pt"/>
+      <TextObject Name="Text30" Left="648.27" Top="22.68" Width="62.37" Height="22.68" Border.Lines="Left, Bottom" Border.Color="Gray" Border.Width="0.25" Text="[RptData.xpremium]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" HorzAlign="Right" WordWrap="false" Font="DilleniaUPC, 14pt"/>
+      <TextObject Name="Text32" Left="710.64" Width="62.37" Height="22.68" Border.Lines="Left" Border.Color="Gray" Border.Width="0.25" Text="[RptData.xolddiscfirst]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" HorzAlign="Right" WordWrap="false" Font="DilleniaUPC, 14pt"/>
+      <TextObject Name="Text33" Left="710.64" Top="22.68" Width="62.37" Height="22.68" Border.Lines="Left, Bottom" Border.Color="Gray" Border.Width="0.25" Text="[RptData.xdiscfirst]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" HorzAlign="Right" WordWrap="false" Font="DilleniaUPC, 14pt"/>
+      <TextObject Name="Text35" Left="773.01" Width="62.37" Height="22.68" Border.Lines="Left" Border.Color="Gray" Border.Width="0.25" Text="[RptData.xoldnetcredit]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" HorzAlign="Right" WordWrap="false" Font="DilleniaUPC, 14pt"/>
+      <TextObject Name="Text36" Left="773.01" Top="22.68" Width="62.37" Height="22.68" Border.Lines="Left, Bottom" Border.Color="Gray" Border.Width="0.25" Text="[RptData.xnetcredit]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" HorzAlign="Right" WordWrap="false" Font="DilleniaUPC, 14pt"/>
+      <TextObject Name="Text38" Left="835.38" Width="211.68" Height="45.36" Border.Lines="Left, Right, Bottom" Border.Color="Gray" Border.Width="0.25" Text="[RptData.xtonote]" Font="DilleniaUPC, 14pt"/>
+      <DataHeaderBand Name="DataHeader1" Top="56.98" Width="1047.06" Height="22.68" RepeatOnEveryPage="true">
+        <TextObject Name="Text6" Width="34.02" Height="22.68" Border.Lines="All" Border.Color="Gray" Border.Width="0.25" Text="ที่" HorzAlign="Center" Font="DilleniaUPC, 14pt"/>
+        <TextObject Name="Text7" Left="66.15" Width="73.71" Height="22.68" Border.Lines="All" Border.Color="Gray" Border.Width="0.25" Text="เลขอ้างอิง" HorzAlign="Center" Font="DilleniaUPC, 14pt"/>
+        <TextObject Name="Text8" Left="34.02" Width="32.13" Height="22.68" Border.Lines="All" Border.Color="Gray" Border.Width="0.25" Text="รหัส" HorzAlign="Center" WordWrap="false" Font="DilleniaUPC, 14pt"/>
+        <TextObject Name="Text10" Left="139.86" Width="73.71" Height="22.68" Border.Lines="All" Border.Color="Gray" Border.Width="0.25" Text="เลขสัญญา" HorzAlign="Center" Font="DilleniaUPC, 14pt"/>
+        <TextObject Name="Text13" Left="213.57" Width="73.71" Height="22.68" Border.Lines="All" Border.Color="Gray" Border.Width="0.25" Text="วันที่ติดตั้ง" HorzAlign="Center" Font="DilleniaUPC, 14pt"/>
+        <TextObject Name="Text16" Left="287.28" Width="139.86" Height="22.68" Border.Lines="All" Border.Color="Gray" Border.Width="0.25" Text="ชื่อ - สกุล" HorzAlign="Center" Font="DilleniaUPC, 14pt"/>
+        <TextObject Name="Text19" Left="427.14" Width="62.37" Height="22.68" Border.Lines="All" Border.Color="Gray" Border.Width="0.25" Text="แบบ" HorzAlign="Center" Font="DilleniaUPC, 14pt"/>
+        <TextObject Name="Text22" Left="489.51" Width="96.39" Height="22.68" Border.Lines="All" Border.Color="Gray" Border.Width="0.25" Text="เลขเครื่อง" HorzAlign="Center" Font="DilleniaUPC, 14pt"/>
+        <TextObject Name="Text25" Left="585.9" Width="62.37" Height="22.68" Border.Lines="All" Border.Color="Gray" Border.Width="0.25" Text="ราคาขาย" HorzAlign="Center" Font="DilleniaUPC, 14pt"/>
+        <TextObject Name="Text28" Left="648.27" Width="62.37" Height="22.68" Border.Lines="All" Border.Color="Gray" Border.Width="0.25" Text="ค่างวด" HorzAlign="Center" Font="DilleniaUPC, 14pt"/>
+        <TextObject Name="Text31" Left="710.64" Width="62.37" Height="22.68" Border.Lines="All" Border.Color="Gray" Border.Width="0.25" Text="ส่วนลด" HorzAlign="Center" Font="DilleniaUPC, 14pt"/>
+        <TextObject Name="Text34" Left="773.01" Width="62.37" Height="22.68" Border.Lines="All" Border.Color="Gray" Border.Width="0.25" Text="คงเหลือ" HorzAlign="Center" Font="DilleniaUPC, 14pt"/>
+        <TextObject Name="Text37" Left="835.38" Width="211.68" Height="22.68" Border.Lines="All" Border.Color="Gray" Border.Width="0.25" Text="หมายเหตุ" HorzAlign="Center" Font="DilleniaUPC, 14pt"/>
+      </DataHeaderBand>
+    </DataBand>
+  </ReportPage>
+</Report>

@@ -1,0 +1,53 @@
+﻿@page "/paymentlist"
+@using ChainConnext.Shared.BD;
+
+@inject ILogger<PaymentList> Logger
+@inject DialogService dialogService
+@inject IJSRuntime jsRuntime
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@inject IAccountService _accountService
+@inject NotificationService NotificationService
+
+<RadzenStack>
+    <RadzenRow>
+        <RadzenColumn Size="2" SizeMD="3">
+            <RadzenTextBox class="w-100" @bind-Value=@Bd.RefNo Name="RefNo" Placeholder="เลขอ้างอิง" />
+        </RadzenColumn>
+        <RadzenColumn Size="2" SizeMD="3">
+            <RadzenTextBox class="w-100" @bind-Value=@Bd.ContNo Name="ContNo" Placeholder="เลขสัญญา" />
+        </RadzenColumn>
+        <RadzenColumn Size="2" SizeMD="3">
+            <RadzenTextBox class="w-100" @bind-Value=@Bd.InvNo Name="InvNo" Placeholder="เลขใบเสร็จ" />
+        </RadzenColumn>
+        <RadzenColumn Size="2" SizeMD="2">
+            <RadzenButton ButtonStyle="ButtonStyle.Success" Text="ค้นหา" Class="w-100" Icon="search" Click=@Search IsBusy=@IsLoading />
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenRow>
+        <RadzenColumn Size="12">
+            <RadzenDataGrid IsLoading="@IsLoading" Data="@bD_Invoices" TItem="BD_InvoiceABH" AllowVirtualization="false" AllowColumnResize="true"
+                            AllowFiltering="true" PageSize="20" AllowPaging="true"
+                            FilterMode="FilterMode.Advanced"
+                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                            LogicalFilterOperator="LogicalFilterOperator.Or"
+                            FilterPopupRenderMode="PopupRenderMode.OnDemand"
+                            AllowSorting="true" SelectionMode="DataGridSelectionMode.Single"
+                            PagerPosition="PagerPosition.Bottom" ColumnWidth="150px" Style=@($"height:{(Height - 80)}px")>
+                <Columns>
+                    <RadzenDataGridColumn TItem="BD_InvoiceABH" Property="RefNo" Title="อ้างอิง" Frozen="true" />
+                    <RadzenDataGridColumn TItem="BD_InvoiceABH" Property="ContNo" Title="สัญญา" />
+                    <RadzenDataGridColumn TItem="BD_InvoiceABH" Property="CustName" Title="ลูกค้า" Width="200px" />
+                    <RadzenDataGridColumn TItem="BD_InvoiceABH" Property="InvNo" Title="เลขใบเสร็จ" Width="200px" />
+                    <RadzenDataGridColumn TItem="BD_InvoiceABH" Property="DocDate" Title="วันที่ใบเสร็จ" FormatString="{0:dd/MM/yyyy}" />
+                    <RadzenDataGridColumn TItem="BD_InvoiceABH" Property="PayPeriod" Title="งวดที่" />
+                    <RadzenDataGridColumn TItem="BD_InvoiceABH" Property="paydate" Title="วันที่" FormatString="{0:dd/MM/yyyy}" />
+                    <RadzenDataGridColumn TItem="BD_InvoiceABH" Property="Amount" Title="จำนวนเงิน" />
+                    <RadzenDataGridColumn TItem="BD_InvoiceABH" Property="CashCode" Title="รหัสเก็บเงิน" />
+                    <RadzenDataGridColumn TItem="BD_InvoiceABH" Property="CashName" Title="ชื่อพนง.เก็บเงิน" />
+                    <RadzenDataGridColumn TItem="BD_InvoiceABH" Property="DueDate" Title="วันที่นัด" FormatString="{0:dd/MM/yyyy}" />
+                </Columns>
+            </RadzenDataGrid>
+        </RadzenColumn>
+    </RadzenRow>
+</RadzenStack>

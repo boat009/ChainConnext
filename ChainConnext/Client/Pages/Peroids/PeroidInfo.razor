@@ -1,0 +1,10 @@
+﻿<RadzenTabs @bind-SelectedIndex=@selectedIndex>
+    <Tabs>
+        <RadzenTabsItem Text="ตารางค่างวด">
+            <PeroidTableInfo pContractId=@pContractId />
+        </RadzenTabsItem>
+        <RadzenTabsItem Text="Aging">
+            <PeroidAging pContractId=@pContractId />
+        </RadzenTabsItem>
+    </Tabs>
+</RadzenTabs>

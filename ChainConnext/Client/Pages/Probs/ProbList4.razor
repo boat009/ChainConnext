@@ -1,0 +1,50 @@
+﻿@using ChainConnext.Shared.Toss;
+@inject IAccountService _accountService
+@inject NavigationManager Navigation
+@inject HttpClient Http
+@inject ILogger<ProbList4> Logger
+@inject Radzen.DialogService dialogService
+@inject IJSRuntime jsRuntime
+
+<RadzenStack>
+    <RadzenRow>
+        <RadzenColumn Size="7">
+            <RadzenDataGrid IsLoading="@IsLoading" Data="@Pbm" TItem="TOSS_Prob_Operation_Main" AllowVirtualization="false" AllowColumnResize="true"
+                            AllowFiltering="true" PageSize="20" AllowPaging="true"
+                            FilterMode="FilterMode.Advanced"
+                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                            LogicalFilterOperator="LogicalFilterOperator.Or"
+                            FilterPopupRenderMode="PopupRenderMode.OnDemand" CellClick="@OnPbmCellClick"
+                            AllowSorting="true" SelectionMode="DataGridSelectionMode.Single" @bind-Value=@selectedPbm
+                            PagerPosition="PagerPosition.Bottom" ColumnWidth="150px" Style=@($"height:{(pHeight - 200)}px")>
+                <Columns>
+                    <RadzenDataGridColumn TItem="TOSS_Prob_Operation_Main" Property="informId" Title="เลขแจ้งปัญหา" Frozen="true" />
+                    <RadzenDataGridColumn TItem="TOSS_Prob_Operation_Main" Property="InfromDateTime" Title="วันแจ้ง" FormatString="{0:dd/MM/yyyy HH:mm}" />
+                    <RadzenDataGridColumn TItem="TOSS_Prob_Operation_Main" Property="ContractSale" Title="พนักงานขาย" />
+                    <RadzenDataGridColumn TItem="TOSS_Prob_Operation_Main" Property="ProblemNameV1" Title="ปัญหาหลัก" />
+                    <RadzenDataGridColumn TItem="TOSS_Prob_Operation_Main" Property="ProblemNameV2" Title="ปัญหารอง" />
+                    <RadzenDataGridColumn TItem="TOSS_Prob_Operation_Main" Property="ProblemNameV3" Title="ปัญหาย่อย" />
+                    <RadzenDataGridColumn TItem="TOSS_Prob_Operation_Main" Property="ProblemDetail" Title="รายละเอียดปัญหา" Width="250px" />
+                    <RadzenDataGridColumn TItem="TOSS_Prob_Operation_Main" Property="WorkNameEng" Title="สถานะ" />
+                </Columns>
+            </RadzenDataGrid>
+        </RadzenColumn>
+        <RadzenColumn Size="5">
+            <RadzenDataGrid IsLoading="@IsDetailLoading" Data="@Pbd" TItem="TOSS_Prob_Operation_Detail" AllowVirtualization="false" AllowColumnResize="true"
+                            AllowFiltering="true" PageSize="20" AllowPaging="true"
+                            FilterMode="FilterMode.Advanced"
+                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                            LogicalFilterOperator="LogicalFilterOperator.Or"
+                            FilterPopupRenderMode="PopupRenderMode.OnDemand"
+                            AllowSorting="true" SelectionMode="DataGridSelectionMode.Single"
+                            PagerPosition="PagerPosition.Bottom" ColumnWidth="150px" Style=@($"height:{(pHeight - 200)}px")>
+                <Columns>
+                    <RadzenDataGridColumn TItem="TOSS_Prob_Operation_Detail" Property="refno" Title="refno" Width="50px" Frozen="true" />
+                    <RadzenDataGridColumn TItem="TOSS_Prob_Operation_Detail" Property="ResponDate" Title="ResponDate" FormatString="{0:dd/MM/yyyy HH:mm}" />
+                    <RadzenDataGridColumn TItem="TOSS_Prob_Operation_Detail" Property="ProblemDetails" Title="ProblemDetails" />
+                    <RadzenDataGridColumn TItem="TOSS_Prob_Operation_Detail" Property="Custname" Title="Custname" Width="250px" />
+                </Columns>
+            </RadzenDataGrid>
+        </RadzenColumn>
+    </RadzenRow>
+</RadzenStack>

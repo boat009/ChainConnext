@@ -1,0 +1,99 @@
+﻿
+<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Wrap="FlexWrap.NoWrap" Gap="0">
+    <RadzenTextBox type=@InputType Placeholder=@TextPlaceHolder
+                   @onkeydown=@FindEnter
+                   @oninput=@(args => SearchValue = args.Value.ToString())
+                   @bind-value=@SearchValue
+                   MaxLength=@TextLength
+                   id="@ID"
+                   Style=@StypeUpperCase />
+    <RadzenButton Icon="search" Variant="Variant.Outlined" ButtonStyle="ButtonStyle.Info" IsBusy=@IsLoad Click=@(() => FindData()) Visible=@VisibleSearchButton />
+</RadzenStack>
+
+@code {
+    [Parameter]
+    public EventCallback<string> OnFindEnter { get; set; }
+    [Parameter]
+    public string SearchValue
+    {
+        get => _value;
+        set
+        {
+            if (_value == value) return;
+            _value = value;
+            SearchValueChanged.InvokeAsync(value);
+        }
+    }
+    //public string SearchValue { get; set; } = "";
+    bool IsLoad = false;
+    [Parameter]
+    public bool VisibleSearchButton { get; set; } = true;
+    [Parameter]
+    public int TextLength { get; set; } = 250;
+    [Parameter]
+    public bool IsUpperCase { get; set; } = false;
+    [Parameter]
+    public bool IsTypeSearch { get; set; } = true;
+    [Parameter]
+    public string TextPlaceHolder { get; set; } = "";
+    [Parameter]
+    public string InputType { get; set; } = "text";
+    [Parameter]
+    public string ID { get; set; } = Guid.NewGuid().ToString();
+
+    [Parameter]
+    public EventCallback<string> SearchValueChanged { get; set; }
+    private string _value = "";
+    //async Task SetAsync(string value) => await SearchValueChanged.InvokeAsync(value);
+
+    string StypeUpperCase = "";
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (IsUpperCase)
+        {
+            StypeUpperCase = "text-transform: uppercase;";
+        }
+        else
+        {
+            StypeUpperCase = "";
+        }
+        base.OnParametersSet();
+    }
+
+    async Task FindEnter(KeyboardEventArgs e)
+    {
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+        {
+            await FindInvoke();
+        }
+    }
+    async Task FindInvoke()
+    {
+        // if (string.IsNullOrEmpty(SearchValue.Trim()))
+        // {
+        //     return;
+        // }
+        IsLoad = true;
+
+        if (!string.IsNullOrEmpty(SearchValue))
+        {
+            if (IsUpperCase)
+            {
+                SearchValue = SearchValue.ToUpper();
+            }
+        }
+        
+        await OnFindEnter.InvokeAsync(SearchValue);
+        IsLoad = false;
+    }
+    async Task FindData()
+    {
+        await FindInvoke();
+    }
+}

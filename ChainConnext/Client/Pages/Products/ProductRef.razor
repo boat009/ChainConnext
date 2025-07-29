@@ -1,0 +1,27 @@
+﻿@using ChainConnext.Shared.Contracts;
+
+@inject HttpClient Http
+@inject ILogger<ProductRef> Logger
+@inject IAccountService _accountService
+@inject NavigationManager Navigation
+
+<RadzenRow>
+    <RadzenDataGrid IsLoading="@isLoading" Data="@infos" TItem="Contract_Info" AllowVirtualization="false" AllowColumnResize="true"
+                    AllowFiltering="true" PageSize="60"
+                    FilterMode="FilterMode.Advanced"
+                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                    LogicalFilterOperator="LogicalFilterOperator.Or"
+                    FilterPopupRenderMode="PopupRenderMode.OnDemand"
+                    AllowSorting="true" SelectionMode="DataGridSelectionMode.Single"
+                    PagerPosition="PagerPosition.Bottom" AllowPaging="true" ColumnWidth="150px">
+        <Columns>
+            <RadzenDataGridColumn TItem="Contract_Info" Property="RefNo" Title="เลขอ้างอิง" Frozen="true" Width="100px" />
+            <RadzenDataGridColumn TItem="Contract_Info" Property="ContractNo" Title="เลขสัญญา" Width="100px" />
+            <RadzenDataGridColumn TItem="Contract_Info" Property="ModelDesc" Title="สินค้า" />
+            <RadzenDataGridColumn TItem="Contract_Info" Property="SerialNo" Title="SerialNo" />
+            <RadzenDataGridColumn TItem="Contract_Info" Property="EffDate" Title="วันที่ติดตั้ง" FormatString="{0:dd/MM/yyyy}" Width="100px" />
+            <RadzenDataGridColumn TItem="Contract_Info" Property="ContractStatus" Title="สถานะ" />
+            <RadzenDataGridColumn TItem="Contract_Info" Property="ContractStatusDate" Title="วันที่สถานะ" FormatString="{0:dd/MM/yyyy}" Width="100px" />
+        </Columns>
+    </RadzenDataGrid>
+</RadzenRow>
